@@ -3,13 +3,27 @@ package ru.siblion.nesterov.logreader.util;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
+
+import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+import org.w3c.dom.*;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.parsers.*;
 
 /**
  * Created by alexander on 06.12.2016.
  */
 public class Methods {
+    public final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain\\";
+    public final static String DOMAIN_NAME = "webl_domain";
+    public static String adminServerDirectory;
 
     public static List<Integer> getExpressionPositions(String string, String filePath) {
         List<Integer> numbers = new ArrayList<Integer>();
@@ -34,7 +48,7 @@ public class Methods {
         return numbers;
     }
 
-    public static String getBlock(String filePath, int fromLine, int toLine) {
+    public static String _getBlock(String filePath, int fromLine, int toLine) {
         System.out.println("getBlock(" + filePath + ", " + fromLine + ", " + toLine + ")");
         StringBuilder block = new StringBuilder();
         for (int i = fromLine; i <= toLine; i++) {
@@ -47,7 +61,7 @@ public class Methods {
         return block.toString();
     }
 
-    public static String _getBlock(String filePath, int fromLine, int toLine)  {
+    public static String getBlock(String filePath, int fromLine, int toLine)  {
         System.out.println("getBlock(" + filePath + ", " + fromLine + ", " + toLine + ")");
         StringBuilder block = new StringBuilder();
         FileReader fr = null;
@@ -64,7 +78,6 @@ public class Methods {
         } catch(Exception e){
             e.printStackTrace();
         } finally{
-            // closes the stream and releases system resources
             if(fr!=null) {
                 try {
                     fr.close();
@@ -105,12 +118,108 @@ public class Methods {
         return regExpBlocksPositions;
     }
 
-    public static List<String> getFilePaths(String location) {
+    public static List<String> getLogFilePaths(String location) {
         List<String> filePaths = new ArrayList<String>();
-        //File some = new File();
 
+        String serverName = location;
+        File directory = new File(DOMAIN_DIRECTORY + "servers\\" + serverName + "\\logs\\");
+        if (directory.exists()) {
+            for (String logFilePath : Methods.getListFilesMatching(directory, (serverName + ".log[0-9]*"))) {
+                filePaths.add(logFilePath);
+            }
+            return filePaths;
+        }
+        List<String> servers = new ArrayList<String>();
 
+        if (location == "webl_domain") {
+            try {
+                File configFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(configFile);
+                doc.getDocumentElement().normalize();
+                NodeList nList = doc.getElementsByTagName(("server"));
+                for (int i = 0; i < nList.getLength(); i++) {
+                    Node nNode = nList.item(i);
+                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element eElement = (Element) nNode;
+                        servers.add(eElement.getElementsByTagName("name").item(0).getTextContent());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
+        Pattern p = Pattern.compile("webl_cluster[0-9]+");
+        Matcher m = p.matcher(location);
+        if (m.matches()) {
+            try {
+                File configFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(configFile);
+                doc.getDocumentElement().normalize();
+                NodeList nList = doc.getElementsByTagName(("server"));
+                for (int i = 1; i < nList.getLength(); i++) {
+                    Node nNode = nList.item(i);
+                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element eElement = (Element) nNode;
+                        if (eElement.getElementsByTagName("cluster").item(0).getTextContent().equals(location)) {
+                            servers.add(eElement.getElementsByTagName("name").item(0).getTextContent());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        File serverLogDirectory;
+        for (String server : servers) {
+            serverLogDirectory = new File(DOMAIN_DIRECTORY + "servers\\" + server + "\\logs\\");
+            String regExp = (server + ".log[0-9]*|webl_domain.log[0-9]*");
+            for (String logFilePath : Methods.getListFilesMatching(serverLogDirectory, regExp)) {
+                filePaths.add(logFilePath);
+            }
+        }
         return filePaths;
+    }
+
+    public static List<String> getListFilesMatching(File root, String regex) {
+        if(!root.isDirectory()) {
+            throw new IllegalArgumentException(root + " is no directory.");
+        }
+        final Pattern p = Pattern.compile(regex); // careful: could also throw an exception!
+        File[] files = root.listFiles(new FileFilter(){
+            @Override
+            public boolean accept(File file) {
+                return p.matcher(file.getName()).matches();
+            }
+        });
+        List<String> filesMatching = new ArrayList<String>();
+        for (File file : files) {
+            filesMatching.add(file.toString());
+        }
+        return filesMatching;
+    }
+
+    public static XMLGregorianCalendar getDate(String dateString) {
+        XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
+        String stringDateFormat = "dd.MM.yy, hh:mm:ss,SSS aa"; // проверить h 11/12
+        SimpleDateFormat format = new SimpleDateFormat(stringDateFormat);
+        Date date = new Date();
+        try {
+             date = format.parse(dateString);
+        } catch (Exception e) {
+            e.getStackTrace();
+        }
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(date);
+        try {
+            xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
+        }
+        return xmlGregorianDate;
     }
 }
