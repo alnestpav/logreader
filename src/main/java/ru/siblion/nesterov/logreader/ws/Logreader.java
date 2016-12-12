@@ -2,13 +2,13 @@ package ru.siblion.nesterov.logreader.ws;
 
 import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.util.Methods;
-import sun.rmi.runtime.Log;
 
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -20,15 +20,25 @@ import java.util.Map;
 public class Logreader {
 
     @WebMethod(operationName = "getLogMessageListString")
-    public String getLogMessageListString(@WebParam(name = "string") String string, @WebParam(name = "location") String location) {
-        List<LogMessage> logMessageList = Methods.getLogMessageList(string, location);
+    public String getLogMessageListString(@WebParam(name = "expression") String expression, @WebParam(name = "location") String location) {
+        List<LogMessage> logMessageList = Methods.getLogMessageList(expression, location);
+        Collections.sort(logMessageList);
+
         StringBuilder allMessagesStringBuilder = new StringBuilder();
         for (LogMessage logMessage : logMessageList) {
-            allMessagesStringBuilder.append(logMessage.getMessage());
+            allMessagesStringBuilder.append(logMessage.getMessage() + "\n");
         }
         return allMessagesStringBuilder.toString();
     }
 
-
-
+    @WebMethod(operationName = "getDomain")
+    public String getDomain(@WebParam(name = "expression") String expression, @WebParam(name = "location") String location) {
+        //List<LogMessage> logMessageList = Methods.getLogMessageList(expression, location);
+        List<LogMessage> logMessageList = Methods.getLogMessageList("java", "webl_domain");
+        StringBuilder allMessagesStringBuilder = new StringBuilder();
+        for (LogMessage logMessage : logMessageList) {
+            allMessagesStringBuilder.append(logMessage.getMessage() + "\n");
+        }
+        return allMessagesStringBuilder.toString();
+}
 }

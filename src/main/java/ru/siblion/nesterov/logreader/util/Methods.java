@@ -36,7 +36,9 @@ public class Methods {
             while (line != null) {
                 int i = 0;
                 while (i < line.toCharArray().length && line.toCharArray()[i] != ':') i++;
-
+                /*System.out.println("filePath " + filePath);
+                System.out.println("line " + line);
+                System.out.println("line.substring(0, i) " + line.substring(0, i));*/
                 numbers.add(Integer.parseInt((line.substring(0, i))));
                 line = reader.readLine();
             }
@@ -58,7 +60,7 @@ public class Methods {
                 lnr.readLine();
             }
             for (int i = fromLine; i <= toLine; i++) {
-                block.append(lnr.readLine()+ "\n");
+                block.append(lnr.readLine()/*+ "\n"*/);
             }
         } catch(Exception e){
             e.printStackTrace();
@@ -189,7 +191,7 @@ public class Methods {
     }
 
     public static XMLGregorianCalendar getDate(String block) {
-        String regex = "\\d\\d.\\d\\d.\\d\\d\\d\\d, \\d:\\d\\d:\\d\\d,\\d+ (PM|AM) (MSK)";
+        String regex = "\\d\\d.\\d\\d.\\d\\d\\d\\d, \\d\\d?:\\d\\d:\\d\\d,\\d+ (PM|AM) (MSK)";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(block);
         m.find();
@@ -241,4 +243,8 @@ public class Methods {
         }
         return logMessageList;
     }
+
+    /*public static List<LogMessage> getLogMessageListByJavaRegExp(String regexp, String location) {
+
+    }*/
 }

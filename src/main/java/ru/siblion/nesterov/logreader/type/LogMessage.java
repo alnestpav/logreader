@@ -8,8 +8,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * Created by alexander on 07.12.2016.
  */
 public class LogMessage implements Comparable<LogMessage> {
-    XMLGregorianCalendar date;
-    String message;
+    private XMLGregorianCalendar date;
+    private String message;
 
     LogMessage(XMLGregorianCalendar date, String message) {
         this.date = date;
