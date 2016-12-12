@@ -1,12 +1,14 @@
 package ru.siblion.nesterov.logreader.ws;
 
+import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.util.Methods;
+import sun.rmi.runtime.Log;
 
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,25 +19,14 @@ import java.util.Map;
 @Stateless
 public class Logreader {
 
-    @WebMethod(operationName = "getLogMessageList")
-    public String getLogMessageList(@WebParam(name = "string") String string, @WebParam(name = "location") String location) {
-
-
-        List<Integer> regExpPositions;
-        List<Integer> blockPositions;
-        StringBuilder block = new StringBuilder();
-        Map<Integer, Integer> regExpBlocksPositions;
-        for (String logFilePath : Methods.getLogFilePaths(location)) {
-            regExpPositions = Methods.getExpressionPositions(string, logFilePath);
-            blockPositions = Methods.getExpressionPositions("####", logFilePath);
-            regExpBlocksPositions = Methods.getRegExpBlocksPositions(regExpPositions, blockPositions);
-            System.out.println(regExpBlocksPositions);
-            for (Map.Entry<Integer, Integer> entry : regExpBlocksPositions.entrySet()) {
-                block.append((Methods.getBlock(logFilePath, entry.getKey(), entry.getValue())).substring(4));
-            }
+    @WebMethod(operationName = "getLogMessageListString")
+    public String getLogMessageListString(@WebParam(name = "string") String string, @WebParam(name = "location") String location) {
+        List<LogMessage> logMessageList = Methods.getLogMessageList(string, location);
+        StringBuilder allMessagesStringBuilder = new StringBuilder();
+        for (LogMessage logMessage : logMessageList) {
+            allMessagesStringBuilder.append(logMessage.getMessage());
         }
-
-        return block.toString();
+        return allMessagesStringBuilder.toString();
     }
 
 

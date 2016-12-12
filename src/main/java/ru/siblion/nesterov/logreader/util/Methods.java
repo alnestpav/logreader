@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import org.w3c.dom.*;
+import ru.siblion.nesterov.logreader.type.LogMessage;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -211,5 +212,33 @@ public class Methods {
             e.printStackTrace();
         }
         return xmlGregorianDate;
+    }
+
+    public static List<LogMessage> getLogMessageList(String string, String location) {
+
+        List<Integer> regExpPositions;
+        List<Integer> blockPositions;
+        Map<Integer, Integer> regExpBlocksPositions;
+
+        List<String> logFilePaths = Methods.getLogFilePaths(location);
+        List<LogMessage> logMessageList = new ArrayList<LogMessage>();
+        for (String logFilePath : logFilePaths) {
+            regExpPositions = Methods.getExpressionPositions(string, logFilePath);
+            blockPositions = Methods.getExpressionPositions("####", logFilePath);
+            regExpBlocksPositions = Methods.getRegExpBlocksPositions(regExpPositions, blockPositions);
+            /*System.out.println(regExpBlocksPositions);
+            System.out.println(blockPositions);*/
+            String currentBlock;
+
+            for (Map.Entry<Integer, Integer> entry : regExpBlocksPositions.entrySet()) {
+                currentBlock = (Methods.getBlock(logFilePath, entry.getKey(), entry.getValue())).substring(4);
+                /*System.out.println("CURRENT_BLOCK{{{" + currentBlock + "}}}");*/
+                LogMessage logMessage = new LogMessage(currentBlock);
+                logMessageList.add(logMessage);
+                /*System.out.println("DATE ");
+                System.out.println(logMessage.getDate());*/
+            }
+        }
+        return logMessageList;
     }
 }
