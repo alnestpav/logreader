@@ -1,13 +1,10 @@
 package ru.siblion.nesterov.logreader.util;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import org.w3c.dom.*;
@@ -46,19 +43,6 @@ public class Methods {
             e.printStackTrace();
         }
         return numbers;
-    }
-
-    public static String _getBlock(String filePath, int fromLine, int toLine) {
-        System.out.println("getBlock(" + filePath + ", " + fromLine + ", " + toLine + ")");
-        StringBuilder block = new StringBuilder();
-        for (int i = fromLine; i <= toLine; i++) {
-            try (Stream<String> lines = Files.lines(Paths.get(filePath))) {
-                block.append(lines.skip(i - 1).findFirst().get() + "\n");
-            }  catch (IOException e) {
-                e.getStackTrace();
-            }
-        }
-        return block.toString();
     }
 
     public static String getBlock(String filePath, int fromLine, int toLine)  {
@@ -203,13 +187,19 @@ public class Methods {
         return filesMatching;
     }
 
-    public static XMLGregorianCalendar getDate(String dateString) {
+    public static XMLGregorianCalendar getDate(String block) {
+        String regex = "\\d\\d.\\d\\d.\\d\\d\\d\\d, \\d:\\d\\d:\\d\\d,\\d+ (PM|AM) (MSK)";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(block);
+        m.find();
+        String stringDate =  m.group();
+        //System.out.println("dateString " + stringDate);
         XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
-        String stringDateFormat = "dd.MM.yy, hh:mm:ss,SSS aa"; // проверить h 11/12
+        String stringDateFormat = "dd.MM.yy, hh:mm:ss,SSS aa zzz"; // проверить h 11/12
         SimpleDateFormat format = new SimpleDateFormat(stringDateFormat);
         Date date = new Date();
         try {
-             date = format.parse(dateString);
+             date = format.parse(stringDate);
         } catch (Exception e) {
             e.getStackTrace();
         }

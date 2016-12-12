@@ -7,7 +7,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 /**
  * Created by alexander on 07.12.2016.
  */
-public class LogMessage {
+public class LogMessage implements Comparable<LogMessage> {
     XMLGregorianCalendar date;
     String message;
 
@@ -17,7 +17,7 @@ public class LogMessage {
     }
 
     public LogMessage(String block) {
-        this.date = Methods.getDate(block.substring(1, 27));
+        this.date = Methods.getDate(block);
         this.message = block;
     }
 
@@ -27,5 +27,10 @@ public class LogMessage {
 
     public String getMessage() {
         return message;
+    }
+
+    @Override
+    public int compareTo(LogMessage logMessage) {
+        return this.date.compare(logMessage.date);
     }
 }

@@ -17,16 +17,10 @@ import java.util.Map;
 @Stateless
 public class Logreader {
 
-    @WebMethod(operationName = "getBlock")
-    public String getBlock(@WebParam(name = "string") String string, @WebParam(name = "location") String location) {
+    @WebMethod(operationName = "getLogMessageList")
+    public String getLogMessageList(@WebParam(name = "string") String string, @WebParam(name = "location") String location) {
 
-        String filePath;
-        String myServerLogFile = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain\\servers\\webl_server1\\logs\\webl_server1.log";
-        String realServerLogFile = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain\\servers\\webl_server1\\logs\\ws_server1.log02354";
-        String testLogFile = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain\\servers\\webl_server1\\logs\\test.log";
-        String domainsDirectory = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains";
 
-        //filePath = testLogFile;
         List<Integer> regExpPositions;
         List<Integer> blockPositions;
         StringBuilder block = new StringBuilder();
