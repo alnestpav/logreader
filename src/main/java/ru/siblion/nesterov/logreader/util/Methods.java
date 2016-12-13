@@ -1,66 +1,60 @@
 package ru.siblion.nesterov.logreader.util;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import org.w3c.dom.*;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.*;
 
 /**
  * Created by alexander on 06.12.2016.
  */
 public class Methods {
-    public final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain\\";
+
     public final static String DOMAIN_NAME = "webl_domain";
-    public static String adminServerDirectory;
+    public final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\" + DOMAIN_NAME + "\\";
 
-    public static List<Integer> getExpressionPositions(String string, String filePath) {
-        List<Integer> numbers = new ArrayList<Integer>();
+    public static List<Integer> getLinesWithStringNumbers(String string, String filePath) {
+        List<Integer> linesWithStringNumbers = new ArrayList<Integer>();
+
+        String command = "findstr /n /c:" + "\"" + string + "\"" + " " + filePath ;
         try {
-            BufferedReader reader;
-            String command = "findstr /n /c:" + "\"" + string + "\"" + " " + filePath ;
-            Process p = Runtime.getRuntime().exec(command);
-
-            InputStream is = p.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(is));
+            Process findstrProcess = Runtime.getRuntime().exec(command);
+            InputStream findstrProcessInputStream = findstrProcess.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(findstrProcessInputStream));
             String line = reader.readLine();
+            Pattern lineNumberPattern = Pattern.compile("\\d+");
+            Matcher lineNumberMatcher;
             while (line != null) {
-                int i = 0;
-                while (i < line.toCharArray().length && line.toCharArray()[i] != ':') i++;
-                /*System.out.println("filePath " + filePath);
-                System.out.println("line " + line);
-                System.out.println("line.substring(0, i) " + line.substring(0, i));*/
-                numbers.add(Integer.parseInt((line.substring(0, i))));
+                lineNumberMatcher = lineNumberPattern.matcher(line);
+                lineNumberMatcher.find();
+                String lineNumberString = lineNumberMatcher.group();
+                linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
                 line = reader.readLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return numbers;
+        return linesWithStringNumbers;
     }
 
-    public static String getBlock(String filePath, int fromLine, int toLine)  {
-        System.out.println("getBlock(" + filePath + ", " + fromLine + ", " + toLine + ")");
+    public static String getBlock(String filePath, int fromLineNumber, int toLineNumber)  {
+        System.out.println("getBlock(" + filePath + ", " + fromLineNumber + ", " + toLineNumber + ")");
         StringBuilder block = new StringBuilder();
         FileReader fr = null;
         LineNumberReader lnr = null;
         try {
             fr = new FileReader(filePath);
             lnr = new LineNumberReader(fr);
-            for (int i = 1; i < fromLine; i++) {
+            for (int i = 1; i < fromLineNumber; i++) {
                 lnr.readLine();
             }
-            for (int i = fromLine; i <= toLine; i++) {
-                block.append(lnr.readLine()/*+ "\n"*/);
+            for (int i = fromLineNumber; i <= toLineNumber; i++) {
+                block.append(lnr.readLine());
             }
         } catch(Exception e){
             e.printStackTrace();
@@ -118,7 +112,7 @@ public class Methods {
         }
         List<String> servers = new ArrayList<String>();
 
-        if (location == "webl_domain") {
+        if (location == DOMAIN_NAME) {
             try {
                 File configFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -190,32 +184,6 @@ public class Methods {
         return filesMatching;
     }
 
-    public static XMLGregorianCalendar getDate(String block) {
-        String regex = "\\d\\d.\\d\\d.\\d\\d\\d\\d, \\d\\d?:\\d\\d:\\d\\d,\\d+ (PM|AM) (MSK)";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(block);
-        m.find();
-        String stringDate =  m.group();
-        //System.out.println("dateString " + stringDate);
-        XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
-        String stringDateFormat = "dd.MM.yy, hh:mm:ss,SSS aa zzz"; // проверить h 11/12
-        SimpleDateFormat format = new SimpleDateFormat(stringDateFormat);
-        Date date = new Date();
-        try {
-             date = format.parse(stringDate);
-        } catch (Exception e) {
-            e.getStackTrace();
-        }
-        GregorianCalendar c = new GregorianCalendar();
-        c.setTime(date);
-        try {
-            xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-        } catch (DatatypeConfigurationException e) {
-            e.printStackTrace();
-        }
-        return xmlGregorianDate;
-    }
-
     public static List<LogMessage> getLogMessageList(String string, String location) {
 
         List<Integer> regExpPositions;
@@ -225,26 +193,18 @@ public class Methods {
         List<String> logFilePaths = Methods.getLogFilePaths(location);
         List<LogMessage> logMessageList = new ArrayList<LogMessage>();
         for (String logFilePath : logFilePaths) {
-            regExpPositions = Methods.getExpressionPositions(string, logFilePath);
-            blockPositions = Methods.getExpressionPositions("####", logFilePath);
+            regExpPositions = Methods.getLinesWithStringNumbers(string, logFilePath);
+            blockPositions = Methods.getLinesWithStringNumbers("####", logFilePath);
             regExpBlocksPositions = Methods.getRegExpBlocksPositions(regExpPositions, blockPositions);
-            /*System.out.println(regExpBlocksPositions);
-            System.out.println(blockPositions);*/
-            String currentBlock;
 
+            String currentBlock;
             for (Map.Entry<Integer, Integer> entry : regExpBlocksPositions.entrySet()) {
                 currentBlock = (Methods.getBlock(logFilePath, entry.getKey(), entry.getValue())).substring(4);
-                /*System.out.println("CURRENT_BLOCK{{{" + currentBlock + "}}}");*/
                 LogMessage logMessage = new LogMessage(currentBlock);
                 logMessageList.add(logMessage);
-                /*System.out.println("DATE ");
-                System.out.println(logMessage.getDate());*/
             }
         }
         return logMessageList;
     }
 
-    /*public static List<LogMessage> getLogMessageListByJavaRegExp(String regexp, String location) {
-
-    }*/
 }

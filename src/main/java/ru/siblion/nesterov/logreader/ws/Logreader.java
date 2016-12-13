@@ -20,8 +20,8 @@ import java.util.Map;
 public class Logreader {
 
     @WebMethod(operationName = "getLogMessageListString")
-    public String getLogMessageListString(@WebParam(name = "expression") String expression, @WebParam(name = "location") String location) {
-        List<LogMessage> logMessageList = Methods.getLogMessageList(expression, location);
+    public String getLogMessageListString(@WebParam(name = "string") String string, @WebParam(name = "location") String location) {
+        List<LogMessage> logMessageList = Methods.getLogMessageList(string, location);
         Collections.sort(logMessageList);
 
         StringBuilder allMessagesStringBuilder = new StringBuilder();
@@ -32,8 +32,8 @@ public class Logreader {
     }
 
     @WebMethod(operationName = "getDomain")
-    public String getDomain(@WebParam(name = "expression") String expression, @WebParam(name = "location") String location) {
-        //List<LogMessage> logMessageList = Methods.getLogMessageList(expression, location);
+    public String getDomain(@WebParam(name = "string") String string, @WebParam(name = "location") String location) {
+        //List<LogMessage> logMessageList = Methods.getLogMessageList(string, location);
         List<LogMessage> logMessageList = Methods.getLogMessageList("java", "webl_domain");
         StringBuilder allMessagesStringBuilder = new StringBuilder();
         for (LogMessage logMessage : logMessageList) {
