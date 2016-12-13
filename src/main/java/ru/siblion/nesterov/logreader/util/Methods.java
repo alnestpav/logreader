@@ -89,7 +89,7 @@ public class Methods {
     }
 
     public static List<String> getLogFilePaths(String location) {
-        List<String> filePaths = new ArrayList<>();
+        List<String> logFiles = new ArrayList<>();
 
          /* Сначала проверяем, является ли местоположение location каким-либо сервером */
         String serverName = location;
@@ -97,9 +97,9 @@ public class Methods {
 
         if (serverLogDirectory.exists()) {
             for (String logFile : getListOfFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
-                filePaths.add(logFile);
+                logFiles.add(logFile);
             }
-            return filePaths;
+            return logFiles;
         }
 
         List<String> servers = new ArrayList<>();
@@ -164,10 +164,14 @@ public class Methods {
             String LogFileRegExp = (server + ".log[0-9]*|webl_domain.log[0-9]*");
             List<String> listOfLogFiles = getListOfFilesMatching(serverLogDirectory, LogFileRegExp);
             for (String logFile : listOfLogFiles) {
-                filePaths.add(logFile);
+                logFiles.add(logFile);
             }
         }
-        return filePaths;
+        return logFiles;
+    }
+
+    public static List<String> getDomainLogFiles(String domainName) {
+        
     }
 
     public static List<String> getListOfFilesMatching(File root, String regex) {
