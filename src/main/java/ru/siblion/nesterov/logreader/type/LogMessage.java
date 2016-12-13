@@ -34,24 +34,26 @@ public class LogMessage implements Comparable<LogMessage> {
     public LogMessage() {}
 
     private static XMLGregorianCalendar parseDate(String block) {
-        String regex = "\\d\\d.\\d\\d.\\d\\d\\d\\d, \\d\\d?:\\d\\d:\\d\\d,\\d+ (PM|AM) (MSK)";
-        Pattern p = Pattern.compile(regex);
+        String dateRegExp = "\\d\\d.\\d\\d.\\d\\d\\d\\d, \\d\\d?:\\d\\d:\\d\\d,\\d+ (PM|AM) (MSK)";
+        Pattern p = Pattern.compile(dateRegExp);
         Matcher m = p.matcher(block);
         m.find();
         String stringDate =  m.group();
+
         XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
         String stringDateFormat = "dd.MM.yy, hh:mm:ss,SSS aa zzz"; // проверить h 11/12
         SimpleDateFormat format = new SimpleDateFormat(stringDateFormat);
-        Date date = new Date();
+
+        Date date = null;
         try {
             date = format.parse(stringDate);
         } catch (Exception e) {
             e.getStackTrace();
         }
-        GregorianCalendar c = new GregorianCalendar();
-        c.setTime(date);
+        GregorianCalendar gregorianCalendar = new GregorianCalendar();
+        gregorianCalendar.setTime(date);
         try {
-            xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+            xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
         } catch (DatatypeConfigurationException e) {
             e.printStackTrace();
         }
@@ -76,8 +78,8 @@ public class LogMessage implements Comparable<LogMessage> {
 
     @Override
     public String toString() {
-        return "Date: " + this.date + "\n" +
-                "Message: " + this.message;
+        return "Date: " + this.date + " " +
+                "Message: " + this.message + "\n";
     }
 
     @Override

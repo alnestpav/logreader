@@ -1,82 +1,34 @@
 package ru.siblion.nesterov.logreader.test;
 
 import ru.siblion.nesterov.logreader.type.LogMessage;
-import ru.siblion.nesterov.logreader.util.Methods;
-import ru.siblion.nesterov.logreader.ws.Logreader;
+import ru.siblion.nesterov.logreader.ws.SoapWebService;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static ru.siblion.nesterov.logreader.core.LogReader.getLogMessages;
 
 
 /**
  * Created by alexander on 06.12.2016.
  */
 public class Test {
+
     public static void main(String[] args) {
-        String location = "webl_domain";
+        String location = "webl_server1";
         String string = "javax";
-        Logreader logreader = new Logreader();
-        List<LogMessage> logMessageList = Methods.getLogMessageList(string, location);
+        //SoapWebService soapWebService = new SoapWebService();
+        List<LogMessage> logMessageList = null;
+        try {
+            logMessageList = getLogMessages(string, location);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Collections.sort(logMessageList);
         System.out.println(logMessageList);
 
-    }
-
-    public static List<Integer> getStringPositionsOldVersion(String string, String filePath) {
-        List<Integer> numbers = new ArrayList<Integer>();
-        try {
-            BufferedReader reader;
-            String command = "findstr /n /c:" + "\"" + string + "\"" + " " + filePath ;
-            Process p = Runtime.getRuntime().exec(command);
-
-            InputStream is = p.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(is));
-            String line = reader.readLine();
-            while (line != null) {
-                int i = 0;
-                while (i < line.toCharArray().length && line.toCharArray()[i] != ':') i++;
-                numbers.add(Integer.parseInt((line.substring(0, i))));
-                line = reader.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return numbers;
-    }
-
-    public static String getBlockOldVersion(String filePath, int fromLineNumber, int toLineNumber)  {
-        System.out.println("getBlock(" + filePath + ", " + fromLineNumber + ", " + toLineNumber + ")");
-        StringBuilder block = new StringBuilder();
-        FileReader fr = null;
-        LineNumberReader lnr = null;
-        try {
-            fr = new FileReader(filePath);
-            lnr = new LineNumberReader(fr);
-            for (int i = 1; i < fromLineNumber; i++) {
-                lnr.readLine();
-            }
-            for (int i = fromLineNumber; i <= toLineNumber; i++) {
-                block.append(lnr.readLine());
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-        } finally{
-            if(fr!=null) {
-                try {
-                    fr.close();
-                } catch (IOException e) {
-
-                }
-            }
-            if(lnr!=null) {
-                try {
-                    lnr.close();
-                } catch(IOException e) {
-
-                }
-            }
-        }
-        return block.toString();
     }
 
 }

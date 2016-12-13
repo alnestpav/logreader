@@ -1,19 +1,27 @@
-package ru.siblion.nesterov.logreader.util;
+package ru.siblion.nesterov.logreader.core;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import ru.siblion.nesterov.logreader.type.LogMessage;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.w3c.dom.*;
-import ru.siblion.nesterov.logreader.type.LogMessage;
-
-import javax.xml.parsers.*;
+import static ru.siblion.nesterov.logreader.util.Utils.getFilesMatching;
 
 /**
- * Created by alexander on 06.12.2016.
+ * Created by alexander on 13.12.2016.
  */
-public class Methods {
+public class LogReader {
 
     public final static String DOMAIN_NAME = "webl_domain";
     public final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\" + DOMAIN_NAME + "\\";
@@ -88,81 +96,64 @@ public class Methods {
         return blockPositions;
     }
 
-    public static List<String> getLogFilePaths(String location) {
-        List<String> logFiles = new ArrayList<>();
+    public static List<String> getLogFiles(String location) throws Exception {
 
          /* Сначала проверяем, является ли местоположение location каким-либо сервером */
         String serverName = location;
         File serverLogDirectory = new File(DOMAIN_DIRECTORY + "servers\\" + serverName + "\\logs\\");
-
         if (serverLogDirectory.exists()) {
-            for (String logFile : getListOfFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
+            List<String> logFiles = new ArrayList<>();
+            for (String logFile : getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
                 logFiles.add(logFile);
             }
             return logFiles;
         }
 
-        List<String> servers = new ArrayList<>();
-
         /* Проверяем, является ли местоположение location каким-либо кластером */
         Pattern clusterPattern = Pattern.compile("webl_cluster[0-9]+");
         Matcher clusterMatcher = clusterPattern.matcher(location);
         if (clusterMatcher.matches()) {
-            try {
-                File domainConfigFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
-
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(domainConfigFile);
-                doc.getDocumentElement().normalize();
-
-                NodeList nList = doc.getElementsByTagName(("server"));
-
-                for (int i = 1; i < nList.getLength(); i++) { // в случае кластера нас не интересует administration server (i = 0)
-                    Node nNode = nList.item(i);
-                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) nNode;
-                        if (eElement.getElementsByTagName("cluster").item(0).getTextContent().equals(location)) {
-                            servers.add(eElement.getElementsByTagName("name").item(0).getTextContent());
-                        }
-                    }
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            return getClusterLogFiles(location);
         }
 
-         /* Проверяем, является ли местоположение location доменом */
+        /* Проверяем, является ли местоположение location доменом */
         if (location == DOMAIN_NAME) {
-            try {
-                File domainConfigFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
+            return getDomainLogFiles(location);
+        } else {
+            throw new Exception();
+        }
+    }
 
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(domainConfigFile);
-                doc.getDocumentElement().normalize();
+    public static List<String> getDomainLogFiles(String domainName) {
+        List<String> servers = new ArrayList<>();
+        try {
+            File domainConfigFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
 
-                NodeList nList = doc.getElementsByTagName(("server"));
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(domainConfigFile);
+            doc.getDocumentElement().normalize();
 
-                for (int i = 0; i < nList.getLength(); i++) {
-                    Node nNode = nList.item(i);
-                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) nNode;
-                        servers.add(eElement.getElementsByTagName("name").item(0).getTextContent());
-                    }
+            NodeList nList = doc.getElementsByTagName(("server"));
+
+            for (int i = 0; i < nList.getLength(); i++) {
+                Node nNode = nList.item(i);
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    servers.add(eElement.getElementsByTagName("name").item(0).getTextContent());
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        /* Обрабатываем все найденные сервера как в случае домена, так и в случае кластера */
+        File serverLogDirectory;
+        List<String> logFiles = new ArrayList<>();
         for (String server : servers) {
             serverLogDirectory = new File(DOMAIN_DIRECTORY + "servers\\" + server + "\\logs\\");
             String LogFileRegExp = (server + ".log[0-9]*|webl_domain.log[0-9]*");
-            List<String> listOfLogFiles = getListOfFilesMatching(serverLogDirectory, LogFileRegExp);
+            List<String> listOfLogFiles = getFilesMatching(serverLogDirectory, LogFileRegExp);
             for (String logFile : listOfLogFiles) {
                 logFiles.add(logFile);
             }
@@ -170,44 +161,63 @@ public class Methods {
         return logFiles;
     }
 
-    public static List<String> getDomainLogFiles(String domainName) {
-        
-    }
+    public static List<String> getClusterLogFiles(String clusterName) {
+        List<String> servers = new ArrayList<>();
+        try {
+            File domainConfigFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
 
-    public static List<String> getListOfFilesMatching(File root, String regex) {
-        if(!root.isDirectory()) {
-            throw new IllegalArgumentException(root + " is no directory.");
-        }
-        final Pattern p = Pattern.compile(regex); // careful: could also throw an exception!
-        File[] files = root.listFiles(new FileFilter(){
-            @Override
-            public boolean accept(File file) {
-                return p.matcher(file.getName()).matches();
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(domainConfigFile);
+            doc.getDocumentElement().normalize();
+
+            NodeList nList = doc.getElementsByTagName(("server"));
+
+            for (int i = 1; i < nList.getLength(); i++) { // в случае кластера нас не интересует administration server (i = 0)
+                Node nNode = nList.item(i);
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    if (eElement.getElementsByTagName("cluster").item(0).getTextContent().equals(clusterName)) {
+                        servers.add(eElement.getElementsByTagName("name").item(0).getTextContent());
+                    }
+                }
             }
-        });
-        List<String> filesMatching = new ArrayList<String>();
-        for (File file : files) {
-            filesMatching.add(file.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return filesMatching;
+        File serverLogDirectory;
+        List<String> logFiles = new ArrayList<>();
+        for (String server : servers) {
+            serverLogDirectory = new File(DOMAIN_DIRECTORY + "servers\\" + server + "\\logs\\");
+            String LogFileRegExp = (server + ".log[0-9]*|webl_domain.log[0-9]*");
+            List<String> listOfLogFiles = getFilesMatching(serverLogDirectory, LogFileRegExp);
+            for (String logFile : listOfLogFiles) {
+                logFiles.add(logFile);
+            }
+        }
+        return logFiles;
+
     }
 
-    public static List<LogMessage> getLogMessageList(String string, String location) {
+    public static List<LogMessage> getLogMessages(String string, String location) throws Exception {
 
         List<Integer> positionsOfLinesWithString;
         List<Integer> prefixPositions;
         Map<Integer, Integer> blockPositions;
 
-        List<String> logFiles = Methods.getLogFilePaths(location);
-        List<LogMessage> logMessageList = new ArrayList<LogMessage>();
+        List<String> logFiles = getLogFiles(location);
+        List<LogMessage> logMessageList = new ArrayList<>();
+
         for (String logFile : logFiles) {
-            positionsOfLinesWithString = Methods.getPositionsOfLinesWithString(string, logFile);
-            prefixPositions = Methods.getPositionsOfLinesWithString("####", logFile);
-            blockPositions = Methods.getBlockPositions(positionsOfLinesWithString, prefixPositions);
+            positionsOfLinesWithString = getPositionsOfLinesWithString(string, logFile);
+            prefixPositions = getPositionsOfLinesWithString("####", logFile);
+
+            blockPositions = getBlockPositions(positionsOfLinesWithString, prefixPositions);
 
             String currentBlock;
             for (Map.Entry<Integer, Integer> entry : blockPositions.entrySet()) {
-                currentBlock = (Methods.getBlock(logFile, entry.getKey(), entry.getValue())).substring(4);
+                currentBlock = (getBlock(logFile, entry.getKey(), entry.getValue())).substring(4); // удаляем префикс ####
                 LogMessage logMessage = new LogMessage(currentBlock);
                 logMessageList.add(logMessage);
             }
