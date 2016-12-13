@@ -89,49 +89,36 @@ public class Methods {
     }
 
     public static List<String> getLogFilePaths(String location) {
-        List<String> filePaths = new ArrayList<String>();
+        List<String> filePaths = new ArrayList<>();
 
+         /* Сначала проверяем, является ли местоположение location каким-либо сервером */
         String serverName = location;
-        File directory = new File(DOMAIN_DIRECTORY + "servers\\" + serverName + "\\logs\\");
-        if (directory.exists()) {
-            for (String logFilePath : Methods.getListFilesMatching(directory, (serverName + ".log[0-9]*"))) {
-                filePaths.add(logFilePath);
+        File serverLogDirectory = new File(DOMAIN_DIRECTORY + "servers\\" + serverName + "\\logs\\");
+
+        if (serverLogDirectory.exists()) {
+            for (String logFile : getListOfFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
+                filePaths.add(logFile);
             }
             return filePaths;
         }
-        List<String> servers = new ArrayList<String>();
 
-        if (location == DOMAIN_NAME) {
+        List<String> servers = new ArrayList<>();
+
+        /* Проверяем, является ли местоположение location каким-либо кластером */
+        Pattern clusterPattern = Pattern.compile("webl_cluster[0-9]+");
+        Matcher clusterMatcher = clusterPattern.matcher(location);
+        if (clusterMatcher.matches()) {
             try {
-                File configFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
+                File domainConfigFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
+
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(configFile);
+                Document doc = dBuilder.parse(domainConfigFile);
                 doc.getDocumentElement().normalize();
-                NodeList nList = doc.getElementsByTagName(("server"));
-                for (int i = 0; i < nList.getLength(); i++) {
-                    Node nNode = nList.item(i);
-                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) nNode;
-                        servers.add(eElement.getElementsByTagName("name").item(0).getTextContent());
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
 
-        Pattern p = Pattern.compile("webl_cluster[0-9]+");
-        Matcher m = p.matcher(location);
-        if (m.matches()) {
-            try {
-                File configFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(configFile);
-                doc.getDocumentElement().normalize();
                 NodeList nList = doc.getElementsByTagName(("server"));
-                for (int i = 1; i < nList.getLength(); i++) {
+
+                for (int i = 1; i < nList.getLength(); i++) { // в случае кластера нас не интересует administration server (i = 0)
                     Node nNode = nList.item(i);
                     if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                         Element eElement = (Element) nNode;
@@ -140,22 +127,50 @@ public class Methods {
                         }
                     }
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        File serverLogDirectory;
+
+         /* Проверяем, является ли местоположение location доменом */
+        if (location == DOMAIN_NAME) {
+            try {
+                File domainConfigFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
+
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(domainConfigFile);
+                doc.getDocumentElement().normalize();
+
+                NodeList nList = doc.getElementsByTagName(("server"));
+
+                for (int i = 0; i < nList.getLength(); i++) {
+                    Node nNode = nList.item(i);
+                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element eElement = (Element) nNode;
+                        servers.add(eElement.getElementsByTagName("name").item(0).getTextContent());
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        /* Обрабатываем все найденные сервера как в случае домена, так и в случае кластера */
         for (String server : servers) {
             serverLogDirectory = new File(DOMAIN_DIRECTORY + "servers\\" + server + "\\logs\\");
-            String regExp = (server + ".log[0-9]*|webl_domain.log[0-9]*");
-            for (String logFilePath : Methods.getListFilesMatching(serverLogDirectory, regExp)) {
-                filePaths.add(logFilePath);
+            String LogFileRegExp = (server + ".log[0-9]*|webl_domain.log[0-9]*");
+            List<String> listOfLogFiles = getListOfFilesMatching(serverLogDirectory, LogFileRegExp);
+            for (String logFile : listOfLogFiles) {
+                filePaths.add(logFile);
             }
         }
         return filePaths;
     }
 
-    public static List<String> getListFilesMatching(File root, String regex) {
+    public static List<String> getListOfFilesMatching(File root, String regex) {
         if(!root.isDirectory()) {
             throw new IllegalArgumentException(root + " is no directory.");
         }
@@ -179,16 +194,16 @@ public class Methods {
         List<Integer> prefixPositions;
         Map<Integer, Integer> blockPositions;
 
-        List<String> logFilePaths = Methods.getLogFilePaths(location);
+        List<String> logFiles = Methods.getLogFilePaths(location);
         List<LogMessage> logMessageList = new ArrayList<LogMessage>();
-        for (String logFilePath : logFilePaths) {
-            positionsOfLinesWithString = Methods.getPositionsOfLinesWithString(string, logFilePath);
-            prefixPositions = Methods.getPositionsOfLinesWithString("####", logFilePath);
+        for (String logFile : logFiles) {
+            positionsOfLinesWithString = Methods.getPositionsOfLinesWithString(string, logFile);
+            prefixPositions = Methods.getPositionsOfLinesWithString("####", logFile);
             blockPositions = Methods.getBlockPositions(positionsOfLinesWithString, prefixPositions);
 
             String currentBlock;
             for (Map.Entry<Integer, Integer> entry : blockPositions.entrySet()) {
-                currentBlock = (Methods.getBlock(logFilePath, entry.getKey(), entry.getValue())).substring(4);
+                currentBlock = (Methods.getBlock(logFile, entry.getKey(), entry.getValue())).substring(4);
                 LogMessage logMessage = new LogMessage(currentBlock);
                 logMessageList.add(logMessage);
             }
