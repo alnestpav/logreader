@@ -1,13 +1,13 @@
 package ru.siblion.nesterov.logreader.test;
 
+import ru.siblion.nesterov.logreader.type.LogMessage;
+import ru.siblion.nesterov.logreader.util.Methods;
 import ru.siblion.nesterov.logreader.ws.Logreader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Created by alexander on 06.12.2016.
@@ -17,11 +17,12 @@ public class Test {
         String location = "webl_domain";
         String string = "javax";
         Logreader logreader = new Logreader();
-        String res = logreader.getLogMessageListString(string, location);
-        System.out.println(res);
+        List<LogMessage> logMessageList = Methods.getLogMessageList(string, location);
+        System.out.println(logMessageList);
+
     }
 
-    /*public static List<Integer> getStringPositionsOldVersion(String string, String filePath) {
+    public static List<Integer> getStringPositionsOldVersion(String string, String filePath) {
         List<Integer> numbers = new ArrayList<Integer>();
         try {
             BufferedReader reader;
@@ -41,6 +42,41 @@ public class Test {
             e.printStackTrace();
         }
         return numbers;
-    }*/
+    }
+
+    public static String getBlockOldVersion(String filePath, int fromLineNumber, int toLineNumber)  {
+        System.out.println("getBlock(" + filePath + ", " + fromLineNumber + ", " + toLineNumber + ")");
+        StringBuilder block = new StringBuilder();
+        FileReader fr = null;
+        LineNumberReader lnr = null;
+        try {
+            fr = new FileReader(filePath);
+            lnr = new LineNumberReader(fr);
+            for (int i = 1; i < fromLineNumber; i++) {
+                lnr.readLine();
+            }
+            for (int i = fromLineNumber; i <= toLineNumber; i++) {
+                block.append(lnr.readLine());
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        } finally{
+            if(fr!=null) {
+                try {
+                    fr.close();
+                } catch (IOException e) {
+
+                }
+            }
+            if(lnr!=null) {
+                try {
+                    lnr.close();
+                } catch(IOException e) {
+
+                }
+            }
+        }
+        return block.toString();
+    }
 
 }

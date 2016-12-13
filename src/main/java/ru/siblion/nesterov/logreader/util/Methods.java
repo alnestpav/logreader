@@ -18,8 +18,8 @@ public class Methods {
     public final static String DOMAIN_NAME = "webl_domain";
     public final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\" + DOMAIN_NAME + "\\";
 
-    public static List<Integer> getLinesWithStringNumbers(String string, String filePath) {
-        List<Integer> linesWithStringNumbers = new ArrayList<Integer>();
+    public static List<Integer> getPositionsOfLinesWithString(String string, String filePath) {
+        List<Integer> linesWithStringNumbers = new ArrayList<>();
 
         String command = "findstr /n /c:" + "\"" + string + "\"" + " " + filePath ;
         try {
@@ -45,58 +45,47 @@ public class Methods {
     public static String getBlock(String filePath, int fromLineNumber, int toLineNumber)  {
         System.out.println("getBlock(" + filePath + ", " + fromLineNumber + ", " + toLineNumber + ")");
         StringBuilder block = new StringBuilder();
-        FileReader fr = null;
-        LineNumberReader lnr = null;
-        try {
-            fr = new FileReader(filePath);
-            lnr = new LineNumberReader(fr);
+
+        try(FileReader fileReader = new FileReader(filePath);
+            LineNumberReader lineNumberReader = new LineNumberReader(fileReader)){
+
             for (int i = 1; i < fromLineNumber; i++) {
-                lnr.readLine();
+                lineNumberReader.readLine();
             }
             for (int i = fromLineNumber; i <= toLineNumber; i++) {
-                block.append(lnr.readLine());
+                block.append(lineNumberReader.readLine());
             }
-        } catch(Exception e){
+
+        } catch(IOException e){
             e.printStackTrace();
-        } finally{
-            if(fr!=null) {
-                try {
-                    fr.close();
-                } catch (IOException e) {
-
-                }
-            }
-            if(lnr!=null) {
-                try {
-                    lnr.close();
-                } catch(IOException e) {
-
-                }
-            }
         }
+
         return block.toString();
     }
 
-    public static Map<Integer, Integer> getRegExpBlocksPositions(List<Integer> regExpPositions, List<Integer> blockPositions) {
-        Map<Integer, Integer> regExpBlocksPositions = new TreeMap<Integer, Integer>();
+    public static Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString, List<Integer> prefixPositions) {
+        Map<Integer, Integer> blockPositions = new TreeMap<>();
         int start = 0;
         int end = 0;
-        for (int i = 0; i < regExpPositions.size(); i++) {
-            for (int j = 0; j <blockPositions.size(); j++) {
-                if (regExpPositions.get(i) >= blockPositions.get(j) && j + 1 < blockPositions.size() && regExpPositions.get(i) < blockPositions.get(j + 1)) {
-                    start =  blockPositions.get(j);
-                    end =  blockPositions.get(j + 1) - 1;
-                    regExpBlocksPositions.put(start, end);
+        for (int i = 0; i < positionsOfLinesWithString.size(); i++) {
+            for (int j = 0; j < prefixPositions.size(); j++) {
+                if (positionsOfLinesWithString.get(i) >= prefixPositions.get(j)
+                        && j + 1 < prefixPositions.size()
+                        && positionsOfLinesWithString.get(i) < prefixPositions.get(j + 1)) {
+
+                    start =  prefixPositions.get(j);
+                    end =  prefixPositions.get(j + 1) - 1;
+                    blockPositions.put(start, end);
                     break;
                 }
-                if (j + 1 == blockPositions.size()) {
-                    start =  blockPositions.get(j);
-                    end =  blockPositions.get(j);
-                    regExpBlocksPositions.put(start, end);
+                if (j + 1 == prefixPositions.size()) {
+                    start =  prefixPositions.get(j);
+                    end =  prefixPositions.get(j);
+                    blockPositions.put(start, end);
                 }
             }
         }
-        return regExpBlocksPositions;
+        return blockPositions;
     }
 
     public static List<String> getLogFilePaths(String location) {
@@ -186,19 +175,19 @@ public class Methods {
 
     public static List<LogMessage> getLogMessageList(String string, String location) {
 
-        List<Integer> regExpPositions;
-        List<Integer> blockPositions;
-        Map<Integer, Integer> regExpBlocksPositions;
+        List<Integer> positionsOfLinesWithString;
+        List<Integer> prefixPositions;
+        Map<Integer, Integer> blockPositions;
 
         List<String> logFilePaths = Methods.getLogFilePaths(location);
         List<LogMessage> logMessageList = new ArrayList<LogMessage>();
         for (String logFilePath : logFilePaths) {
-            regExpPositions = Methods.getLinesWithStringNumbers(string, logFilePath);
-            blockPositions = Methods.getLinesWithStringNumbers("####", logFilePath);
-            regExpBlocksPositions = Methods.getRegExpBlocksPositions(regExpPositions, blockPositions);
+            positionsOfLinesWithString = Methods.getPositionsOfLinesWithString(string, logFilePath);
+            prefixPositions = Methods.getPositionsOfLinesWithString("####", logFilePath);
+            blockPositions = Methods.getBlockPositions(positionsOfLinesWithString, prefixPositions);
 
             String currentBlock;
-            for (Map.Entry<Integer, Integer> entry : regExpBlocksPositions.entrySet()) {
+            for (Map.Entry<Integer, Integer> entry : blockPositions.entrySet()) {
                 currentBlock = (Methods.getBlock(logFilePath, entry.getKey(), entry.getValue())).substring(4);
                 LogMessage logMessage = new LogMessage(currentBlock);
                 logMessageList.add(logMessage);
