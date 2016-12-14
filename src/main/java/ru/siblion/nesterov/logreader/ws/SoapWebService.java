@@ -1,11 +1,14 @@
 package ru.siblion.nesterov.logreader.ws;
 
+
+
 import ru.siblion.nesterov.logreader.type.LogMessage;
 
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import java.util.Collections;
 import java.util.List;
