@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class LogReader {
 
-    public static List<Integer> getPositionsOfLinesWithString(String string, String filePath) {
+    private static List<Integer> getPositionsOfLinesWithString(String string, String filePath) {
         List<Integer> linesWithStringNumbers = new ArrayList<>();
 
         String command = "findstr /n /r /c:" + "\"" + string + "\"" + " " + filePath ;
@@ -39,7 +39,33 @@ public class LogReader {
         return linesWithStringNumbers;
     }
 
-    public static String getBlock(String filePath, int fromLineNumber, int toLineNumber)  {
+    private static Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
+                                                          List<Integer> prefixPositions) {
+        Map<Integer, Integer> blockPositions = new TreeMap<>();
+        int start;
+        int end;
+        for (int i = 0; i < positionsOfLinesWithString.size(); i++) {
+            for (int j = 0; j < prefixPositions.size(); j++) {
+                if (positionsOfLinesWithString.get(i) >= prefixPositions.get(j)
+                        && j + 1 < prefixPositions.size()
+                        && positionsOfLinesWithString.get(i) < prefixPositions.get(j + 1)) {
+
+                    start =  prefixPositions.get(j);
+                    end =  prefixPositions.get(j + 1) - 1;
+                    blockPositions.put(start, end);
+                    break;
+                }
+                if (j + 1 == prefixPositions.size()) { // Если дошли до конца, значит искомая строка внутри последней строки-блока
+                    start =  prefixPositions.get(j);
+                    end =  prefixPositions.get(j);
+                    blockPositions.put(start, end);
+                }
+            }
+        }
+        return blockPositions;
+    }
+
+    private static String getBlock(String filePath, int fromLineNumber, int toLineNumber)  {
         System.out.println("getBlock(" + filePath + ", " + fromLineNumber + ", " + toLineNumber + ")");
         StringBuilder block = new StringBuilder();
 
@@ -58,31 +84,6 @@ public class LogReader {
         }
 
         return block.toString();
-    }
-
-    public static Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString, List<Integer> prefixPositions) {
-        Map<Integer, Integer> blockPositions = new TreeMap<>();
-        int start = 0;
-        int end = 0;
-        for (int i = 0; i < positionsOfLinesWithString.size(); i++) {
-            for (int j = 0; j < prefixPositions.size(); j++) {
-                if (positionsOfLinesWithString.get(i) >= prefixPositions.get(j)
-                        && j + 1 < prefixPositions.size()
-                        && positionsOfLinesWithString.get(i) < prefixPositions.get(j + 1)) {
-
-                    start =  prefixPositions.get(j);
-                    end =  prefixPositions.get(j + 1) - 1;
-                    blockPositions.put(start, end);
-                    break;
-                }
-                if (j + 1 == prefixPositions.size()) {
-                    start =  prefixPositions.get(j);
-                    end =  prefixPositions.get(j);
-                    blockPositions.put(start, end);
-                }
-            }
-        }
-        return blockPositions;
     }
 
     public static List<LogMessage> getLogMessages(String string, String location) throws Exception {

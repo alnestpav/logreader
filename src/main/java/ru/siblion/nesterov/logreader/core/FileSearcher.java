@@ -22,35 +22,7 @@ public class FileSearcher {
     public final static String DOMAIN_NAME = "webl_domain";
     public final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\" + DOMAIN_NAME + "\\";
 
-    public static List<String> getLogFiles(String location) throws Exception {
-
-         /* Сначала проверяем, является ли местоположение location каким-либо сервером */
-        String serverName = location;
-        File serverLogDirectory = new File(DOMAIN_DIRECTORY + "servers\\" + serverName + "\\logs\\");
-        if (serverLogDirectory.exists()) {
-            List<String> logFiles = new ArrayList<>();
-            for (String logFile : getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
-                logFiles.add(logFile);
-            }
-            return logFiles;
-        }
-
-        /* Проверяем, является ли местоположение location каким-либо кластером */
-        Pattern clusterPattern = Pattern.compile("webl_cluster[0-9]+");
-        Matcher clusterMatcher = clusterPattern.matcher(location);
-        if (clusterMatcher.matches()) {
-            return getClusterLogFiles(location);
-        }
-
-        /* Проверяем, является ли местоположение location доменом */
-        if (location.equals(DOMAIN_NAME)) {
-            return getDomainLogFiles(location);
-        } else {
-            throw new Exception();
-        }
-    }
-
-    public static List<String> getDomainLogFiles(String domainName) {
+    private static List<String> getDomainLogFiles() {
         List<String> servers = new ArrayList<>();
         try {
             File domainConfigFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
@@ -80,14 +52,12 @@ public class FileSearcher {
             serverLogDirectory = new File(DOMAIN_DIRECTORY + "servers\\" + server + "\\logs\\");
             String LogFileRegExp = (server + ".log[0-9]*|webl_domain.log[0-9]*");
             List<String> listOfLogFiles = getFilesMatching(serverLogDirectory, LogFileRegExp);
-            for (String logFile : listOfLogFiles) {
-                logFiles.add(logFile);
-            }
+            logFiles.addAll(listOfLogFiles);
         }
         return logFiles;
     }
 
-    public static List<String> getClusterLogFiles(String clusterName) {
+    private static List<String> getClusterLogFiles(String clusterName) {
         List<String> servers = new ArrayList<>();
         try {
             File domainConfigFile = new File(DOMAIN_DIRECTORY + "config\\config.xml");
@@ -116,19 +86,17 @@ public class FileSearcher {
         List<String> logFiles = new ArrayList<>();
         for (String server : servers) {
             serverLogDirectory = new File(DOMAIN_DIRECTORY + "servers\\" + server + "\\logs\\");
-            String LogFileRegExp = (server + ".log[0-9]*|webl_domain.log[0-9]*");
+            String LogFileRegExp = (server + ".log[0-9]*");
             List<String> listOfLogFiles = getFilesMatching(serverLogDirectory, LogFileRegExp);
-            for (String logFile : listOfLogFiles) {
-                logFiles.add(logFile);
-            }
+            logFiles.addAll(listOfLogFiles);
         }
         return logFiles;
 
     }
 
-    public static List<String> getFilesMatching(File root, String regExp) {
+    private static List<String> getFilesMatching(File root, String regExp) {
         if (!root.isDirectory()) {
-            throw new IllegalArgumentException(root + " is no directory.");
+            throw new IllegalArgumentException(root + " это не директория.");
         }
         final Pattern p = Pattern.compile(regExp);
 
@@ -145,4 +113,33 @@ public class FileSearcher {
         }
         return filesMatching;
     }
+
+    public static List<String> getLogFiles(String location) throws Exception {
+
+         /* Сначала проверяем, является ли местоположение location каким-либо сервером */
+        String serverName = location;
+        File serverLogDirectory = new File(DOMAIN_DIRECTORY + "servers\\" + serverName + "\\logs\\");
+        if (serverLogDirectory.exists()) {
+            List<String> logFiles = new ArrayList<>();
+            for (String logFile : getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
+                logFiles.add(logFile);
+            }
+            return logFiles;
+        }
+
+        /* Проверяем, является ли местоположение location каким-либо кластером */
+        Pattern clusterPattern = Pattern.compile("webl_cluster[0-9]+");
+        Matcher clusterMatcher = clusterPattern.matcher(location);
+        if (clusterMatcher.matches()) {
+            return getClusterLogFiles(location);
+        }
+
+        /* Проверяем, является ли местоположение location доменом */
+        if (location.equals(DOMAIN_NAME)) {
+            return getDomainLogFiles();
+        } else {
+            throw new Exception();
+        }
+    }
+
 }

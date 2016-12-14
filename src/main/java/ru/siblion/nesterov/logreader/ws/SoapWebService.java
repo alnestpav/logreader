@@ -20,14 +20,16 @@ import static ru.siblion.nesterov.logreader.core.LogReader.getLogMessages;
 public class SoapWebService {
 
     @WebMethod(operationName = "getListOfLogMessages")
-    public List<LogMessage> getListOfLogMessages(@WebParam(name = "string") String string, @WebParam(name = "location") String location) {
+    public List<LogMessage> getListOfLogMessages(@WebParam(name = "string") String string,
+                                                 @WebParam(name = "location") String location) {
         List<LogMessage> logMessageList = null;
         try {
             logMessageList = getLogMessages(string, location);
+            Collections.sort(logMessageList);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("Ошибка: неверный атрибут location");
+            //e.printStackTrace();
         }
-        Collections.sort(logMessageList);
         return logMessageList;
     }
 }
