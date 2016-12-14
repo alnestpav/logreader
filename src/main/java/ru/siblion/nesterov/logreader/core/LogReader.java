@@ -2,6 +2,7 @@ package ru.siblion.nesterov.logreader.core;
 
 import ru.siblion.nesterov.logreader.type.LogMessage;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +87,10 @@ public class LogReader {
         return block.toString();
     }
 
-    public static List<LogMessage> getLogMessages(String string, String location) throws Exception {
+    public static List<LogMessage> getLogMessages(String string,
+                                                  String location,
+                                                  XMLGregorianCalendar dateFrom,
+                                                  XMLGregorianCalendar dateTo) throws Exception {
 
         List<Integer> positionsOfLinesWithString;
         List<Integer> prefixPositions;
@@ -105,7 +109,10 @@ public class LogReader {
             for (Map.Entry<Integer, Integer> entry : blockPositions.entrySet()) {
                 currentBlock = (getBlock(logFile, entry.getKey(), entry.getValue())).substring(4); // удаляем префикс ####
                 LogMessage logMessage = new LogMessage(currentBlock);
-                logMessageList.add(logMessage);
+                XMLGregorianCalendar logMessageDate = logMessage.getDate();
+                if (logMessageDate.compare(dateFrom) >= 0 && logMessageDate.compare(dateTo) <= 0 ) {
+                    logMessageList.add(logMessage);
+                }
             }
         }
         return logMessageList;

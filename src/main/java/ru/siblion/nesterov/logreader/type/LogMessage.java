@@ -1,14 +1,9 @@
 package ru.siblion.nesterov.logreader.type;
 
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+import ru.siblion.nesterov.logreader.util.*;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,25 +34,9 @@ public class LogMessage implements Comparable<LogMessage> {
         Matcher m = p.matcher(block);
         m.find();
         String stringDate =  m.group();
-
-        XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
         String stringDateFormat = "dd.MM.yy, hh:mm:ss,SSS aa zzz"; // проверить h 11/12
-        SimpleDateFormat format = new SimpleDateFormat(stringDateFormat);
-
-        Date date = null;
-        try {
-            date = format.parse(stringDate);
-        } catch (Exception e) {
-            e.getStackTrace();
-        }
-        GregorianCalendar gregorianCalendar = new GregorianCalendar();
-        gregorianCalendar.setTime(date);
-        try {
-            xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
-        } catch (DatatypeConfigurationException e) {
-            e.printStackTrace();
-        }
-        return xmlGregorianDate;
+        XMLGregorianCalendar date = Utils.stringToXMLGregorianCalendar(stringDate, stringDateFormat);
+        return date;
     }
 
     public XMLGregorianCalendar getDate() {

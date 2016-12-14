@@ -3,6 +3,7 @@ package ru.siblion.nesterov.logreader.ws;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 
 import javax.ws.rs.*;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,14 +15,16 @@ import static ru.siblion.nesterov.logreader.core.LogReader.getLogMessages;
 @Path("/hello")
 public class RestWebService {
     @GET
-    @Path("{string}/{location}")
+    @Path("{string}/{location}/{dateFrom}/{dateTo}")
     @Consumes(value={"text/xml", "application/json"})
     @Produces(value={"text/xml", "application/json"})
     public List<LogMessage> getListOfLogMessages(@PathParam("string") String string,
-                                                 @PathParam("location") String location) {
+                                                 @PathParam("location") String location,
+                                                 @PathParam("dateFrom") String dateFrom,
+                                                 @PathParam("dateTo") String dateTo) {
         List<LogMessage> logMessageList = null;
         try {
-            logMessageList = getLogMessages(string, location);
+            //logMessageList = getLogMessages(string, location, dateFrom, dateTo);
             Collections.sort(logMessageList);
         } catch (Exception e) {
             throw new IllegalArgumentException("Ошибка: неверный атрибут location");
