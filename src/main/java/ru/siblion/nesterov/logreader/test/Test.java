@@ -17,9 +17,8 @@ import static ru.siblion.nesterov.logreader.core.LogReader.getLogMessages;
 public class Test {
 
     public static void main(String[] args) {
-        String location = "webl_server1";
+        String location = "webl_domain";
         String string = "javax";
-        //SoapWebService soapWebService = new SoapWebService();
         List<LogMessage> logMessageList = null;
         try {
             logMessageList = getLogMessages(string, location);
