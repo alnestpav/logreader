@@ -23,7 +23,7 @@ public class SoapWebService {
                                                  @WebParam(name = "location") String location,
                                                  @WebParam(name = "dateFrom") String dateFrom,
                                                  @WebParam(name = "dateTo") String dateTo) {
-
-        return Request.getListOfLogMessages(string, location, dateFrom, dateTo);
+        Request request = new Request(string, location, dateFrom, dateTo);
+        return request.getListOfLogMessages();
     }
 }
