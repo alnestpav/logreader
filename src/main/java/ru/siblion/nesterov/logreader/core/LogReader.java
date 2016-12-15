@@ -1,6 +1,8 @@
 package ru.siblion.nesterov.logreader.core;
 
+import ru.siblion.nesterov.logreader.type.LogFile;
 import ru.siblion.nesterov.logreader.type.LogMessage;
+import sun.rmi.runtime.Log;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
@@ -13,14 +15,12 @@ import java.util.regex.Pattern;
  */
 public class LogReader {
 
-    private static Map<String, List<Integer>> getPositionsOfLinesWithString(String string, List<String> files) {
+    private static List<LogFile> getPositionsOfLinesWithString(String string, List<LogFile> logFiles) {
 
         StringBuilder filesString = new StringBuilder();
-        for (String file : files) {
-            filesString.append(file + " ");
+        for (LogFile logFile: logFiles) {
+            filesString.append(logFile.getFilePath() + " ");
         }
-
-        Map<String, List<Integer>> linesWithStringNumbersInFile = new HashMap<>();
         String command = "findstr /n /r /c:" + "\"" + string + "\"" + " " + filesString;
 
         try {
@@ -29,7 +29,7 @@ public class LogReader {
             BufferedReader reader = new BufferedReader(new InputStreamReader(findstrProcessInputStream));
             String line = reader.readLine();
 
-            Pattern fileNamePattern = Pattern.compile("\\w+.log\\d*");
+            Pattern fileNamePattern = Pattern.compile("[^.]+\\.log\\d*");
             Matcher fileNameMatcher;
 
             Pattern lineNumberPattern = Pattern.compile(":\\d+");
@@ -45,10 +45,23 @@ public class LogReader {
                 fileNameMatcher = fileNamePattern.matcher(line);
                 fileNameMatcher.find();
                 String fileName = fileNameMatcher.group();
-                if (!fileName.equals(currentFileName)) {
-                    linesWithStringNumbersInFile.put(currentFileName, linesWithStringNumbers);
+                System.out.println("fileName " + fileName);
+                if (!fileName.equals(currentFileName)) { // проверить последний случай!
+                    for (LogFile logFile : logFiles) {
+                        if (logFile.getFilePath().equals(currentFileName)) {
+                            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                            if (!string.equals("####")) {
+                                logFile.setPositionsOfString(linesWithStringNumbers);
+                            } else {
+                                logFile.setPrefixPositions(linesWithStringNumbers);
+                            }
+                        }
+                    }
                     currentFileName = fileName;
+                    System.out.println("not clear " + linesWithStringNumbers);
                     linesWithStringNumbers.clear();
+                    System.out.println("clear " + linesWithStringNumbers);
+                    System.out.println("___________________________");
                 }
                 lineNumberMatcher = lineNumberPattern.matcher(line);
                 lineNumberMatcher.find();
@@ -60,7 +73,7 @@ public class LogReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return linesWithStringNumbersInFile;
+        return logFiles;
     }
 
     private static Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
@@ -89,11 +102,11 @@ public class LogReader {
         return blockPositions;
     }
 
-    private static String getBlock(String filePath, int fromLineNumber, int toLineNumber)  {
-        System.out.println("getBlock(" + filePath + ", " + fromLineNumber + ", " + toLineNumber + ")");
+    private static String getBlock(LogFile logFile, int fromLineNumber, int toLineNumber)  {
+        System.out.println("getBlock(" + logFile.getFilePath() + ", " + fromLineNumber + ", " + toLineNumber + ")");
         StringBuilder block = new StringBuilder();
 
-        try(FileReader fileReader = new FileReader(filePath);
+        try(FileReader fileReader = new FileReader(logFile.getFilePath());
             LineNumberReader lineNumberReader = new LineNumberReader(fileReader)){
 
             for (int i = 1; i < fromLineNumber; i++) {
@@ -114,49 +127,54 @@ public class LogReader {
                                                   String location,
                                                   XMLGregorianCalendar dateFrom,
                                                   XMLGregorianCalendar dateTo) throws Exception {
-
-        Map<String, List<Integer>> positionsOfLinesWithString;
-        Map<String, List<Integer>> prefixPositions;
-
         Map<Integer, Integer> blockPositions;
 
-        List<String> logFiles = FileSearcher.getLogFiles(location);
+        List<LogFile> logFiles = FileSearcher.getLogFiles(location);
+
         List<LogMessage> logMessageList = new ArrayList<>();
 
-        positionsOfLinesWithString = getPositionsOfLinesWithString(string, logFiles);
-        prefixPositions = getPositionsOfLinesWithString("####", logFiles);
+        getPositionsOfLinesWithString(string, logFiles);
+        getPositionsOfLinesWithString("####", logFiles);
 
-        blockPositions = getBlockPositions(positionsOfLinesWithString, prefixPositions);
+        System.out.println(logFiles);
+        for (LogFile logFile : logFiles) {
+            blockPositions = getBlockPositions(logFile.getPositionsOfString(), logFile.getPrefixPositions());
 
-        String currentBlock;
-        for (Map.Entry<Integer, Integer> entry : blockPositions.entrySet()) {
-            currentBlock = (getBlock(logFile, entry.getKey(), entry.getValue())).substring(4); // удаляем префикс ####
-            LogMessage logMessage = new LogMessage(currentBlock);
-            XMLGregorianCalendar logMessageDate = logMessage.getDate();
-            if (dateFrom == null && dateTo == null) {
-                System.out.println("add Log Message");
-                logMessageList.add(logMessage);
-                break;
-            }
-            if (dateFrom == null) {
-                if (logMessageDate.compare(dateTo) <= 0) {
+            String currentBlock;
+            for (Map.Entry<Integer, Integer> entry : blockPositions.entrySet()) {
+                currentBlock = (getBlock(logFile, entry.getKey(), entry.getValue())).substring(4); // удаляем префикс ####
+                LogMessage logMessage = new LogMessage(currentBlock);
+                XMLGregorianCalendar logMessageDate = logMessage.getDate();
+                if (dateFrom == null && dateTo == null) {
                     System.out.println("add Log Message");
                     logMessageList.add(logMessage);
                     break;
                 }
-            }
-            if (dateTo == null) {
-                if (logMessageDate.compare(dateFrom) >= 0) {
+                if (dateFrom == null) {
+                    if (logMessageDate.compare(dateTo) <= 0) {
+                        System.out.println("add Log Message");
+                        logMessageList.add(logMessage);
+                        break;
+                    }
+                }
+                if (dateTo == null) {
+                    if (logMessageDate.compare(dateFrom) >= 0) {
+                        System.out.println("add Log Message");
+                        logMessageList.add(logMessage);
+                        break;
+                    }
+                }
+                if (logMessageDate.compare(dateFrom) >= 0 && logMessageDate.compare(dateTo) <= 0 ) {
                     System.out.println("add Log Message");
                     logMessageList.add(logMessage);
-                    break;
                 }
             }
-            if (logMessageDate.compare(dateFrom) >= 0 && logMessageDate.compare(dateTo) <= 0 ) {
-                System.out.println("add Log Message");
-                logMessageList.add(logMessage);
-            }
-            }
+
+        }
+
+
+
+
         return logMessageList;
     }
 
