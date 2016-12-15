@@ -26,7 +26,9 @@ public class LogMessage implements Comparable<LogMessage> {
         this.message = message;
     }
 
-    public LogMessage() {}
+    public LogMessage() { // Нужен для JAXB
+
+    }
 
     private static XMLGregorianCalendar parseDate(String block) {
         String dateRegExp = "\\d\\d.\\d\\d.\\d\\d\\d\\d, \\d\\d?:\\d\\d:\\d\\d,\\d+ (PM|AM) (MSK)";
@@ -34,8 +36,8 @@ public class LogMessage implements Comparable<LogMessage> {
         Matcher m = p.matcher(block);
         m.find();
         String stringDate =  m.group();
-        String stringDateFormat = "dd.MM.yy, hh:mm:ss,SSS aa zzz"; // проверить h 11/12
-        XMLGregorianCalendar date = Utils.stringToXMLGregorianCalendar(stringDate, stringDateFormat);
+        System.out.println();
+        XMLGregorianCalendar date = Utils.stringToXMLGregorianCalendar(stringDate);
         return date;
     }
 

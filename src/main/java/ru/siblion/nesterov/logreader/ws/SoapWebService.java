@@ -19,11 +19,7 @@ import java.util.List;
 public class SoapWebService {
 
     @WebMethod(operationName = "getListOfLogMessages")
-    public List<LogMessage> getListOfLogMessages(@WebParam(name = "string") String string,
-                                                 @WebParam(name = "location") String location,
-                                                 @WebParam(name = "dateFrom") String dateFrom,
-                                                 @WebParam(name = "dateTo") String dateTo) {
-        Request request = new Request(string, location, dateFrom, dateTo);
+    public List<LogMessage> getListOfLogMessages(@WebParam(name = "request") Request request) {
         return request.getListOfLogMessages();
     }
 }

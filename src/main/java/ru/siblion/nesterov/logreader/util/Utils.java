@@ -14,10 +14,12 @@ import java.util.GregorianCalendar;
  * Created by alexander on 06.12.2016.
  */
 public class Utils {
+    private final static String XML_GREGORIAN_CALENDAR_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"; // проверить H или k
+    private final static String STRING_DATE_FORMAT = "dd.MM.yyyy, hh:mm:ss,SSS aa zzz"; // проверить h 11/12
 
-    public static XMLGregorianCalendar stringToXMLGregorianCalendar(String stringDate, String stringDateFormat) {
+    public static XMLGregorianCalendar stringToXMLGregorianCalendar(String stringDate) {
         XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
-        SimpleDateFormat format = new SimpleDateFormat(stringDateFormat);
+        SimpleDateFormat format = new SimpleDateFormat(STRING_DATE_FORMAT);
 
         Date date = null;
         try {
@@ -25,7 +27,7 @@ public class Utils {
         } catch (Exception e) {
             e.getStackTrace();
         }
-        GregorianCalendar gregorianCalendar = new GregorianCalendar();
+        GregorianCalendar gregorianCalendar = new GregorianCalendar();;
         gregorianCalendar.setTime(date);
         try {
             xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);

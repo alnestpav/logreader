@@ -111,6 +111,7 @@ public class LogReader {
                 LogMessage logMessage = new LogMessage(currentBlock);
                 XMLGregorianCalendar logMessageDate = logMessage.getDate();
                 if (logMessageDate.compare(dateFrom) >= 0 && logMessageDate.compare(dateTo) <= 0 ) {
+                    System.out.println("add Log Message");
                     logMessageList.add(logMessage);
                 }
             }
