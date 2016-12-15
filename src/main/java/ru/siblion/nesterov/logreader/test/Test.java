@@ -3,7 +3,6 @@ package ru.siblion.nesterov.logreader.test;
 import ru.siblion.nesterov.logreader.core.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
 import ru.siblion.nesterov.logreader.type.LogMessage;
-import ru.siblion.nesterov.logreader.util.Utils;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -22,8 +21,11 @@ public class Test {
         String dateToString = "2016-12-14T15:48:31.734+03:00";*/
         String dateFromString = "15.12.2016, 10:47:53,548 AM MSK";
         String dateToString = "15.12.2016, 10:48:00,477 AM MSK";
-        XMLGregorianCalendar dateFrom = Utils.stringToXMLGregorianCalendar(dateFromString);
-        XMLGregorianCalendar dateTo = Utils.stringToXMLGregorianCalendar(dateToString);
+/*        XMLGregorianCalendar dateFrom = Utils.stringToXMLGregorianCalendar(dateFromString);
+        XMLGregorianCalendar dateTo = Utils.stringToXMLGregorianCalendar(dateToString);*/
+
+        XMLGregorianCalendar dateFrom = null;
+        XMLGregorianCalendar dateTo = null;
         List<LogMessage> logMessageList = null;
         SoapWebService soapWebService = new SoapWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();

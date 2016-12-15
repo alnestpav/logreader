@@ -2,11 +2,9 @@ package ru.siblion.nesterov.logreader.core;
 
 import ru.siblion.nesterov.logreader.type.DateInterval;
 import ru.siblion.nesterov.logreader.type.LogMessage;
-import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,7 +62,7 @@ public class Request {
                 Collections.sort(logMessageList);
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new IllegalArgumentException("Ошибка: неверный атрибут location");
+                //throw new IllegalArgumentException("Ошибка: неверный атрибут location");
             }
         }
 

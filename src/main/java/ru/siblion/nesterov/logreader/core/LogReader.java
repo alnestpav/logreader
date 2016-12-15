@@ -4,10 +4,7 @@ import ru.siblion.nesterov.logreader.type.LogMessage;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,28 +13,54 @@ import java.util.regex.Pattern;
  */
 public class LogReader {
 
-    private static List<Integer> getPositionsOfLinesWithString(String string, String filePath) {
-        List<Integer> linesWithStringNumbers = new ArrayList<>();
+    private static Map<String, List<Integer>> getPositionsOfLinesWithString(String string, List<String> files) {
 
-        String command = "findstr /n /r /c:" + "\"" + string + "\"" + " " + filePath ;
+        StringBuilder filesString = new StringBuilder();
+        for (String file : files) {
+            filesString.append(file + " ");
+        }
+
+        Map<String, List<Integer>> linesWithStringNumbersInFile = new HashMap<>();
+        String command = "findstr /n /r /c:" + "\"" + string + "\"" + " " + filesString;
+
         try {
             Process findstrProcess = Runtime.getRuntime().exec(command);
             InputStream findstrProcessInputStream = findstrProcess.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(findstrProcessInputStream));
             String line = reader.readLine();
-            Pattern lineNumberPattern = Pattern.compile("\\d+");
+
+            Pattern fileNamePattern = Pattern.compile("\\w+.log\\d*");
+            Matcher fileNameMatcher;
+
+            Pattern lineNumberPattern = Pattern.compile(":\\d+");
             Matcher lineNumberMatcher;
+
+            fileNameMatcher = fileNamePattern.matcher(line);
+            fileNameMatcher.find();
+            String currentFileName = fileNameMatcher.group();
+
+            List<Integer> linesWithStringNumbers = new ArrayList<>();
+
             while (line != null) {
+                fileNameMatcher = fileNamePattern.matcher(line);
+                fileNameMatcher.find();
+                String fileName = fileNameMatcher.group();
+                if (!fileName.equals(currentFileName)) {
+                    linesWithStringNumbersInFile.put(currentFileName, linesWithStringNumbers);
+                    currentFileName = fileName;
+                    linesWithStringNumbers.clear();
+                }
                 lineNumberMatcher = lineNumberPattern.matcher(line);
                 lineNumberMatcher.find();
-                String lineNumberString = lineNumberMatcher.group();
+                String lineNumberString = lineNumberMatcher.group().substring(1);
                 linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
+
                 line = reader.readLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return linesWithStringNumbers;
+        return linesWithStringNumbersInFile;
     }
 
     private static Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
@@ -92,30 +115,48 @@ public class LogReader {
                                                   XMLGregorianCalendar dateFrom,
                                                   XMLGregorianCalendar dateTo) throws Exception {
 
-        List<Integer> positionsOfLinesWithString;
-        List<Integer> prefixPositions;
+        Map<String, List<Integer>> positionsOfLinesWithString;
+        Map<String, List<Integer>> prefixPositions;
+
         Map<Integer, Integer> blockPositions;
 
         List<String> logFiles = FileSearcher.getLogFiles(location);
         List<LogMessage> logMessageList = new ArrayList<>();
 
-        for (String logFile : logFiles) {
-            positionsOfLinesWithString = getPositionsOfLinesWithString(string, logFile);
-            prefixPositions = getPositionsOfLinesWithString("####", logFile);
+        positionsOfLinesWithString = getPositionsOfLinesWithString(string, logFiles);
+        prefixPositions = getPositionsOfLinesWithString("####", logFiles);
 
-            blockPositions = getBlockPositions(positionsOfLinesWithString, prefixPositions);
+        blockPositions = getBlockPositions(positionsOfLinesWithString, prefixPositions);
 
-            String currentBlock;
-            for (Map.Entry<Integer, Integer> entry : blockPositions.entrySet()) {
-                currentBlock = (getBlock(logFile, entry.getKey(), entry.getValue())).substring(4); // удаляем префикс ####
-                LogMessage logMessage = new LogMessage(currentBlock);
-                XMLGregorianCalendar logMessageDate = logMessage.getDate();
-                if (logMessageDate.compare(dateFrom) >= 0 && logMessageDate.compare(dateTo) <= 0 ) {
+        String currentBlock;
+        for (Map.Entry<Integer, Integer> entry : blockPositions.entrySet()) {
+            currentBlock = (getBlock(logFile, entry.getKey(), entry.getValue())).substring(4); // удаляем префикс ####
+            LogMessage logMessage = new LogMessage(currentBlock);
+            XMLGregorianCalendar logMessageDate = logMessage.getDate();
+            if (dateFrom == null && dateTo == null) {
+                System.out.println("add Log Message");
+                logMessageList.add(logMessage);
+                break;
+            }
+            if (dateFrom == null) {
+                if (logMessageDate.compare(dateTo) <= 0) {
                     System.out.println("add Log Message");
                     logMessageList.add(logMessage);
+                    break;
                 }
             }
-        }
+            if (dateTo == null) {
+                if (logMessageDate.compare(dateFrom) >= 0) {
+                    System.out.println("add Log Message");
+                    logMessageList.add(logMessage);
+                    break;
+                }
+            }
+            if (logMessageDate.compare(dateFrom) >= 0 && logMessageDate.compare(dateTo) <= 0 ) {
+                System.out.println("add Log Message");
+                logMessageList.add(logMessage);
+            }
+            }
         return logMessageList;
     }
 
