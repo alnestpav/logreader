@@ -153,12 +153,6 @@ public class FileSearcher {
         }
 
         /* Проверяем, является ли местоположение location каким-либо кластером */
-        /*Pattern clusterPattern = Pattern.compile("webl_cluster[0-9]+");
-        Matcher clusterMatcher = clusterPattern.matcher(location);
-        if (clusterMatcher.matches()) {
-            return getClusterLogFiles(location);
-        }*/
-        /* Проверяем, является ли местоположение location каким-либо кластером */
         List<LogFile> logFiles = getClusterLogFiles(location);
         return logFiles;
 

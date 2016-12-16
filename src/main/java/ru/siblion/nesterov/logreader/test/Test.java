@@ -7,7 +7,6 @@ import ru.siblion.nesterov.logreader.ws.RestWebService;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
 
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,10 +52,6 @@ public class Test {
         }
         System.out.println(logMessageList);
 
-
-    }
-
-    public static void testRestWebService() {
 
     }
 
