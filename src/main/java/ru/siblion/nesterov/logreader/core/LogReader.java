@@ -21,6 +21,7 @@ public class LogReader {
         for (LogFile logFile: logFiles) {
             filesString.append(logFile.getFilePath() + " ");
         }
+        System.out.println("filesString " + filesString);
         String command = "findstr /n /r /c:" + "\"" + string + "\"" + " " + filesString;
 
         try {
@@ -45,11 +46,9 @@ public class LogReader {
                 fileNameMatcher = fileNamePattern.matcher(line);
                 fileNameMatcher.find();
                 String fileName = fileNameMatcher.group();
-                System.out.println("fileName " + fileName);
                 if (!fileName.equals(currentFileName)) { // проверить последний случай!
                     for (LogFile logFile : logFiles) {
                         if (logFile.getFilePath().equals(currentFileName)) {
-                            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                             if (!string.equals("####")) {
                                 logFile.setPositionsOfString(linesWithStringNumbers);
                             } else {
@@ -70,6 +69,18 @@ public class LogReader {
 
                 line = reader.readLine();
             }
+            for (LogFile logFile : logFiles) {
+                if (logFile.getFilePath().equals(currentFileName)) {
+                    if (!string.equals("####")) {
+                        logFile.setPositionsOfString(linesWithStringNumbers);
+                    } else {
+                        logFile.setPrefixPositions(linesWithStringNumbers);
+                    }
+                }
+            }
+
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }

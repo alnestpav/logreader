@@ -1,5 +1,6 @@
 package ru.siblion.nesterov.logreader.type;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +28,8 @@ public class LogFile {
     }
 
     public void setPositionsOfString(List<Integer> positionsOfString) {
-        this.positionsOfString = positionsOfString;
+        this.positionsOfString = new ArrayList<>();
+        this.positionsOfString.addAll(positionsOfString);
     }
 
     public List<Integer> getPrefixPositions() {
@@ -35,7 +37,8 @@ public class LogFile {
     }
 
     public void setPrefixPositions(List<Integer> prefixPositions) {
-        this.prefixPositions = prefixPositions;
+        this.prefixPositions = new ArrayList<>();
+        this.prefixPositions.addAll(prefixPositions);
     }
 
     @Override
