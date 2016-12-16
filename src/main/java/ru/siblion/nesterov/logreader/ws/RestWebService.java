@@ -6,7 +6,6 @@ import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,23 +36,15 @@ public class RestWebService {
     }*/
 
     @POST
-    //@Path("{string}/{location}/{dateFrom}/{dateTo}")
-    //@Consumes(value={"text/xml", "application/json"})
-    @Consumes(value={"application/json"})
-    //@Produces(value={"text/xml", "application/json"})
-    @Produces(value={"application/json"})
+    @Consumes(value={"application/xml,application/json"})
+    @Produces(value={"application/xml,application/json"})
     public List<LogMessage> getListOfLogMessages(Request request) {
         return request.getListOfLogMessages();
     }
 
 
+
     @GET
-    //@Path("{string}/{location}/{dateFrom}/{dateTo}")
-    //@Consumes(value={"text/xml", "application/json"})
-    //@Consumes({MediaType.APPLICATION_JSON})
-    //@Produces(value={"text/xml", "application/json"})
-    //@Produces({MediaType.APPLICATION_JSON})
-    //@Produces(value={"application/json"})
     @Produces(value={"text/xml"})
     public Request test() {
         String location = "webl_domain";
