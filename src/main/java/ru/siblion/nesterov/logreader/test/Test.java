@@ -16,7 +16,7 @@ import java.util.List;
 public class Test {
 
     public static void main(String[] args) {
-        String location = "webl_server1";
+        String location = "webl_domain";
         String string = "javax";
 /*        String dateFromString = "2016-12-14T15:48:28.432+03:00";
         String dateToString = "2016-12-14T15:48:31.734+03:00";*/
@@ -40,10 +40,10 @@ public class Test {
         System.out.println(logMessageList);
 
 
-        /*String currentDirectory;
+        String currentDirectory;
         File file = new File("");
         currentDirectory = file.getAbsolutePath();
-        System.out.println("Current working directory : "+currentDirectory);*/
+        System.out.println("Current working directory : "+currentDirectory);
     }
 
 }

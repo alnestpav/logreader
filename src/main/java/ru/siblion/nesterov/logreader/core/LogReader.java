@@ -30,17 +30,32 @@ public class LogReader {
             BufferedReader reader = new BufferedReader(new InputStreamReader(findstrProcessInputStream));
             String line = reader.readLine();
 
-            Pattern fileNamePattern = Pattern.compile("[^.]+\\.log\\d*");
-            Matcher fileNameMatcher;
-
+            List<Integer> linesWithStringNumbers = new ArrayList<>();
+            if (logFiles.size() == 1) {
+                while (line != null) {
+                    Pattern lineNumberPattern = Pattern.compile("\\d+");
+                    Matcher lineNumberMatcher;
+                    lineNumberMatcher = lineNumberPattern.matcher(line);
+                    lineNumberMatcher.find();
+                    String lineNumberString = lineNumberMatcher.group();
+                    linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
+                    line = reader.readLine();
+                }
+                if (!string.equals("####")) {
+                    logFiles.get(0).setPositionsOfString(linesWithStringNumbers);
+                } else {
+                    logFiles.get(0).setPrefixPositions(linesWithStringNumbers);
+                }
+                return logFiles;
+            }
             Pattern lineNumberPattern = Pattern.compile(":\\d+");
             Matcher lineNumberMatcher;
 
+            Pattern fileNamePattern = Pattern.compile("[^.]+\\.log\\d*");
+            Matcher fileNameMatcher;
             fileNameMatcher = fileNamePattern.matcher(line);
             fileNameMatcher.find();
             String currentFileName = fileNameMatcher.group();
-
-            List<Integer> linesWithStringNumbers = new ArrayList<>();
 
             while (line != null) {
                 fileNameMatcher = fileNamePattern.matcher(line);
@@ -148,6 +163,9 @@ public class LogReader {
 
         System.out.println(logFiles);
         for (LogFile logFile : logFiles) {
+            if (logFile.getPositionsOfString() == null || logFile.getPrefixPositions() == null ) {
+                break; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
+            }
             blockPositions = getBlockPositions(logFile.getPositionsOfString(), logFile.getPrefixPositions());
 
             String currentBlock;

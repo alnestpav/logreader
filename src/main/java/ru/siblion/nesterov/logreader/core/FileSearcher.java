@@ -1,12 +1,10 @@
 package ru.siblion.nesterov.logreader.core;
 
-import com.sun.java.browser.plugin2.DOM;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import ru.siblion.nesterov.logreader.type.LogFile;
-import sun.rmi.runtime.Log;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,13 +20,11 @@ import java.util.regex.Pattern;
  */
 public class FileSearcher {
 
-/*    public final static String DOMAIN_NAME = "webl_domain";
-    public final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\" + DOMAIN_NAME + "\\";*/
     private String domainDirectory;
     private String domainName;
 
     public FileSearcher() {
-        //domainDirectory = (new File("").getAbsolutePath() + "\\");
+        //domainDirectory = (new File("").getAbsolutePath());
         domainDirectory = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain";
         Pattern domainPattern = Pattern.compile("\\\\\\w+$");
         Matcher domainMatcher = domainPattern.matcher(domainDirectory);
@@ -41,7 +37,6 @@ public class FileSearcher {
     public FileSearcher(String domainDirectory) {
         this.domainDirectory = domainDirectory;
     }
-
 
     private List<LogFile> getDomainLogFiles() {
         List<String> servers = new ArrayList<>();
@@ -71,7 +66,7 @@ public class FileSearcher {
         List<LogFile> logFiles = new ArrayList<>();
         for (String server : servers) {
             serverLogDirectory = new File(domainDirectory + "\\servers\\" + server + "\\logs\\");
-            String LogFileRegExp = (server + ".log[0-9]*|webl_domain.log[0-9]*");
+            String LogFileRegExp = (server + ".log[0-9]*|" + domainName + ".log[0-9]*");
             List<String> listOfLogFiles = getFilesMatching(serverLogDirectory, LogFileRegExp);
             for (String logFilePath : listOfLogFiles) {
                 logFiles.add(new LogFile(logFilePath));
