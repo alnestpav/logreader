@@ -24,8 +24,8 @@ public class FileSearcher {
     private String domainName;
 
     public FileSearcher() {
-        //domainDirectory = (new File("").getAbsolutePath());
-        domainDirectory = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain";
+        //domainDirectory = (new File("").getAbsolutePath()); // если запускать на сервере
+        domainDirectory = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
         Pattern domainPattern = Pattern.compile("\\\\\\w+$");
         Matcher domainMatcher = domainPattern.matcher(domainDirectory);
         domainMatcher.find();
@@ -136,7 +136,12 @@ public class FileSearcher {
 
     public List<LogFile> getLogFiles(String location) throws Exception {
 
-         /* Сначала проверяем, является ли местоположение location каким-либо сервером */
+        /* Проверяем, является ли местоположение location доменом */
+        if (location.equals(domainName)) {
+            return getDomainLogFiles();
+        }
+
+         /* Проверяем, является ли местоположение location каким-либо сервером */
         String serverName = location;
         File serverLogDirectory = new File(domainDirectory + "\\servers\\" + serverName + "\\logs\\");
         if (serverLogDirectory.exists()) {
@@ -148,18 +153,16 @@ public class FileSearcher {
         }
 
         /* Проверяем, является ли местоположение location каким-либо кластером */
-        Pattern clusterPattern = Pattern.compile("webl_cluster[0-9]+");
+        /*Pattern clusterPattern = Pattern.compile("webl_cluster[0-9]+");
         Matcher clusterMatcher = clusterPattern.matcher(location);
         if (clusterMatcher.matches()) {
             return getClusterLogFiles(location);
-        }
+        }*/
+        /* Проверяем, является ли местоположение location каким-либо кластером */
+        List<LogFile> logFiles = getClusterLogFiles(location);
+        return logFiles;
 
-        /* Проверяем, является ли местоположение location доменом */
-        if (location.equals(domainName)) {
-            return getDomainLogFiles();
-        } else {
-            throw new Exception();
-        }
+
     }
 
 }

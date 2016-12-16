@@ -38,12 +38,6 @@ public class Test {
             e.printStackTrace();
         }
         System.out.println(logMessageList);
-
-
-        String currentDirectory;
-        File file = new File("");
-        currentDirectory = file.getAbsolutePath();
-        System.out.println("Current working directory : "+currentDirectory);
     }
 
 }

@@ -153,10 +153,16 @@ public class LogReader {
         Map<Integer, Integer> blockPositions;
 
         FileSearcher fileSearcher = new FileSearcher();
-
+        List<LogMessage> logMessageList = new ArrayList<>();
         List<LogFile> logFiles = fileSearcher.getLogFiles(location);
 
-        List<LogMessage> logMessageList = new ArrayList<>();
+        if (logFiles.size() == 0) {
+            LogMessage logMessage = new LogMessage();
+            logMessage.setMessage("Неверный параметр location");
+            logMessageList.add(logMessage);
+            return logMessageList;
+        }
+
 
         getPositionsOfLinesWithString(string, logFiles);
         getPositionsOfLinesWithString("####", logFiles);
