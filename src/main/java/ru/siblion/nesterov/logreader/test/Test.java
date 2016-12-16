@@ -6,6 +6,7 @@ import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,12 @@ public class Test {
             e.printStackTrace();
         }
         System.out.println(logMessageList);
+
+
+        /*String currentDirectory;
+        File file = new File("");
+        currentDirectory = file.getAbsolutePath();
+        System.out.println("Current working directory : "+currentDirectory);*/
     }
 
 }

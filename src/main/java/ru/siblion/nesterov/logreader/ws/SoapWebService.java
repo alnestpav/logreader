@@ -8,6 +8,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -21,5 +22,14 @@ public class SoapWebService {
     @WebMethod(operationName = "getListOfLogMessages")
     public List<LogMessage> getListOfLogMessages(@WebParam(name = "request") Request request) {
         return request.getListOfLogMessages();
+    }
+
+    @WebMethod(operationName = "getWorkingDirectory")
+    public String getWorkingDirectory() {
+        String currentDirectory;
+        File file = new File("");
+        currentDirectory = file.getAbsolutePath();
+
+        return currentDirectory;
     }
 }

@@ -57,10 +57,7 @@ public class LogReader {
                         }
                     }
                     currentFileName = fileName;
-                    System.out.println("not clear " + linesWithStringNumbers);
                     linesWithStringNumbers.clear();
-                    System.out.println("clear " + linesWithStringNumbers);
-                    System.out.println("___________________________");
                 }
                 lineNumberMatcher = lineNumberPattern.matcher(line);
                 lineNumberMatcher.find();
@@ -140,7 +137,9 @@ public class LogReader {
                                                   XMLGregorianCalendar dateTo) throws Exception {
         Map<Integer, Integer> blockPositions;
 
-        List<LogFile> logFiles = FileSearcher.getLogFiles(location);
+        FileSearcher fileSearcher = new FileSearcher();
+
+        List<LogFile> logFiles = fileSearcher.getLogFiles(location);
 
         List<LogMessage> logMessageList = new ArrayList<>();
 
