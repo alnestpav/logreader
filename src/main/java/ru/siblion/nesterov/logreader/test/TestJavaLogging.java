@@ -18,7 +18,12 @@ public class TestJavaLogging {
         fLogger.info("this is info");
         fLogger.warning("this is a warning");
         fLogger.severe("this is severe");
-        fLogger.logp(Level.INFO, TestJavaLogging.class.getName(), "doSomething", "blah");
+        try {
+            System.out.println(10/0);
+        } catch(Exception e) {
+            fLogger.logp(Level.INFO, TestJavaLogging.class.getName(), e.getMessage(), "");
+        }
+
 
     }
 }

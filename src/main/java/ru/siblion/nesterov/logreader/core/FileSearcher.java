@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +24,8 @@ public class FileSearcher {
 
     private String domainDirectory;
     private String domainName;
+
+    private static final Logger logger = Logger.getLogger(FileSearcher.class.getName());
 
     public FileSearcher() {
         //domainDirectory = (new File("").getAbsolutePath()); // если запускать на сервере
@@ -57,9 +61,8 @@ public class FileSearcher {
                     servers.add(eElement.getElementsByTagName("name").item(0).getTextContent());
                 }
             }
-
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Ошибка при парсинге config.xml", e) ;
         }
 
         File serverLogDirectory;
@@ -98,7 +101,7 @@ public class FileSearcher {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Ошибка при парсинге config.xml", e) ;
         }
         File serverLogDirectory;
         List<LogFile> logFiles = new ArrayList<>();
@@ -115,8 +118,12 @@ public class FileSearcher {
     }
 
     private List<String> getFilesMatching(File root, String regExp) {
-        if (!root.isDirectory()) {
-            throw new IllegalArgumentException(root + " это не директория.");
+        try {
+            if (!root.isDirectory()) {
+                throw new IllegalArgumentException(root + " это не директория.");
+            }
+        } catch(IllegalArgumentException e) {
+            logger.log(Level.SEVERE, "Ошибка при поиске файлов в некоторой папке", e) ;
         }
         final Pattern p = Pattern.compile(regExp);
 

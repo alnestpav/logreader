@@ -10,8 +10,6 @@
           <element id="library" level="project" name="Maven: javax:javaee-api:7.0" />
           <element id="library" level="project" name="Maven: com.sun.mail:javax.mail:1.5.0" />
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1" />
-          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-api:2.7" />
-          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-core:2.7" />
         </element>
       </element>
       <element id="directory" name="META-INF">

@@ -2,11 +2,12 @@ package ru.siblion.nesterov.logreader.core;
 
 import ru.siblion.nesterov.logreader.type.LogFile;
 import ru.siblion.nesterov.logreader.type.LogMessage;
-import sun.rmi.runtime.Log;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,8 @@ import java.util.regex.Pattern;
  * Created by alexander on 13.12.2016.
  */
 public class LogReader {
+
+    private static final Logger logger = Logger.getLogger(LogReader.class.getName());
 
     private static List<LogFile> getPositionsOfLinesWithString(String string, List<LogFile> logFiles) {
 
@@ -91,10 +94,8 @@ public class LogReader {
                 }
             }
 
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch(IOException e) {
+            logger.log(Level.SEVERE, "Ошибка при получении номеров строк в файле", e) ;
         }
         return logFiles;
     }
@@ -140,7 +141,7 @@ public class LogReader {
             }
 
         } catch(IOException e){
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Ошибка при парсинге блока", e) ;
         }
 
         return block.toString();
@@ -151,7 +152,6 @@ public class LogReader {
                                                   XMLGregorianCalendar dateFrom,
                                                   XMLGregorianCalendar dateTo) throws Exception {
         Map<Integer, Integer> blockPositions;
-
         FileSearcher fileSearcher = new FileSearcher();
         List<LogMessage> logMessageList = new ArrayList<>();
         List<LogFile> logFiles = fileSearcher.getLogFiles(location);
@@ -203,12 +203,7 @@ public class LogReader {
                     logMessageList.add(logMessage);
                 }
             }
-
         }
-
-
-
-
         return logMessageList;
     }
 

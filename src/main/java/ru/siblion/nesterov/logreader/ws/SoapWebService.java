@@ -29,7 +29,6 @@ public class SoapWebService {
         String currentDirectory;
         File file = new File("");
         currentDirectory = file.getAbsolutePath();
-
         return currentDirectory;
     }
 }
