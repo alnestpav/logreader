@@ -27,7 +27,9 @@ public class Utils {
         } catch (Exception e) {
             e.getStackTrace();
         }
-        GregorianCalendar gregorianCalendar = new GregorianCalendar();;
+        GregorianCalendar gregorianCalendar = new GregorianCalendar();
+        System.out.println(date);
+        System.out.println(stringDate);
         gregorianCalendar.setTime(date);
         try {
             xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);

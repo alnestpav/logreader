@@ -3,6 +3,7 @@ package ru.siblion.nesterov.logreader.test;
 import ru.siblion.nesterov.logreader.core.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
 import ru.siblion.nesterov.logreader.type.LogMessage;
+import ru.siblion.nesterov.logreader.ws.RestWebService;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -38,6 +39,25 @@ public class Test {
             e.printStackTrace();
         }
         System.out.println(logMessageList);
+
+
+        RestWebService restWebService = new RestWebService();
+        System.out.println(restWebService.test());
+
+        System.out.println("____________________________");
+
+        try {
+            logMessageList = restWebService.getListOfLogMessages(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(logMessageList);
+
+
+    }
+
+    public static void testRestWebService() {
+
     }
 
 }
