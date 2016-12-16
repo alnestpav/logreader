@@ -163,7 +163,6 @@ public class LogReader {
             return logMessageList;
         }
 
-
         getPositionsOfLinesWithString(string, logFiles);
         getPositionsOfLinesWithString("####", logFiles);
 

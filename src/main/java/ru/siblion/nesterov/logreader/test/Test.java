@@ -31,7 +31,7 @@ public class Test {
         SoapWebService soapWebService = new SoapWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
-        Request request = new Request(string, location, dateIntervals);
+        Request request = Request.getNewRequest(string, location, dateIntervals);
         try {
             logMessageList = soapWebService.getListOfLogMessages(request);
         } catch (Exception e) {

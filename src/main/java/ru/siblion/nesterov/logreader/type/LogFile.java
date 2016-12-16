@@ -44,8 +44,8 @@ public class LogFile {
     @Override
     public String toString() {
         return "FilePath: " + filePath + " \n"
-                + "positionsOfString: " + positionsOfString + "\n"
-                + "prefixPositions: " + prefixPositions + "\n";
+                + "PositionsOfString: " + positionsOfString + "\n"
+                + "PrefixPositions: " + prefixPositions + "\n";
     }
 
 }

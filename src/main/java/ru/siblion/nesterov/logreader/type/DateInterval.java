@@ -36,4 +36,9 @@ public class DateInterval {
     public void setDateTo(XMLGregorianCalendar dateTo) {
         this.dateTo = dateTo;
     }
+
+    @Override
+    public String toString() {
+        return "DateFrom: " + dateFrom + ", DateTo: " + dateTo;
+    }
 }

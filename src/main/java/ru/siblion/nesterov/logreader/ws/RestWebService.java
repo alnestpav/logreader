@@ -34,7 +34,7 @@ public class RestWebService {
         XMLGregorianCalendar dateTo = Utils.stringToXMLGregorianCalendar(dateToString);
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
-        Request request = new Request(string, location, dateIntervals);
+        Request request = Request.getNewRequest(string, location, dateIntervals);
         return request;
     }
 

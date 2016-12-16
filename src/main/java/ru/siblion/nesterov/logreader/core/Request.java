@@ -24,12 +24,19 @@ public class Request {
     @XmlElement
     private List<DateInterval> dateIntervals;
 
-    private static final Logger logger = Logger.getLogger(Request.class.getName());
+    private static final Logger logger = Logger.getLogger(Request.class.getName()); // проверить правильно работает в xml
 
-    public Request(String string, String location, List<DateInterval> dateIntervals) {
+    private Request(String string, String location, List<DateInterval> dateIntervals) {
         this.string = string;
         this.location = location;
         this.dateIntervals = dateIntervals;
+    }
+
+    public static Request getNewRequest(String string, String location, List<DateInterval> dateIntervals) {
+        Request request = new Request(string, location, dateIntervals);
+        logger.log(Level.INFO, "Создание нового запроса " + request);
+
+        return request;
     }
 
     public Request() { // Нужен для JAXB
@@ -68,7 +75,13 @@ public class Request {
                 logger.log(Level.SEVERE, "Проблема при получении лог-сообщения", e) ;
             }
         }
+        logger.log(Level.INFO, "Запрос " + this + " успешно завершен");
         return logMessageList;
+    }
+
+    @Override
+    public String toString() {
+        return "String: " + string + ", Location: " + location + ", DateIntervals: " + dateIntervals;
     }
 
 }
