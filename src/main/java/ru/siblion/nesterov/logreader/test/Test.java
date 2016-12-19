@@ -5,6 +5,7 @@ import ru.siblion.nesterov.logreader.core.FileFormat;
 import ru.siblion.nesterov.logreader.core.LogFileWriter;
 import ru.siblion.nesterov.logreader.core.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
+import ru.siblion.nesterov.logreader.type.LogFile;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.ws.RestWebService;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
@@ -51,6 +52,7 @@ public class Test {
         LogFileWriter.write(logMessageList, FileFormat.rtf);
         LogFileWriter.write(logMessageList, FileFormat.txt);
         LogFileWriter.write(logMessageList, FileFormat.log);
+        LogFileWriter.write(logMessageList, FileFormat.doc);
 
 
 
