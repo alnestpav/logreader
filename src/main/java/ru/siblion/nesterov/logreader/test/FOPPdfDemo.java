@@ -46,14 +46,14 @@ public class FOPPdfDemo {
         // the XSL FO file
         File xsltFile = new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\template.xsl");
         // the XML file which provides the input
-        StreamSource xmlSource = new StreamSource(new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\employee.xml"));
+        StreamSource xmlSource = new StreamSource(new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\my_file.XML"));
         // create an instance of fop factory\
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         // a user agent is needed for transformation
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         // Setup output
         OutputStream out;
-        out = new java.io.FileOutputStream("C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\employee.pdf");
+        out = new java.io.FileOutputStream("C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\my_file.pdf");
 
         try {
             // Construct fop with desired output format
