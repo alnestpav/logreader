@@ -1,11 +1,13 @@
 package ru.siblion.nesterov.logreader.core;
 
+import org.apache.fop.apps.FOPException;
+import ru.siblion.nesterov.logreader.test.FopConverter;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.type.LogMessages;
-import ru.siblion.nesterov.logreader.util.JaxbList;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,34 +17,88 @@ import java.util.List;
  * Created by alexander on 19.12.2016.
  */
 public class LogFileWriter {
-
-    public static void write(List<LogMessage> logMessagesList, FileFormat fileFormat) {
-        String directory = "C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\";
-        File file = new File(directory + "my_file." + fileFormat);
-
+    private final static String DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\";
+    public static void write(List<LogMessage> logMessageList, FileFormat fileFormat) {
+        File file = new File(DIRECTORY + "my_file." + fileFormat);
 
         try (FileWriter fw = new FileWriter(file)) {
-            LogMessages logMessages = new LogMessages();
-            logMessages.setLogMessages(logMessagesList);
-
                 switch(fileFormat) {
-                    case DOC:
+                    case doc: writeDoc(logMessageList, file);
                         break;
-                    case LOG:
+                    case log: writeLog(logMessageList, file);
                         break;
-                    case PDF:
+                    case pdf: writePdf(logMessageList, file);
                         break;
-                    case RTF:
+                    case rtf: writeRtf(logMessageList, file);
                         break;
-                    case TXT:
+                    case txt: writeTxt(logMessageList, file);
                         break;
-                    case XML: JaxbParser.saveObject(file, logMessages);
+                    case xml: writeXml(logMessageList, file);
                         break;
             }
         } catch(IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void writeXml(List<LogMessage> logMessageList, File file) {
+        LogMessages logMessages = new LogMessages();
+        logMessages.setLogMessages(logMessageList);
+        try {
+            JaxbParser.saveObject(file, logMessages);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void writePdf(List<LogMessage> logMessageList, File file) {
+        File xmlFile = new File("temp\\tempLogFile.xml");
+        writeXml(logMessageList, xmlFile);
+
+        try {
+            FopConverter.convertTo(xmlFile, FileFormat.pdf, file);
+            xmlFile.delete();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (FOPException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void writeRtf(List<LogMessage> logMessageList, File file) {
+        File xmlFile = new File("temp\\tempLogFile.xml");
+        writeXml(logMessageList, xmlFile);
+
+        try {
+            FopConverter.convertTo(xmlFile, FileFormat.rtf, file);
+            xmlFile.delete();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (FOPException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private static void writeTxt(List<LogMessage> logMessageList, File file) {
+        try (FileWriter logFileWriter = new FileWriter(file)) {
+            for (LogMessage logMessage : logMessageList) {
+                logFileWriter.write(logMessage.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void writeLog(List<LogMessage> logMessageList, File file) {
+        writeTxt(logMessageList, file);
+    }
+
+    private static void writeDoc(List<LogMessage> logMessageList, File file) {
+
     }
 }

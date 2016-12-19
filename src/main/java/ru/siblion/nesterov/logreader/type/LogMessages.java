@@ -22,4 +22,9 @@ public class LogMessages {
     public void setLogMessages(List<LogMessage> employees) {
         this.logMessages = employees;
     }
+
+    /*@Override
+    public static toString() {
+        return
+    }*/
 }

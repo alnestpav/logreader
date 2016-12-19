@@ -1,5 +1,6 @@
 package ru.siblion.nesterov.logreader.test;
 
+import org.apache.fop.apps.FOPException;
 import ru.siblion.nesterov.logreader.core.FileFormat;
 import ru.siblion.nesterov.logreader.core.LogFileWriter;
 import ru.siblion.nesterov.logreader.core.Request;
@@ -9,6 +10,8 @@ import ru.siblion.nesterov.logreader.ws.RestWebService;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.transform.TransformerException;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,8 +45,12 @@ public class Test {
             e.printStackTrace();
         }
         System.out.println(logMessageList);
-        LogFileWriter.write(logMessageList, FileFormat.XML);
 
+        LogFileWriter.write(logMessageList, FileFormat.xml);
+        LogFileWriter.write(logMessageList, FileFormat.pdf);
+        LogFileWriter.write(logMessageList, FileFormat.rtf);
+        LogFileWriter.write(logMessageList, FileFormat.txt);
+        LogFileWriter.write(logMessageList, FileFormat.log);
 
 
 
