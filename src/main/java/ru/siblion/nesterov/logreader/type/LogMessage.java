@@ -36,7 +36,6 @@ public class LogMessage implements Comparable<LogMessage> {
         Matcher m = p.matcher(block);
         m.find();
         String stringDate =  m.group();
-        System.out.println();
         XMLGregorianCalendar date = Utils.stringToXMLGregorianCalendar(stringDate);
         return date;
     }

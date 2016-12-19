@@ -39,7 +39,7 @@ public class Request {
         return request;
     }
 
-    public Request() { // Нужен для JAXB
+    public Request() { // Нужен для JAXB или точнее для xml-object преобразования
 
     }
 
@@ -81,7 +81,7 @@ public class Request {
 
     @Override
     public String toString() {
-        return "String: " + string + ", Location: " + location + ", DateIntervals: " + dateIntervals;
+        return "request(String: " + string + ", Location: " + location + ", DateIntervals: " + dateIntervals + ")";
     }
 
 }

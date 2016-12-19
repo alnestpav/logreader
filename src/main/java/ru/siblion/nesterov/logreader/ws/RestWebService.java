@@ -23,6 +23,7 @@ public class RestWebService {
         return request.getListOfLogMessages();
     }
 
+
     @GET
     @Produces(value={"text/xml"})
     public Request test() {
