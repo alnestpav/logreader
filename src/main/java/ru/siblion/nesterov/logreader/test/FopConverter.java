@@ -19,7 +19,7 @@ import org.apache.fop.apps.MimeConstants;
 import ru.siblion.nesterov.logreader.core.FileFormat;
 
 public class FopConverter {
-    private static final File xslFile = new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\template.xsl");
+    private static final File xslFile = new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\pdf.xsl");
     /**
      * Method that will convert the given XML to PDF
      * @throws IOException
@@ -42,11 +42,6 @@ public class FopConverter {
             case rtf: {
                 out = new FileOutputStream(file);
                 fopOutputFormat = MimeConstants.MIME_RTF;
-                break;
-            }
-            case txt: {
-                out = new FileOutputStream(file);
-                fopOutputFormat = MimeConstants.MIME_PLAIN_TEXT;
                 break;
             }
         }
