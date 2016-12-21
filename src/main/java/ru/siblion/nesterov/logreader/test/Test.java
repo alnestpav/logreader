@@ -1,15 +1,18 @@
 package ru.siblion.nesterov.logreader.test;
 
 import org.apache.fop.apps.FOPException;
+import ru.siblion.nesterov.logreader.core.Converter;
 import ru.siblion.nesterov.logreader.core.FileFormat;
 import ru.siblion.nesterov.logreader.core.LogFileWriter;
 import ru.siblion.nesterov.logreader.core.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
 import ru.siblion.nesterov.logreader.type.LogFile;
 import ru.siblion.nesterov.logreader.type.LogMessage;
+import ru.siblion.nesterov.logreader.type.LogMessages;
 import ru.siblion.nesterov.logreader.ws.RestWebService;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.TransformerException;
 import java.io.File;
@@ -47,13 +50,21 @@ public class Test {
         }
         System.out.println(logMessageList);
 
-        LogFileWriter.write(logMessageList, FileFormat.xml);
+        /*LogFileWriter.write(logMessageList, FileFormat.xml);
         LogFileWriter.write(logMessageList, FileFormat.pdf);
         LogFileWriter.write(logMessageList, FileFormat.rtf);
         LogFileWriter.write(logMessageList, FileFormat.txt);
         LogFileWriter.write(logMessageList, FileFormat.log);
-        LogFileWriter.write(logMessageList, FileFormat.doc);
+        LogFileWriter.write(logMessageList, FileFormat.doc);*/
 
+        LogMessages logMessages = new LogMessages();
+        logMessages.setLogMessages(logMessageList);
+
+        try {
+            Converter.marshal(logMessages);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
 
 
     }

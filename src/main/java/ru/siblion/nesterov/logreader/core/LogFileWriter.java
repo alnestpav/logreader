@@ -84,7 +84,6 @@ public class LogFileWriter {
         }
     }
 
-
     private static void writeTxt(List<LogMessage> logMessageList, File file) {
         try (FileWriter logFileWriter = new FileWriter(file)) {
             for (LogMessage logMessage : logMessageList) {
@@ -116,6 +115,5 @@ public class LogFileWriter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
