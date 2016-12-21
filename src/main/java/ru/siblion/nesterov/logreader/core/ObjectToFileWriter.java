@@ -92,7 +92,6 @@ public class LogFileWriter {
 
     private void writeTxt(Object object, File file) {
         try (FileWriter logFileWriter = new FileWriter(file)) {
-
             LogMessages logMessages = (LogMessages) object;
             for (LogMessage logMessage : logMessages.getLogMessages()) {
                 logFileWriter.write(logMessage.toString());
@@ -107,7 +106,6 @@ public class LogFileWriter {
     }
 
     private void writeDoc(Object object, File file) {
-
         try {
             Converter.convert(object, FileFormat.doc, file);
         } catch (JAXBException e) {
