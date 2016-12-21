@@ -60,11 +60,7 @@ public class Test {
         LogMessages logMessages = new LogMessages();
         logMessages.setLogMessages(logMessageList);
 
-        try {
-            Converter.marshal(logMessages);
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
+        LogFileWriter.write(logMessageList, FileFormat.html);
 
 
     }

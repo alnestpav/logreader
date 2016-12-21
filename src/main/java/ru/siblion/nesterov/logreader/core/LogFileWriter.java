@@ -7,7 +7,6 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import ru.siblion.nesterov.logreader.test.FopConverter;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.type.LogMessages;
-import ru.siblion.nesterov.logreader.util.JaxbParser;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
@@ -23,19 +22,21 @@ public class LogFileWriter {
         File file = new File(DIRECTORY + "my_file." + fileFormat);
 
         try (FileWriter fw = new FileWriter(file)) {
-                switch(fileFormat) {
-                    case doc: writeDoc(logMessageList, file);
-                        break;
-                    case log: writeLog(logMessageList, file);
-                        break;
-                    case pdf: writePdf(logMessageList, file);
-                        break;
-                    case rtf: writeRtf(logMessageList, file);
-                        break;
-                    case txt: writeTxt(logMessageList, file);
-                        break;
-                    case xml: writeXml(logMessageList, file);
-                        break;
+            switch(fileFormat) {
+                case doc: writeDoc(logMessageList, file);
+                    break;
+                case html: writeHtml(logMessageList, file);
+                    break;
+                case log: writeLog(logMessageList, file);
+                    break;
+                case pdf: writePdf(logMessageList, file);
+                    break;
+                case rtf: writeRtf(logMessageList, file);
+                    break;
+                case txt: writeTxt(logMessageList, file);
+                    break;
+                case xml: writeXml(logMessageList, file);
+                    break;
             }
         } catch(IOException e) {
             e.printStackTrace();
@@ -46,7 +47,17 @@ public class LogFileWriter {
         LogMessages logMessages = new LogMessages();
         logMessages.setLogMessages(logMessageList);
         try {
-            JaxbParser.saveObject(file, logMessages);
+            Converter.convert(logMessages, FileFormat.xml, file);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void writeHtml(List<LogMessage> logMessageList, File file) {
+        LogMessages logMessages = new LogMessages();
+        logMessages.setLogMessages(logMessageList);
+        try {
+            Converter.convert(logMessages, FileFormat.html, file);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
