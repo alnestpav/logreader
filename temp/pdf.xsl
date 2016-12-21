@@ -10,9 +10,8 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="simpleA4">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block font-size="16pt" font-weight="bold" space-after="5mm">Logs<xsl:value-of select="companyname"/>
-          </fo:block>
-          <fo:block font-size="10pt">
+          <fo:block font-size="16pt" font-weight="bold" space-after="5mm">Log Messages</fo:block>
+          <fo:block font-size="8pt">
               <xsl:apply-templates select="logMessage"/>>
           </fo:block>
         </fo:flow>
@@ -20,12 +19,13 @@
      </fo:root>
 </xsl:template>
 <xsl:template match="logMessage">
+	<fo:block hyphenate="true" text-align="left">
         <fo:block>
           <xsl:value-of select="date"/>
-        </fo:block>
-		        <fo:block>
+		  </fo:block>
+        <fo:block space-after="1.0em">
           <xsl:value-of select="message"/>
         </fo:block>
-    
+	</fo:block>
   </xsl:template>
 </xsl:stylesheet>
