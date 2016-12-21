@@ -1,5 +1,6 @@
 package ru.siblion.nesterov.logreader.core;
 
+
 import org.apache.fop.apps.FOPException;
 import ru.siblion.nesterov.logreader.test.FopConverter;
 import ru.siblion.nesterov.logreader.type.LogMessage;
@@ -10,31 +11,36 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.util.List;
 
 /**
  * Created by alexander on 19.12.2016.
  */
 public class LogFileWriter {
+    private Object object;
     private final static String DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\";
-    public static void write(List<LogMessage> logMessageList, FileFormat fileFormat) {
+
+    public LogFileWriter(Object object) {
+        this.object = object;
+    }
+
+    public void write(Object object, FileFormat fileFormat) {
         File file = new File(DIRECTORY + "my_file." + fileFormat);
 
         try (FileWriter fw = new FileWriter(file)) {
             switch(fileFormat) {
-                case doc: writeDoc(logMessageList, file);
+                case doc: writeDoc(object, file);
                     break;
-                case html: writeHtml(logMessageList, file);
+                case html: writeHtml(object, file);
                     break;
-                case log: writeLog(logMessageList, file);
+                case log: writeLog(object, file);
                     break;
-                case pdf: writePdf(logMessageList, file);
+                case pdf: writePdf(object, file);
                     break;
-                case rtf: writeRtf(logMessageList, file);
+                case rtf: writeRtf(object, file);
                     break;
-                case txt: writeTxt(logMessageList, file);
+                case txt: writeTxt(object, file);
                     break;
-                case xml: writeXml(logMessageList, file);
+                case xml: writeXml(object, file);
                     break;
             }
         } catch(IOException e) {
@@ -42,31 +48,27 @@ public class LogFileWriter {
         }
     }
 
-    private static void writeXml(List<LogMessage> logMessageList, File file) {
-        LogMessages logMessages = new LogMessages();
-        logMessages.setLogMessages(logMessageList);
+    private void writeXml(Object object, File file) {
         StreamResult streamResult;
         streamResult = new StreamResult(file);
         try {
-            JaxbParser.saveObject(logMessages, streamResult);
+            JaxbParser.saveObject(object, streamResult);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
     }
 
-    private static void writeHtml(List<LogMessage> logMessageList, File file) {
-        LogMessages logMessages = new LogMessages();
-        logMessages.setLogMessages(logMessageList);
+    private void writeHtml(Object object, File file) {
         try {
-            Converter.convert(logMessages, FileFormat.html, file);
+            Converter.convert(object, FileFormat.html, file);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
     }
 
-    private static void writePdf(List<LogMessage> logMessageList, File file) {
+    private void writePdf(Object object, File file) {
         File xmlFile = new File("temp\\tempLogFile.xml");
-        writeXml(logMessageList, xmlFile);
+        writeXml(object, xmlFile);
 
         try {
             FopConverter.convertTo(xmlFile, FileFormat.pdf, file);
@@ -80,19 +82,19 @@ public class LogFileWriter {
         }
     }
 
-    private static void writeRtf(List<LogMessage> logMessageList, File file) {
-        LogMessages logMessages = new LogMessages();
-        logMessages.setLogMessages(logMessageList);
+    private void writeRtf(Object object, File file) {
         try {
-            Converter.convert(logMessages, FileFormat.rtf, file);
+            Converter.convert(object, FileFormat.rtf, file);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
     }
 
-    private static void writeTxt(List<LogMessage> logMessageList, File file) {
+    private void writeTxt(Object object, File file) {
         try (FileWriter logFileWriter = new FileWriter(file)) {
-            for (LogMessage logMessage : logMessageList) {
+
+            LogMessages logMessages = (LogMessages) object;
+            for (LogMessage logMessage : logMessages.getLogMessages()) {
                 logFileWriter.write(logMessage.toString());
             }
         } catch (IOException e) {
@@ -100,15 +102,14 @@ public class LogFileWriter {
         }
     }
 
-    private static void writeLog(List<LogMessage> logMessageList, File file) {
-        writeTxt(logMessageList, file);
+    private void writeLog(Object object, File file) {
+        writeTxt(object, file);
     }
 
-    private static void writeDoc(List<LogMessage> logMessageList, File file) {
-        LogMessages logMessages = new LogMessages();
-        logMessages.setLogMessages(logMessageList);
+    private void writeDoc(Object object, File file) {
+
         try {
-            Converter.convert(logMessages, FileFormat.doc, file);
+            Converter.convert(object, FileFormat.doc, file);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
