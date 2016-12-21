@@ -50,17 +50,17 @@ public class Test {
         }
         System.out.println(logMessageList);
 
-        LogFileWriter.write(logMessageList, FileFormat.xml);
+        //LogFileWriter.write(logMessageList, FileFormat.xml);
         LogFileWriter.write(logMessageList, FileFormat.pdf);
-        LogFileWriter.write(logMessageList, FileFormat.rtf);
-        LogFileWriter.write(logMessageList, FileFormat.txt);
-        LogFileWriter.write(logMessageList, FileFormat.log);
-        LogFileWriter.write(logMessageList, FileFormat.doc);
+       // LogFileWriter.write(logMessageList, FileFormat.rtf);
+        //LogFileWriter.write(logMessageList, FileFormat.txt);
+        //LogFileWriter.write(logMessageList, FileFormat.log);
+       // LogFileWriter.write(logMessageList, FileFormat.doc);
 
         LogMessages logMessages = new LogMessages();
         logMessages.setLogMessages(logMessageList);
 
-        LogFileWriter.write(logMessageList, FileFormat.html);
+       // LogFileWriter.write(logMessageList, FileFormat.html);
 
 
     }

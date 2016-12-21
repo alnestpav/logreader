@@ -22,36 +22,6 @@
      </fo:root>
 </xsl:template>
 <xsl:template match="logMessage">
-
-	
-		<fo:page-sequence reference-orientation="from-page-master-region()" master-reference="PageMaster">
-		<fo:static-content flow-name="xsl-region-start">
-			<fo:block-container height="100%" display-align="center">
-				<fo:block text-align="center" font-family="sans-serif" font-size="1.6em">Date</fo:block>
-			</fo:block-container>
-		</fo:static-content>
-		
-		<fo:static-content flow-name="xsl-region-start">
-			<fo:block-container height="100%" display-align="center">
-				<fo:block text-align="center" font-family="sans-serif" font-size="1.6em">Message</fo:block>
-			</fo:block-container>
-		</fo:static-content>
-		
-		<fo:flow flow-name="xsl-region-body" font-family="serif" font-size="1em" line-height="1.4" axf:hyphenate-hyphenated-word="false" hyphenate="true">
-		<fo:block span="all" font-family="sans-serif" font-size="2em" font-weight="bold" line-height="2" space-before="1em" space-after="1em" space-before.conditionality="retain" space-after.conditionality="retain" background-color="transparent">
-		<fo:block start-indent="1em" end-indent="1em">Explaining each region in a page</fo:block>
-		</fo:block>
-		<fo:block start-indent="0.5em" end-indent="0.5em" hyphenate="true" text-align="justify">
-		<fo:block>One page consists of five regions in XSL-FO.</fo:block>
-		<fo:block space-before="1em"><fo:inline font-weight="bold" space-end="1em">1. region-start</fo:inline>Region of the left side where 'left' is written. The length from the left edge of the paper to the left edge of the region-start can be specified by the margin-left property. The width of region-start can be specified by the extent property.</fo:block>
-	<fo:block space-before="1em"><fo:inline font-weight="bold" space-end="1em">2. region-end</fo:inline>Region of the right side where 'right' is written. The length from the right edge of the paper to the right edge of the region-end can be specified by the margin-end property. The width of region-end can be specified by the extent property.</fo:block>
-	<fo:block space-before="1em"><fo:inline font-weight="bold" space-end="1em">3. region-before</fo:inline>The upper region where 'top' is placed. The length from the top edge of the paper to the top edge of the region-before can be specified by the margin-top property. The depth ofregion-before can be specified by the extent property. This will be the most commonly used to create headers.</fo:block>
-	<fo:block space-before="1em"><fo:inline font-weight="bold" space-end="1em">4. region-after</fo:inline>The lower region where 'Antenna House, Inc.' is placed. The length from the bottom edge of the paper to the bottom edge of the region-after can be specified by the margin-bottom property. The depth of region-after can be specified by the extent property. This will be the most commonly used to create footers.</fo:block>
-	<fo:block space-before="1em"><fo:inline font-weight="bold" space-end="1em">5. region-body</fo:inline>The middle region of the page where the text is placed.</fo:block>
-		</fo:block>
-	</fo:flow>
-		
-		
-		
+	<fo:block>asfdsfadsfgasdfadsfsadfadsaffdsdf</fo:block>
   </xsl:template>
 </xsl:stylesheet>
