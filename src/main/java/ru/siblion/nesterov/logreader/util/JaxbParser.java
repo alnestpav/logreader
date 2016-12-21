@@ -4,7 +4,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
 
 /**
  * Created by alexander on 19.12.2016.

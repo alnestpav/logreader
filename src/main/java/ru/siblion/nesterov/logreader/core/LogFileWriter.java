@@ -7,9 +7,11 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import ru.siblion.nesterov.logreader.test.FopConverter;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.type.LogMessages;
+import ru.siblion.nesterov.logreader.util.JaxbParser;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.List;
 
@@ -46,8 +48,10 @@ public class LogFileWriter {
     private static void writeXml(List<LogMessage> logMessageList, File file) {
         LogMessages logMessages = new LogMessages();
         logMessages.setLogMessages(logMessageList);
+        StreamResult streamResult;
+        streamResult = new StreamResult(file);
         try {
-            Converter.convert(logMessages, FileFormat.xml, file);
+            JaxbParser.saveObject(logMessages, streamResult);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -80,17 +84,11 @@ public class LogFileWriter {
     }
 
     private static void writeRtf(List<LogMessage> logMessageList, File file) {
-        File xmlFile = new File("temp\\tempLogFile.xml");
-        writeXml(logMessageList, xmlFile);
-
+        LogMessages logMessages = new LogMessages();
+        logMessages.setLogMessages(logMessageList);
         try {
-            FopConverter.convertTo(xmlFile, FileFormat.rtf, file);
-            xmlFile.delete();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (FOPException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
+            Converter.convert(logMessages, FileFormat.rtf, file);
+        } catch (JAXBException e) {
             e.printStackTrace();
         }
     }
@@ -109,7 +107,7 @@ public class LogFileWriter {
         writeTxt(logMessageList, file);
     }
 
-    private static void writeDoc(List<LogMessage> logMessageList, File file) {
+    private static void writeDocOld(List<LogMessage> logMessageList, File file) {
         XWPFDocument document= new XWPFDocument();
         try (FileOutputStream out = new FileOutputStream(file)) {
             XWPFParagraph paragraph;
@@ -127,4 +125,16 @@ public class LogFileWriter {
             e.printStackTrace();
         }
     }
+
+    private static void writeDoc(List<LogMessage> logMessageList, File file) {
+        LogMessages logMessages = new LogMessages();
+        logMessages.setLogMessages(logMessageList);
+        try {
+            Converter.convert(logMessages, FileFormat.doc, file);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
