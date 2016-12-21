@@ -2,7 +2,7 @@ package ru.siblion.nesterov.logreader.core;
 
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 
-import javax.xml.bind.DataBindingException;
+
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;

@@ -1,9 +1,6 @@
 package ru.siblion.nesterov.logreader.core;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 import ru.siblion.nesterov.logreader.test.FopConverter;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.type.LogMessages;
@@ -105,25 +102,6 @@ public class LogFileWriter {
 
     private static void writeLog(List<LogMessage> logMessageList, File file) {
         writeTxt(logMessageList, file);
-    }
-
-    private static void writeDocOld(List<LogMessage> logMessageList, File file) {
-        XWPFDocument document= new XWPFDocument();
-        try (FileOutputStream out = new FileOutputStream(file)) {
-            XWPFParagraph paragraph;
-            XWPFRun run;
-            for (LogMessage logMessage : logMessageList) {
-                paragraph = document.createParagraph();
-                run = paragraph.createRun();
-                run.setText(logMessage.toString());
-            }
-            document.write(out);
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private static void writeDoc(List<LogMessage> logMessageList, File file) {
