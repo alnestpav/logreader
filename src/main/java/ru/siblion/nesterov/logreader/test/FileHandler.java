@@ -27,12 +27,14 @@ public class FileHandler {
         Runnable pinger = new Runnable() {
             public void run() {
                 System.out.println("Clearing directory!");
+                clearDirectory(config.getDirectory());
+
             }
         };
         ses.scheduleAtFixedRate(pinger, 0, config.getTimeInterval(), TimeUnit.SECONDS);
     }
 
-    public void clearDirectory(File dir) {
+    public static void clearDirectory(File dir) {
         for(File file : dir.listFiles())
             if (!file.isDirectory())
                 file.delete();
