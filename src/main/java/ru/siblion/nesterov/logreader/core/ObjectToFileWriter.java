@@ -74,7 +74,7 @@ public class ObjectToFileWriter {
 
     private void writePdf(Object object, File file) {
         try {
-            FopConverter.convertTo(object, FileFormat.pdf, file);
+            FopConverter.convert(object, FileFormat.pdf, file);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (FOPException e) {
@@ -88,7 +88,7 @@ public class ObjectToFileWriter {
 
     private void writeRtf(Object object, File file) {
         try {
-            FopConverter.convertTo(object, FileFormat.rtf, file);
+            FopConverter.convert(object, FileFormat.rtf, file);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (FOPException e) {
@@ -104,7 +104,7 @@ public class ObjectToFileWriter {
         StreamResult streamResult;
         streamResult = new StreamResult(file);
         try {
-            JaxbParser.saveObject(object, streamResult);
+            JaxbParser.objectToXml(object, streamResult);
         } catch (JAXBException e) {
             e.printStackTrace();
         }

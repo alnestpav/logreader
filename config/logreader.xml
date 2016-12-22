@@ -1,13 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project>
-    <files>
-        <directory>
-
-        </directory>
-
-        <storage-time>
-
-        </storage-time>
-    </files>
-
-</project>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Config>
+    <directory>C:\Users\alexander\IdeaProjects\logreader\config\</directory>
+    <time-interval>1</time-interval>
+</Config>

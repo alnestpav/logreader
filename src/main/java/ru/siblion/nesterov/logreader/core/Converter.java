@@ -22,7 +22,7 @@ public class Converter {
     public static void convert(Object jaxbObject, FileFormat fileFormat, File file) throws JAXBException {
         StringWriter writer = new StringWriter();
         StreamResult streamResult = new StreamResult(writer);
-        JaxbParser.saveObject(jaxbObject, streamResult);
+        JaxbParser.objectToXml(jaxbObject, streamResult);
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = null;
 

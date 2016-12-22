@@ -23,11 +23,11 @@ public class FopConverter {
      * @throws FOPException
      * @throws TransformerException
      */
-    public static void convertTo(Object jaxbObject, FileFormat fileFormat, File file) throws IOException, FOPException,
+    public static void convert(Object jaxbObject, FileFormat fileFormat, File file) throws IOException, FOPException,
             TransformerException, JAXBException {
         StringWriter writer = new StringWriter();
         StreamResult streamResult = new StreamResult(writer);
-        JaxbParser.saveObject(jaxbObject, streamResult);
+        JaxbParser.objectToXml(jaxbObject, streamResult);
 
         Source xmlSource = new StreamSource(new StringReader(writer.toString()));
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
