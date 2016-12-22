@@ -1,5 +1,9 @@
 package ru.siblion.nesterov.logreader.type;
 
+import ru.siblion.nesterov.logreader.core.FileFormat;
+import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
+import sun.rmi.runtime.Log;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collections;
@@ -21,16 +25,24 @@ public class Request {
     @XmlElement
     private List<DateInterval> dateIntervals;
 
+    @XmlElement
+    private FileFormat fileFormat;
+
     private static final Logger logger = Logger.getLogger(Request.class.getName()); // проверить правильно работает в xml
 
-    private Request(String string, String location, List<DateInterval> dateIntervals) {
+    private static final String DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\";
+
+
+    private Request(String string, String location, List<DateInterval> dateIntervals, FileFormat fileFormat) {
         this.string = string;
         this.location = location;
         this.dateIntervals = dateIntervals;
+        this.fileFormat = fileFormat;
     }
 
-    public static Request getNewRequest(String string, String location, List<DateInterval> dateIntervals) {
-        Request request = new Request(string, location, dateIntervals);
+    public static Request getNewRequest(String string, String location,
+                                        List<DateInterval> dateIntervals, FileFormat fileFormat) {
+        Request request = new Request(string, location, dateIntervals, fileFormat);
         logger.log(Level.INFO, "Создание нового запроса " + request);
 
         return request;
@@ -61,6 +73,13 @@ public class Request {
         this.dateIntervals = dateIntervals;
     }
 
+    public FileFormat getFileFormat() {
+        return fileFormat;
+    }
+    public void setFileFormat(FileFormat fileFormat) {
+        this.fileFormat = fileFormat;
+    }
+
 
     public List<LogMessage> getListOfLogMessages() {
         List<LogMessage> logMessageList = null;
@@ -74,6 +93,18 @@ public class Request {
         }
         logger.log(Level.INFO, "Запрос " + this + " успешно завершен");
         return logMessageList;
+    }
+
+    public void saveResultToFile() {
+        List<LogMessage> logMessageList = getListOfLogMessages();
+        LogMessages logMessages = new LogMessages();
+        logMessages.setLogMessages(logMessageList);
+        ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter(logMessages);
+        objectToFileWriter.write(fileFormat);
+    }
+
+    public String getFilePath() {
+        return DIRECTORY + "export." + fileFormat;
     }
 
     @Override

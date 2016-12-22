@@ -1,5 +1,7 @@
 package ru.siblion.nesterov.logreader.ws;
 
+import ru.siblion.nesterov.logreader.core.FileFormat;
+import ru.siblion.nesterov.logreader.test.MyRunnable;
 import ru.siblion.nesterov.logreader.type.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
 import ru.siblion.nesterov.logreader.type.LogMessage;
@@ -19,10 +21,12 @@ public class RestWebService {
     @POST
     @Consumes(value={"application/xml,application/json"})
     @Produces(value={"application/xml,application/json"})
-    public List<LogMessage> getListOfLogMessages(Request request) {
-        return request.getListOfLogMessages();
+    public String getListOfLogMessages(Request request) {
+        Runnable myRunnable = new MyRunnable(request);
+        Thread t = new Thread(myRunnable);
+        t.start();
+        return request.getFilePath();
     }
-
 
     @GET
     @Produces(value={"text/xml"})
@@ -35,7 +39,7 @@ public class RestWebService {
         XMLGregorianCalendar dateTo = Utils.stringToXMLGregorianCalendar(dateToString);
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
-        Request request = Request.getNewRequest(string, location, dateIntervals);
+        Request request = Request.getNewRequest(string, location, dateIntervals, FileFormat.doc);
         return request;
     }
 

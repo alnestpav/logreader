@@ -32,27 +32,28 @@ public class Test {
 
         XMLGregorianCalendar dateFrom = null;
         XMLGregorianCalendar dateTo = null;
-        List<LogMessage> logMessageList = null;
         SoapWebService soapWebService = new SoapWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
-        Request request = Request.getNewRequest(string, location, dateIntervals);
+        FileFormat fileFormat = FileFormat.pdf;
+        Request request = Request.getNewRequest(string, location, dateIntervals, fileFormat);
+        String filePath = null;
         try {
-            logMessageList = soapWebService.getListOfLogMessages(request);
+            filePath = soapWebService.getListOfLogMessages(request);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(logMessageList);
+        System.out.println(filePath);
 
         //ObjectToFileWriter.write(logMessageList, FileFormat.xml);
-        LogMessages logMessages = new LogMessages();
+        /*LogMessages logMessages = new LogMessages();
         logMessages.setLogMessages(logMessageList);
         ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter(logMessageList);
-        objectToFileWriter.write(logMessages, FileFormat.pdf);
-        objectToFileWriter.write(logMessages, FileFormat.rtf);
-        objectToFileWriter.write(logMessages, FileFormat.log);
-        objectToFileWriter.write(logMessages, FileFormat.doc);
-        objectToFileWriter.write(logMessages, FileFormat.html);
+        objectToFileWriter.write(FileFormat.pdf);
+        objectToFileWriter.write(FileFormat.rtf);
+        objectToFileWriter.write(FileFormat.log);
+        objectToFileWriter.write(FileFormat.doc);
+        objectToFileWriter.write(FileFormat.html);*/
 
 
     }

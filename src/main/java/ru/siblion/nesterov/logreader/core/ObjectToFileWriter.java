@@ -22,7 +22,7 @@ public class ObjectToFileWriter {
         this.object = object;
     }
 
-    public void write(Object object, FileFormat fileFormat) {
+    public void write(FileFormat fileFormat) {
         File file = new File(DIRECTORY + "export." + fileFormat);
 
         try (FileWriter fw = new FileWriter(file)) {
