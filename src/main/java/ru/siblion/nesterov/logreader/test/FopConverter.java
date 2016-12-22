@@ -1,14 +1,10 @@
 package ru.siblion.nesterov.logreader.test;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.fop.apps.FOPException;
@@ -17,6 +13,7 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import ru.siblion.nesterov.logreader.core.FileFormat;
+import ru.siblion.nesterov.logreader.util.JaxbParser;
 
 public class FopConverter {
     private static final File xslFile = new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\pdf.xsl");
@@ -26,8 +23,13 @@ public class FopConverter {
      * @throws FOPException
      * @throws TransformerException
      */
-    public static void convertTo(File xmlFile, FileFormat fileFormat, File file)  throws IOException, FOPException, TransformerException {
-        StreamSource xmlSource = new StreamSource(xmlFile);
+    public static void convertTo(Object jaxbObject, FileFormat fileFormat, File file) throws IOException, FOPException,
+            TransformerException, JAXBException {
+        StringWriter writer = new StringWriter();
+        StreamResult streamResult = new StreamResult(writer);
+        JaxbParser.saveObject(jaxbObject, streamResult);
+
+        Source xmlSource = new StreamSource(new StringReader(writer.toString()));
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         OutputStream out = null;

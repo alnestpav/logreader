@@ -73,31 +73,29 @@ public class ObjectToFileWriter {
     }
 
     private void writePdf(Object object, File file) {
-        File xmlFile = new File("temp\\tempLogFile.xml");
-        writeXml(object, xmlFile);
         try {
-            FopConverter.convertTo(xmlFile, FileFormat.pdf, file);
-            xmlFile.delete();
+            FopConverter.convertTo(object, FileFormat.pdf, file);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (FOPException e) {
             e.printStackTrace();
         } catch (TransformerException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
             e.printStackTrace();
         }
     }
 
     private void writeRtf(Object object, File file) {
-        File xmlFile = new File("temp\\tempLogFile.xml");
-        writeXml(object, xmlFile);
         try {
-            FopConverter.convertTo(xmlFile, FileFormat.rtf, file);
-            xmlFile.delete();
+            FopConverter.convertTo(object, FileFormat.rtf, file);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (FOPException e) {
             e.printStackTrace();
         } catch (TransformerException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
             e.printStackTrace();
         }
     }

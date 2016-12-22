@@ -35,7 +35,7 @@ public class Test {
         SoapWebService soapWebService = new SoapWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
-        FileFormat fileFormat = FileFormat.pdf;
+        FileFormat fileFormat = FileFormat.rtf;
         Request request = Request.getNewRequest(string, location, dateIntervals, fileFormat);
         String filePath = null;
         try {
