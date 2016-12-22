@@ -1,6 +1,5 @@
 package ru.siblion.nesterov.logreader.core;
 
-
 import org.apache.fop.apps.FOPException;
 import ru.siblion.nesterov.logreader.test.FopConverter;
 import ru.siblion.nesterov.logreader.type.LogMessage;
@@ -15,16 +14,16 @@ import java.io.*;
 /**
  * Created by alexander on 19.12.2016.
  */
-public class LogFileWriter {
+public class ObjectToFileWriter {
     private Object object;
     private final static String DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\";
 
-    public LogFileWriter(Object object) {
+    public ObjectToFileWriter(Object object) {
         this.object = object;
     }
 
     public void write(Object object, FileFormat fileFormat) {
-        File file = new File(DIRECTORY + "my_file." + fileFormat);
+        File file = new File(DIRECTORY + "export." + fileFormat);
 
         try (FileWriter fw = new FileWriter(file)) {
             switch(fileFormat) {
@@ -38,8 +37,6 @@ public class LogFileWriter {
                     break;
                 case rtf: writeRtf(object, file);
                     break;
-                case txt: writeTxt(object, file);
-                    break;
                 case xml: writeXml(object, file);
                     break;
             }
@@ -48,11 +45,9 @@ public class LogFileWriter {
         }
     }
 
-    private void writeXml(Object object, File file) {
-        StreamResult streamResult;
-        streamResult = new StreamResult(file);
+    private void writeDoc(Object object, File file) {
         try {
-            JaxbParser.saveObject(object, streamResult);
+            Converter.convert(object, FileFormat.doc, file);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -66,10 +61,20 @@ public class LogFileWriter {
         }
     }
 
+    private void writeLog(Object object, File file) {
+        try (FileWriter logFileWriter = new FileWriter(file)) {
+            LogMessages logMessages = (LogMessages) object;
+            for (LogMessage logMessage : logMessages.getLogMessages()) {
+                logFileWriter.write(logMessage.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void writePdf(Object object, File file) {
         File xmlFile = new File("temp\\tempLogFile.xml");
         writeXml(object, xmlFile);
-
         try {
             FopConverter.convertTo(xmlFile, FileFormat.pdf, file);
             xmlFile.delete();
@@ -90,28 +95,14 @@ public class LogFileWriter {
         }
     }
 
-    private void writeTxt(Object object, File file) {
-        try (FileWriter logFileWriter = new FileWriter(file)) {
-            LogMessages logMessages = (LogMessages) object;
-            for (LogMessage logMessage : logMessages.getLogMessages()) {
-                logFileWriter.write(logMessage.toString());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void writeLog(Object object, File file) {
-        writeTxt(object, file);
-    }
-
-    private void writeDoc(Object object, File file) {
+    private void writeXml(Object object, File file) {
+        StreamResult streamResult;
+        streamResult = new StreamResult(file);
         try {
-            Converter.convert(object, FileFormat.doc, file);
+            JaxbParser.saveObject(object, streamResult);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
     }
-
 
 }

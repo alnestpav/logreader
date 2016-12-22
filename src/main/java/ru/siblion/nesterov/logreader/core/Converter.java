@@ -33,6 +33,7 @@ public class Converter {
             case html: xslFile = xslFileForHtml;
                 break;
             case rtf: xslFile = xslFileForRtf;
+                
                 break;
         }
         try {

@@ -2,8 +2,8 @@ package ru.siblion.nesterov.logreader.test;
 
 
 import ru.siblion.nesterov.logreader.core.FileFormat;
-import ru.siblion.nesterov.logreader.core.LogFileWriter;
-import ru.siblion.nesterov.logreader.core.Request;
+import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
+import ru.siblion.nesterov.logreader.type.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.type.LogMessages;
@@ -44,18 +44,15 @@ public class Test {
         }
         System.out.println(logMessageList);
 
-        //LogFileWriter.write(logMessageList, FileFormat.xml);
+        //ObjectToFileWriter.write(logMessageList, FileFormat.xml);
         LogMessages logMessages = new LogMessages();
         logMessages.setLogMessages(logMessageList);
-        LogFileWriter logFileWriter = new LogFileWriter(logMessageList);
-        logFileWriter.write(logMessages, FileFormat.pdf);
-       // LogFileWriter.write(logMessageList, FileFormat.rtf);
-        //LogFileWriter.write(logMessageList, FileFormat.txt);
-        //LogFileWriter.write(logMessageList, FileFormat.log);
-       // LogFileWriter.write(logMessageList, FileFormat.doc);
-
-
-       // LogFileWriter.write(logMessageList, FileFormat.html);
+        ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter(logMessageList);
+        objectToFileWriter.write(logMessages, FileFormat.pdf);
+        objectToFileWriter.write(logMessages, FileFormat.rtf);
+        objectToFileWriter.write(logMessages, FileFormat.log);
+        objectToFileWriter.write(logMessages, FileFormat.doc);
+        objectToFileWriter.write(logMessages, FileFormat.html);
 
 
     }

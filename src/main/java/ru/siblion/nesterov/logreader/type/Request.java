@@ -1,7 +1,4 @@
-package ru.siblion.nesterov.logreader.core;
-
-import ru.siblion.nesterov.logreader.type.DateInterval;
-import ru.siblion.nesterov.logreader.type.LogMessage;
+package ru.siblion.nesterov.logreader.type;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
