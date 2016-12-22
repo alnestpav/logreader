@@ -88,9 +88,16 @@ public class ObjectToFileWriter {
     }
 
     private void writeRtf(Object object, File file) {
+        File xmlFile = new File("temp\\tempLogFile.xml");
+        writeXml(object, xmlFile);
         try {
-            Converter.convert(object, FileFormat.rtf, file);
-        } catch (JAXBException e) {
+            FopConverter.convertTo(xmlFile, FileFormat.rtf, file);
+            xmlFile.delete();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (FOPException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
             e.printStackTrace();
         }
     }
