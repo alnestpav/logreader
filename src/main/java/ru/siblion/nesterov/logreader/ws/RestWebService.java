@@ -1,10 +1,8 @@
 package ru.siblion.nesterov.logreader.ws;
 
 import ru.siblion.nesterov.logreader.core.FileFormat;
-import ru.siblion.nesterov.logreader.test.MyRunnable;
 import ru.siblion.nesterov.logreader.type.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
-import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.ws.rs.*;

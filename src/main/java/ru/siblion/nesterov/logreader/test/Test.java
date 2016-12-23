@@ -19,8 +19,6 @@ import java.util.List;
 public class Test {
 
     public static void main(String[] args) {
-        FileHandler fileHandler = new FileHandler();
-        fileHandler.startFileTracking();
         String location = "webl_domain";
         String string = "javax";
 /*        String dateFromString = "2016-12-14T15:48:28.432+03:00";
@@ -44,6 +42,8 @@ public class Test {
             e.printStackTrace();
         }
         System.out.println(filePath);
+        FileHandler fileHandler = new FileHandler();
+        fileHandler.removeOldFiles();
         /*try {
             Thread.currentThread().sleep(1);
         } catch (InterruptedException e) {

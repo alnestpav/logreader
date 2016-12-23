@@ -7,6 +7,9 @@ import ru.siblion.nesterov.logreader.type.Config;
 import ru.siblion.nesterov.logreader.type.Request;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 
+import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.text.ParseException;
@@ -16,36 +19,27 @@ import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+@Startup
+@Singleton
 public class FileHandler {
     private final static File configFile = new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\config\\logreader.xml");
     private Config config;
 
     private static final Logger logger = Logger.getLogger(Request.class.getName());
 
-
-    public void startFileTracking() {
+    @Schedule(minute="0", hour="0") // запуск метода каждый день в полночь
+    public void removeOldFiles() {
         try {
             config = (Config) JaxbParser.xmlToObject(configFile, new Config()); // второй параметр возможно нужно поменять в сигнатуре метода
-            System.out.println(config.getDirectory());
-            System.out.println(config.getLifeTime());
-
-            ScheduledExecutorService ses =
-                    Executors.newScheduledThreadPool(1);
-            System.out.println("runnable");
-            Runnable pinger = new Runnable() {
-                public void run() {
-                    System.out.println("IN THREAD");
-                    removeOldFiles(config.getDirectory());
-                }
-            };
-            ses.scheduleAtFixedRate(pinger, 1, 2, TimeUnit.SECONDS);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
-    }
+        System.out.println(config.getDirectory());
+        System.out.println(config.getLifeTime());
 
-    public void removeOldFiles(File directory) {
         long configLifeTime = config.getLifeTime();
+        File directory = config.getDirectory();
         for(File file : directory.listFiles()) {
             String stringDateOfFile = null;
             try {
