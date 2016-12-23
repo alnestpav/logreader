@@ -23,8 +23,4 @@ public class LogMessages {
         this.logMessages = employees;
     }
 
-    /*@Override
-    public static toString() {
-        return
-    }*/
 }

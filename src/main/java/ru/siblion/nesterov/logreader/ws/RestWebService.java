@@ -1,6 +1,6 @@
 package ru.siblion.nesterov.logreader.ws;
 
-import ru.siblion.nesterov.logreader.core.FileFormat;
+import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.type.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
 import ru.siblion.nesterov.logreader.util.Utils;

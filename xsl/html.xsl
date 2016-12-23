@@ -6,17 +6,26 @@
   <head>
   <style>
   div {
-	margin-top: 1.0em;
-	word-wrap:break-word;
+	word-wrap: break-word;
+    white-space: pre-wrap;
+    margin-top: -1.5em;
   }
+  p {
+    font-family: courier new;
+    font-size: 14;
+    margin-top: -1.5em;
+    }
+
+
   </style>
   </head>
   <body>
-  <h2>Logs</h2>
   <div>
     <xsl:for-each select="/logMessages/logMessage">
-      <div><p><xsl:value-of select="date"/></p></div>
-      <div><p><xsl:value-of select="message"/></p></div>
+      <div>
+        <p><xsl:value-of select="date"/></p>
+        <p><xsl:value-of select="message"/></p>
+      </div>
     </xsl:for-each>
   </div>
   </body>

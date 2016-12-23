@@ -1,9 +1,7 @@
 package ru.siblion.nesterov.logreader.type;
 
-import ru.siblion.nesterov.logreader.core.FileFormat;
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
 import ru.siblion.nesterov.logreader.test.MyRunnable;
-import sun.rmi.runtime.Log;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -110,6 +108,7 @@ public class Request {
 
     public void saveResultToFile() {
         List<LogMessage> logMessageList = getListOfLogMessages();
+        System.out.println("LOG " + logMessageList);
         LogMessages logMessages = new LogMessages();
         logMessages.setLogMessages(logMessageList);
         ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter(logMessages);

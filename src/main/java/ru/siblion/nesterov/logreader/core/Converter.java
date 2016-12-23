@@ -1,7 +1,7 @@
 package ru.siblion.nesterov.logreader.core;
 
+import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
-
 
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.*;
@@ -33,7 +33,6 @@ public class Converter {
             case html: xslFile = xslFileForHtml;
                 break;
             case rtf: xslFile = xslFileForRtf;
-
                 break;
         }
         try {

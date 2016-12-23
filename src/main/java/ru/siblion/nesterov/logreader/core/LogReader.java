@@ -137,13 +137,13 @@ public class LogReader {
                 lineNumberReader.readLine();
             }
             for (int i = fromLineNumber; i <= toLineNumber; i++) {
-                block.append(lineNumberReader.readLine());
+                block.append(lineNumberReader.readLine() + "\n");
             }
 
         } catch(IOException e){
             logger.log(Level.SEVERE, "Ошибка при парсинге блока", e) ;
         }
-
+        System.out.println(block.toString());
         return block.toString();
     }
 

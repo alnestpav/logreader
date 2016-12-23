@@ -15,7 +15,6 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +29,7 @@ public class FileHandler {
 
     @Schedule(minute="0", hour="0") // запуск метода каждый день в полночь
     public void removeOldFiles() {
+        logger.log(Level.INFO, "Удаление старых лог-файлов");
         try {
             config = (Config) JaxbParser.xmlToObject(configFile, new Config()); // второй параметр возможно нужно поменять в сигнатуре метода
         } catch (JAXBException e) {
@@ -48,23 +48,18 @@ public class FileHandler {
                 logger.log(Level.WARNING, "В папке находятся не только экспортированные log файлы", e) ;
                 continue;
             }
-            System.out.println("dddddddateeeeeeeee " + stringDateOfFile);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
             Date currentDate = new Date();
             Date dateOfFile = null;
             try {
                 dateOfFile = simpleDateFormat.parse(stringDateOfFile);
             } catch (ParseException e) {
-                //break;
+                e.printStackTrace();
             }
-            System.out.println("date " + dateOfFile);
-            System.out.println("config " + configLifeTime);
             long lifeTime = (currentDate.getTime() - dateOfFile.getTime())/1000; // в секундах
-            System.out.println(lifeTime);
             if (!file.isDirectory() &&  lifeTime > configLifeTime)
                 file.delete();
         }
     }
-
 
 }

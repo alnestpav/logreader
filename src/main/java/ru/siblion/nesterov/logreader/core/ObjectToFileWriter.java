@@ -2,6 +2,7 @@ package ru.siblion.nesterov.logreader.core;
 
 import org.apache.fop.apps.FOPException;
 import ru.siblion.nesterov.logreader.test.FopConverter;
+import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.type.LogMessages;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
