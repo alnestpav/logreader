@@ -16,7 +16,7 @@ import ru.siblion.nesterov.logreader.core.FileFormat;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 
 public class FopConverter {
-    private static final File xslFile = new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\pdf.xsl");
+    private static final String XSL_DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\xsl\\";
     /**
      * Method that will convert the given XML to PDF
      * @throws IOException
@@ -33,17 +33,19 @@ public class FopConverter {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         OutputStream out = null;
-
+        File xslFile = null;
         String fopOutputFormat = null;
         switch(fileFormat) {
             case pdf: {
                 out = new FileOutputStream(file);
                 fopOutputFormat = MimeConstants.MIME_PDF;
+                xslFile = new File(XSL_DIRECTORY + "pdf.xsl");
                 break;
             }
             case rtf: {
                 out = new FileOutputStream(file);
                 fopOutputFormat = MimeConstants.MIME_RTF;
+                xslFile = new File(XSL_DIRECTORY + "pdf.xsl"); //  rtf шаблон сделать
                 break;
             }
         }

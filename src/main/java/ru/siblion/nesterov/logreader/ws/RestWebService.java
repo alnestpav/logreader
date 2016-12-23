@@ -9,6 +9,7 @@ import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.ws.rs.*;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,11 +22,8 @@ public class RestWebService {
     @POST
     @Consumes(value={"application/xml,application/json"})
     @Produces(value={"application/xml,application/json"})
-    public String getListOfLogMessages(Request request) {
-        Runnable myRunnable = new MyRunnable(request);
-        Thread t = new Thread(myRunnable);
-        t.start();
-        return request.getFilePath();
+    public File getListOfLogMessages(Request request) {
+        return request.getResponse();
     }
 
     @GET

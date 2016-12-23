@@ -13,11 +13,11 @@ import java.io.*;
  * Created by alexander on 21.12.2016.
  */
 public class Converter {
-    private static final String DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\";
+    private static final String XSL_DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\xsl\\";
 
-    private static final File xslFileForDoc = new File(DIRECTORY + "doc.xsl");
-    private static final File xslFileForHtml = new File(DIRECTORY + "html.xsl");
-    private static final File xslFileForRtf = new File(DIRECTORY + "rtf.xsl");
+    private static final File xslFileForDoc = new File(XSL_DIRECTORY + "doc.xsl");
+    private static final File xslFileForHtml = new File(XSL_DIRECTORY + "html.xsl");
+    private static final File xslFileForRtf = new File(XSL_DIRECTORY + "rtf.xsl");
 
     public static void convert(Object jaxbObject, FileFormat fileFormat, File file) throws JAXBException {
         StringWriter writer = new StringWriter();

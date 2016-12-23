@@ -2,11 +2,15 @@ package ru.siblion.nesterov.logreader.type;
 
 import ru.siblion.nesterov.logreader.core.FileFormat;
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
+import ru.siblion.nesterov.logreader.test.MyRunnable;
 import sun.rmi.runtime.Log;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,9 +32,13 @@ public class Request {
     @XmlElement
     private FileFormat fileFormat;
 
+    private Date date;
+
     private static final Logger logger = Logger.getLogger(Request.class.getName()); // проверить правильно работает в xml
 
     private static final String DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\";
+
+    private File outputFile;
 
 
     private Request(String string, String location, List<DateInterval> dateIntervals, FileFormat fileFormat) {
@@ -38,6 +46,11 @@ public class Request {
         this.location = location;
         this.dateIntervals = dateIntervals;
         this.fileFormat = fileFormat;
+        this.date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
+        String formattedDate = simpleDateFormat.format(date);
+        outputFile =  new File(DIRECTORY + formattedDate + "-" + this.hashCode() + "." + fileFormat);
+
     }
 
     public static Request getNewRequest(String string, String location,
@@ -100,12 +113,16 @@ public class Request {
         LogMessages logMessages = new LogMessages();
         logMessages.setLogMessages(logMessageList);
         ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter(logMessages);
-        objectToFileWriter.write(fileFormat);
+        objectToFileWriter.write(fileFormat, outputFile);
     }
 
-    public String getFilePath() {
-        return DIRECTORY + "export." + fileFormat;
+    public File getResponse() {
+        Runnable myRunnable = new MyRunnable(this);
+        Thread t = new Thread(myRunnable);
+        t.start();
+        return outputFile;
     }
+
 
     @Override
     public String toString() {

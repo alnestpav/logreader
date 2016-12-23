@@ -9,14 +9,14 @@ import java.io.File;
 /**
  * Created by alexander on 22.12.2016.
  */
-@XmlRootElement(name = "Config")
+@XmlRootElement(name = "log-files")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Config {
     @XmlElement(name = "directory")
     private File directory;
 
-    @XmlElement(name = "time-interval")
-    private int timeInterval; // в секундах
+    @XmlElement(name = "life-time")
+    private int lifeTime; // в секундах
 
     public Config() {
 
@@ -30,11 +30,11 @@ public class Config {
         this.directory = directory;
     }
 
-    public int getTimeInterval() {
-        return timeInterval;
+    public int getLifeTime() {
+        return lifeTime;
     }
 
-    public void setTimeInterval(int timeInterval) {
-        this.timeInterval = timeInterval;
+    public void setLifeTime(int lifeTime) {
+        this.lifeTime = lifeTime;
     }
 }

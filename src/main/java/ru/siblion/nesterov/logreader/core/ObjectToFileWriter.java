@@ -16,14 +16,12 @@ import java.io.*;
  */
 public class ObjectToFileWriter {
     private Object object;
-    private final static String DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\";
 
     public ObjectToFileWriter(Object object) {
         this.object = object;
     }
 
-    public void write(FileFormat fileFormat) {
-        File file = new File(DIRECTORY + "export." + fileFormat);
+    public void write(FileFormat fileFormat, File file) {
 
         try (FileWriter fw = new FileWriter(file)) {
             switch(fileFormat) {
