@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+<xsl:stylesheet version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:fo="http://www.w3.org/1999/XSL/Format" exclude-result-prefixes="fo">
 <xsl:template match="logMessages">
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -12,7 +12,7 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block font-size="16pt" font-weight="bold" space-after="5mm">logreader 1.0.1</fo:block>
             <fo:block>
-                <fo:external-graphic src="siblion_logo.gif"></fo:external-graphic>
+                <fo:external-graphic src="pdf.png" />
             </fo:block>
           <fo:block font-family="courier new" font-size="14pt">
               <xsl:apply-templates select="logMessage"/>>
