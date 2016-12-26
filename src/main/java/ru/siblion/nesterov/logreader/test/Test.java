@@ -33,22 +33,20 @@ public class Test {
         SoapWebService soapWebService = new SoapWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
-        FileFormat fileFormat = FileFormat.pdf;
-        Request request = Request.getNewRequest(string, location, dateIntervals, fileFormat);
-        File filePath = null;
-        try {
-            filePath = soapWebService.getListOfLogMessages(request);
-        } catch (Exception e) {
-            e.printStackTrace();
+        FileFormat[] fileFormats = { FileFormat.doc, FileFormat.html, FileFormat.log, FileFormat.pdf, FileFormat.pdf, FileFormat.rtf };
+        for (FileFormat fileFormat : fileFormats) {
+            Request request = Request.getNewRequest(string, location, dateIntervals, fileFormat);
+            File filePath = null;
+            try {
+                filePath = soapWebService.getListOfLogMessages(request);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println(filePath);
+            FileHandler fileHandler = new FileHandler();
+            fileHandler.removeOldFiles();
         }
-        System.out.println(filePath);
-        FileHandler fileHandler = new FileHandler();
-        fileHandler.removeOldFiles();
-        /*try {
-            Thread.currentThread().sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
+
     }
 
 }

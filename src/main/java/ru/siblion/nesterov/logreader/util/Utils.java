@@ -1,6 +1,5 @@
 package ru.siblion.nesterov.logreader.util;
 
-
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 
 import javax.xml.datatype.DatatypeConfigurationException;

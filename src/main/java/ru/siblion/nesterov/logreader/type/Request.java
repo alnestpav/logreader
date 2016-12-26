@@ -1,7 +1,7 @@
 package ru.siblion.nesterov.logreader.type;
 
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
-import ru.siblion.nesterov.logreader.test.MyRunnable;
+import ru.siblion.nesterov.logreader.exceptions.TooManyProcessException;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Exchanger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,6 +39,8 @@ public class Request {
 
     private File outputFile;
 
+    private static int processCount = 0;
+
 
     private Request(String string, String location, List<DateInterval> dateIntervals, FileFormat fileFormat) {
         this.string = string;
@@ -48,7 +51,6 @@ public class Request {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
         String formattedDate = simpleDateFormat.format(date);
         outputFile =  new File(DIRECTORY + formattedDate + "-" + this.hashCode() + "." + fileFormat);
-
     }
 
     public static Request getNewRequest(String string, String location,
@@ -115,13 +117,21 @@ public class Request {
         objectToFileWriter.write(fileFormat, outputFile);
     }
 
-    public File getResponse() {
-        Runnable myRunnable = new MyRunnable(this);
-        Thread t = new Thread(myRunnable);
-        t.start();
+    public File getResponse() throws TooManyProcessException {
+        if (processCount >= 10) {
+                throw new TooManyProcessException();
+        }
+        System.out.println("processCount " + processCount);
+        Thread getLogMessagesThread = new Thread(new Runnable() {
+            public void run() {
+                processCount++;
+                saveResultToFile();
+                processCount--;
+            }
+        });
+        getLogMessagesThread.start();	//Запуск потока, который ищет логи и выводит их в файл
         return outputFile;
     }
-
 
     @Override
     public String toString() {

@@ -21,7 +21,9 @@
 <xsl:template match="logMessage">
 	<fo:block>
         <fo:block>
-          <xsl:value-of select="date"/>
+            <fo:inline font-weight="bold">
+                <xsl:value-of select="date"/>
+            </fo:inline>
         </fo:block>
         <fo:block space-after="1.0em" wrap-option="wrap" white-space="pre" white-space-collapse="false" white-space-treatment="preserve">
           <xsl:value-of select="message"/>

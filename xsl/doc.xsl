@@ -4,6 +4,11 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:template match="/">
 <w:wordDocument xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml">
   <w:body>
+      <w:p>
+          <w:r><w:t>Log messages</w:t></w:r>
+          <w:r><w:t><xsl:value-of select="Title"/></w:t></w:r>
+      </w:p>
+      <w:b/>
   	<xsl:for-each select="/logMessages/logMessage">
 	<w:p>
       <w:r>

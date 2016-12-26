@@ -1,7 +1,5 @@
 package ru.siblion.nesterov.logreader.util;
 
-import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
-import ru.siblion.nesterov.logreader.type.Config;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

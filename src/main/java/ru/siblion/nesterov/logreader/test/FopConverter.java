@@ -17,12 +17,7 @@ import ru.siblion.nesterov.logreader.util.JaxbParser;
 
 public class FopConverter {
     private static final String XSL_DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\xsl\\";
-    /**
-     * Method that will convert the given XML to PDF
-     * @throws IOException
-     * @throws FOPException
-     * @throws TransformerException
-     */
+
     public static void convert(Object jaxbObject, FileFormat fileFormat, File file) throws IOException, FOPException,
             TransformerException, JAXBException {
         StringWriter writer = new StringWriter();
