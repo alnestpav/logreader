@@ -1,6 +1,6 @@
 package ru.siblion.nesterov.logreader.ws;
 
-import ru.siblion.nesterov.logreader.exceptions.TooManyProcessException;
+import ru.siblion.nesterov.logreader.exceptions.TooManyThreadException;
 import ru.siblion.nesterov.logreader.type.Request;
 
 import javax.ejb.Stateless;
@@ -24,7 +24,7 @@ public class SoapWebService {
     public File getListOfLogMessages(@WebParam(name = "request") Request request) { // File или String лучше?
         try {
             return request.getResponse();
-        } catch (TooManyProcessException e) {
+        } catch (TooManyThreadException e) {
             logger.log(Level.WARNING, "Количество процессов не может быть больше 10", e);
         }
         return null;

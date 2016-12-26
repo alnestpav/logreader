@@ -162,8 +162,6 @@ public class FileSearcher {
         /* Проверяем, является ли местоположение location каким-либо кластером */
         List<LogFile> logFiles = getClusterLogFiles(location);
         return logFiles;
-
-
     }
 
 }

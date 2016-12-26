@@ -1,7 +1,7 @@
 package ru.siblion.nesterov.logreader.type;
 
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
-import ru.siblion.nesterov.logreader.exceptions.TooManyProcessException;
+import ru.siblion.nesterov.logreader.exceptions.TooManyThreadException;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Exchanger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -117,9 +116,9 @@ public class Request {
         objectToFileWriter.write(fileFormat, outputFile);
     }
 
-    public File getResponse() throws TooManyProcessException {
+    public File getResponse() throws TooManyThreadException {
         if (processCount >= 10) {
-                throw new TooManyProcessException();
+                throw new TooManyThreadException();
         }
         System.out.println("processCount " + processCount);
         Thread getLogMessagesThread = new Thread(new Runnable() {

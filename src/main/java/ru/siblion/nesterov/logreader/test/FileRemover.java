@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 @Startup
 @Singleton
-public class FileHandler {
+public class FileRemover {
     private final static File configFile = new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\config\\logreader.xml");
     private Config config;
 
@@ -45,7 +45,7 @@ public class FileHandler {
             try {
                 stringDateOfFile = file.getName().substring(0, 28); // здесь программа зависала, хотя должно быть исключение
             } catch (StringIndexOutOfBoundsException e) {
-                logger.log(Level.WARNING, "В папке находятся не только экспортированные log файлы", e) ;
+                logger.log(Level.WARNING, "В папке находятся не только экспортированные лог-файлы", e) ;
                 continue;
             }
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");

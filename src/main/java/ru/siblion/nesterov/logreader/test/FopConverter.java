@@ -15,6 +15,8 @@ import org.apache.fop.apps.MimeConstants;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 
+// класс для конвертации объекта в документ
+// используется для pdf и rtf
 public class FopConverter {
     private static final String XSL_DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\xsl\\";
 
@@ -40,7 +42,7 @@ public class FopConverter {
             case rtf: {
                 out = new FileOutputStream(file);
                 fopOutputFormat = MimeConstants.MIME_RTF;
-                xslFile = new File(XSL_DIRECTORY + "pdf.xsl"); //  rtf шаблон сделать
+                xslFile = new File(XSL_DIRECTORY + "rtf.xsl"); //  rtf шаблон сделать
                 break;
             }
         }

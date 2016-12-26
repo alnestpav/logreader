@@ -15,6 +15,7 @@ import java.io.*;
 /**
  * Created by alexander on 19.12.2016.
  */
+// класс для записи объектов в файлы
 public class ObjectToFileWriter {
     private Object object;
 
@@ -23,24 +24,19 @@ public class ObjectToFileWriter {
     }
 
     public void write(FileFormat fileFormat, File file) {
-
-        try (FileWriter fw = new FileWriter(file)) {
-            switch(fileFormat) {
-                case doc: writeDoc(object, file);
-                    break;
-                case html: writeHtml(object, file);
-                    break;
-                case log: writeLog(object, file);
-                    break;
-                case pdf: writePdf(object, file);
-                    break;
-                case rtf: writeRtf(object, file);
-                    break;
-                case xml: writeXml(object, file);
-                    break;
-            }
-        } catch(IOException e) {
-            e.printStackTrace();
+        switch(fileFormat) {
+            case doc: writeDoc(object, file);
+                break;
+            case html: writeHtml(object, file);
+                break;
+            case log: writeLog(object, file);
+                break;
+            case pdf: writePdf(object, file);
+                break;
+            case rtf: writeRtf(object, file);
+                break;
+            case xml: writeXml(object, file);
+                break;
         }
     }
 

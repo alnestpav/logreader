@@ -33,7 +33,7 @@ public class Test {
         SoapWebService soapWebService = new SoapWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
-        FileFormat[] fileFormats = { FileFormat.doc, FileFormat.html, FileFormat.log, FileFormat.pdf, FileFormat.pdf, FileFormat.rtf };
+        FileFormat[] fileFormats = { FileFormat.doc, FileFormat.html, FileFormat.log, FileFormat.pdf, FileFormat.pdf, FileFormat.rtf, FileFormat.xml };
         for (FileFormat fileFormat : fileFormats) {
             Request request = Request.getNewRequest(string, location, dateIntervals, fileFormat);
             File filePath = null;
@@ -43,8 +43,8 @@ public class Test {
                 e.printStackTrace();
             }
             System.out.println(filePath);
-            FileHandler fileHandler = new FileHandler();
-            fileHandler.removeOldFiles();
+            FileRemover fileRemover = new FileRemover();
+            fileRemover.removeOldFiles();
         }
 
     }

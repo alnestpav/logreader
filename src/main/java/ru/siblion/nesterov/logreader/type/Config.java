@@ -11,6 +11,7 @@ import java.io.File;
  */
 @XmlRootElement(name = "log-files")
 @XmlAccessorType(XmlAccessType.FIELD)
+// класс для работы с config-файлом config/logreader.xml
 public class Config {
     @XmlElement(name = "directory")
     private File directory;
