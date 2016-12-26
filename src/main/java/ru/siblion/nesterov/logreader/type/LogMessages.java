@@ -12,8 +12,20 @@ import java.util.List;
 @XmlRootElement(name = "logMessages")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogMessages {
+    @XmlElement(name = "request")
+    private Request request;
+
     @XmlElement(name = "logMessage")
     private List<LogMessage> logMessages = null;
+
+    public LogMessages(Request request, List<LogMessage> logMessageList) {
+        this.request = request;
+        logMessages = logMessageList;
+    }
+
+    public LogMessages() {
+
+    }
 
     public List<LogMessage> getLogMessages() {
         return logMessages;
@@ -21,6 +33,13 @@ public class LogMessages {
 
     public void setLogMessages(List<LogMessage> employees) {
         this.logMessages = employees;
+    }
+
+    public Request getRequest() {
+        return request;
+    }
+    public void setRequest(Request request) {
+        this.request = request;
     }
 
 }

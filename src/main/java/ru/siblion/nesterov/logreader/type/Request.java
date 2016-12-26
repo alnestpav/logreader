@@ -20,14 +20,13 @@ import static ru.siblion.nesterov.logreader.core.LogReader.getLogMessages;
  */
 @XmlRootElement(name = "Request")
 public class Request {
-    @XmlElement
+
     private String string;
-    @XmlElement
+
     private String location;
-    @XmlElement
+
     private List<DateInterval> dateIntervals;
 
-    @XmlElement
     private FileFormat fileFormat;
 
     private Date date;
@@ -63,7 +62,7 @@ public class Request {
     public Request() { // Нужен для JAXB или точнее для xml-object преобразования
 
     }
-
+    @XmlElement(name = "string")
     public String getString() {
         return string;
     }
@@ -71,6 +70,7 @@ public class Request {
         this.string = string;
     }
 
+    @XmlElement(name = "location")
     public String getLocation() {
         return location;
     }
@@ -78,6 +78,7 @@ public class Request {
         this.location = location;
     }
 
+    @XmlElement(name = "dateIntervals")
     public List<DateInterval> getDateIntervals() {
         return dateIntervals;
     }
@@ -85,11 +86,20 @@ public class Request {
         this.dateIntervals = dateIntervals;
     }
 
+    @XmlElement(name = "fileFormat")
     public FileFormat getFileFormat() {
         return fileFormat;
     }
     public void setFileFormat(FileFormat fileFormat) {
         this.fileFormat = fileFormat;
+    }
+
+    @XmlElement(name = "date")
+    public Date getDate() {
+        return date;
+    }
+    public void setDate(Date date) {
+        this.date = date;
     }
 
 
@@ -110,8 +120,7 @@ public class Request {
     public void saveResultToFile() {
         List<LogMessage> logMessageList = getListOfLogMessages();
         System.out.println("LOG " + logMessageList);
-        LogMessages logMessages = new LogMessages();
-        logMessages.setLogMessages(logMessageList);
+        LogMessages logMessages = new LogMessages(this, logMessageList);
         ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter(logMessages);
         objectToFileWriter.write(fileFormat, outputFile);
     }
@@ -134,7 +143,7 @@ public class Request {
 
     @Override
     public String toString() {
-        return "request(String: " + string + ", Location: " + location + ", DateIntervals: " + dateIntervals + ")";
+        return "Request:\n" + "\tDate: " + date + "\n\tString: " + string + "\n\tLocation: " + location + "\n\tDateIntervals: " + dateIntervals + "";
     }
 
 }

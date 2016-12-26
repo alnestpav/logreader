@@ -59,6 +59,7 @@ public class ObjectToFileWriter {
     private void writeLog(Object object, File file) {
         try (FileWriter logFileWriter = new FileWriter(file)) {
             LogMessages logMessages = (LogMessages) object;
+            logFileWriter.write(logMessages.getRequest().toString() + "\n");
             for (LogMessage logMessage : logMessages.getLogMessages()) {
                 logFileWriter.write(logMessage.toString());
             }

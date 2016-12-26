@@ -58,8 +58,7 @@ public class LogMessage implements Comparable<LogMessage> {
 
     @Override
     public String toString() {
-        return "Date: " + this.date + " " +
-                "Message: " + this.message + "\n";
+        return "LogMessage:" + "\n\tDate: " + this.date + "\n\tMessage: " + this.message + "\n";
     }
 
     @Override

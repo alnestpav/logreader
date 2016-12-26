@@ -10,7 +10,10 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="simpleA4">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block font-size="16pt" font-weight="bold" space-after="5mm">Log Messages</fo:block>
+          <fo:block font-size="16pt" font-weight="bold" space-after="5mm">logreader 1.0.1</fo:block>
+            <fo:block>
+                <fo:external-graphic src="siblion_logo.gif"></fo:external-graphic>
+            </fo:block>
           <fo:block font-family="courier new" font-size="14pt">
               <xsl:apply-templates select="logMessage"/>>
           </fo:block>
