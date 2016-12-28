@@ -1,4 +1,4 @@
-package ru.siblion.nesterov.logreader.test;
+package ru.siblion.nesterov.logreader.core;
 
 /**
  * Created by alexander on 22.12.2016.

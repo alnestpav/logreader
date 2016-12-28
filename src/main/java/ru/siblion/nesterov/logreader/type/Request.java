@@ -131,12 +131,13 @@ public class Request {
         }
         System.out.println("processCount " + processCount);
         Thread getLogMessagesThread = new Thread(new Runnable() {
+            @Override
             public void run() {
                 processCount++;
                 saveResultToFile();
                 processCount--;
             }
-        });
+        }, "searching and writing logs");
         getLogMessagesThread.start();	//Запуск потока, который ищет логи и выводит их в файл
         return outputFile;
     }

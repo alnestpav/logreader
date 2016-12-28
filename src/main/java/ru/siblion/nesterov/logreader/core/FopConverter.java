@@ -1,4 +1,4 @@
-package ru.siblion.nesterov.logreader.test;
+package ru.siblion.nesterov.logreader.core;
 import java.io.*;
 
 import javax.xml.bind.JAXBException;
