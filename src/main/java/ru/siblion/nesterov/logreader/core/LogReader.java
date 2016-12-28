@@ -1,5 +1,6 @@
 package ru.siblion.nesterov.logreader.core;
 
+import ru.siblion.nesterov.logreader.test.MyLogger;
 import ru.siblion.nesterov.logreader.type.LogFile;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 
@@ -16,16 +17,17 @@ import java.util.regex.Pattern;
  */
 public class LogReader {
 
-    private static final Logger logger = Logger.getLogger(LogReader.class.getName());
+    private static final Logger logger = MyLogger.getLogger();
 
     private static List<LogFile> getPositionsOfLinesWithString(String string, List<LogFile> logFiles) {
-
+        logger.log(Level.INFO, "log files:::: " + logFiles);
         StringBuilder filesString = new StringBuilder();
         for (LogFile logFile: logFiles) {
             filesString.append(logFile.getFilePath() + " ");
         }
         System.out.println("filesString " + filesString);
         String command = "findstr /n /r /c:" + "\"" + string + "\"" + " " + filesString;
+        logger.log(Level.INFO, "command:\n" + command);
 
         try {
             Process findstrProcess = Runtime.getRuntime().exec(command);
@@ -127,7 +129,7 @@ public class LogReader {
     }
 
     private static String getBlock(LogFile logFile, int fromLineNumber, int toLineNumber)  {
-        System.out.println("getBlock(" + logFile.getFilePath() + ", " + fromLineNumber + ", " + toLineNumber + ")");
+        logger.log(Level.INFO, "getBlock(" + logFile.getFilePath() + ", " + fromLineNumber + ", " + toLineNumber + ")");
         StringBuilder block = new StringBuilder();
 
         try(FileReader fileReader = new FileReader(logFile.getFilePath());
@@ -151,14 +153,16 @@ public class LogReader {
                                                   String location,
                                                   XMLGregorianCalendar dateFrom,
                                                   XMLGregorianCalendar dateTo) throws Exception {
+        logger.log(Level.INFO, "Получить лог сообщения");
         Map<Integer, Integer> blockPositions;
         FileSearcher fileSearcher = new FileSearcher();
         List<LogMessage> logMessageList = new ArrayList<>();
         List<LogFile> logFiles = fileSearcher.getLogFiles(location);
-
+        logger.log(Level.SEVERE, "logFiles " + logFiles) ;
         if (logFiles.size() == 0) {
             LogMessage logMessage = new LogMessage();
             logMessage.setMessage("Неверный параметр location");
+            logger.log(Level.INFO, "Неверный параметр location");
             logMessageList.add(logMessage);
             return logMessageList;
         }
@@ -172,21 +176,25 @@ public class LogReader {
                 break; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
             }
             blockPositions = getBlockPositions(logFile.getPositionsOfString(), logFile.getPrefixPositions());
-
+            logger.log(Level.INFO, "blockPositions " + blockPositions);
             String currentBlock;
             for (Map.Entry<Integer, Integer> entry : blockPositions.entrySet()) {
                 currentBlock = (getBlock(logFile, entry.getKey(), entry.getValue())).substring(4); // удаляем префикс ####
+                logger.log(Level.INFO, "CURRENT BLOCK: " + currentBlock);
                 LogMessage logMessage = new LogMessage(currentBlock);
                 XMLGregorianCalendar logMessageDate = logMessage.getDate();
+                logger.log(Level.INFO, "CURRENT logMessageDate: " + logMessageDate);
                 if (dateFrom == null && dateTo == null) {
                     System.out.println("add Log Message");
                     logMessageList.add(logMessage);
+                    logger.log(Level.INFO, "Добавлено сообщение");
                     break;
                 }
                 if (dateFrom == null) {
                     if (logMessageDate.compare(dateTo) <= 0) {
                         System.out.println("add Log Message");
                         logMessageList.add(logMessage);
+                        logger.log(Level.INFO, "Добавлено сообщение");
                         break;
                     }
                 }
@@ -194,12 +202,17 @@ public class LogReader {
                     if (logMessageDate.compare(dateFrom) >= 0) {
                         System.out.println("add Log Message");
                         logMessageList.add(logMessage);
+                        logger.log(Level.INFO, "Добавлено сообщение");
                         break;
                     }
                 }
                 if (logMessageDate.compare(dateFrom) >= 0 && logMessageDate.compare(dateTo) <= 0 ) {
                     System.out.println("add Log Message");
                     logMessageList.add(logMessage);
+                    logger.log(Level.INFO, "Добавлено сообщение");
+                }
+                else {
+                    logger.log(Level.INFO, "ELSE УСЛОВИЕ");
                 }
             }
         }

@@ -1,5 +1,6 @@
 package ru.siblion.nesterov.logreader.ws;
 
+import ru.siblion.nesterov.logreader.test.MyLogger;
 import ru.siblion.nesterov.logreader.type.Request;
 
 import javax.ws.rs.*;
@@ -12,12 +13,13 @@ import java.util.logging.Logger;
  */
 @Path("/restWebService")
 public class RestWebService {
-    private static final Logger logger = Logger.getLogger(Request.class.getName());
+    private static final Logger logger = MyLogger.getLogger();
 
     @POST
     @Consumes(value = {"application/xml,application/json"})
     @Produces(value = {"application/xml,application/json"})
     public File getListOfLogMessages(Request request) {
+        logger.log(Level.INFO, "rest web webservice");
         try {
             return request.getResponse();
         } catch (Exception e) {

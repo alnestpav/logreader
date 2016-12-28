@@ -4,17 +4,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import ru.siblion.nesterov.logreader.test.MyLogger;
 import ru.siblion.nesterov.logreader.type.LogFile;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -28,16 +26,7 @@ public class FileSearcher {
     private String domainDirectory;
     private String domainName;
 
-    private static final Logger logger = Logger.getLogger(FileSearcher.class.getName());
-    static {
-        Handler fileHandler = null;
-        try {
-            fileHandler = new FileHandler("messages.log");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        logger.addHandler(fileHandler);
-    }
+    private static final Logger logger = MyLogger.getLogger();
 
     public FileSearcher() {
         domainDirectory = (new File("").getAbsolutePath()); // если запускать на сервере
