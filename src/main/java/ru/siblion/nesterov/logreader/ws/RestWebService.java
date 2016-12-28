@@ -1,6 +1,5 @@
 package ru.siblion.nesterov.logreader.ws;
 
-import ru.siblion.nesterov.logreader.exceptions.TooManyThreadException;
 import ru.siblion.nesterov.logreader.type.Request;
 
 import javax.ws.rs.*;
@@ -21,8 +20,8 @@ public class RestWebService {
     public File getListOfLogMessages(Request request) {
         try {
             return request.getResponse();
-        } catch (TooManyThreadException e) {
-            logger.log(Level.WARNING, "Количество процессов не может быть больше 10", e);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Какая-то ошибка", e);
         }
         return null;
     }

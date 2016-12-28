@@ -10,8 +10,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -26,10 +29,19 @@ public class FileSearcher {
     private String domainName;
 
     private static final Logger logger = Logger.getLogger(FileSearcher.class.getName());
+    static {
+        Handler fileHandler = null;
+        try {
+            fileHandler = new FileHandler("messages.log");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        logger.addHandler(fileHandler);
+    }
 
     public FileSearcher() {
-        //domainDirectory = (new File("").getAbsolutePath()); // если запускать на сервере
-        domainDirectory = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
+        domainDirectory = (new File("").getAbsolutePath()); // если запускать на сервере
+        //domainDirectory = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
         Pattern domainPattern = Pattern.compile("\\\\\\w+$");
         Matcher domainMatcher = domainPattern.matcher(domainDirectory);
         domainMatcher.find();

@@ -27,11 +27,11 @@ public class Test {
         String dateToString = "2016-12-14T15:48:31.734+03:00";*/
         String dateFromString = "14.12.2016, 10:47:53,548 AM MSK";
         String dateToString = "26.12.2016, 10:48:00,477 AM MSK";
-        XMLGregorianCalendar dateFrom = Utils.stringToXMLGregorianCalendar(dateFromString);
-        XMLGregorianCalendar dateTo = Utils.stringToXMLGregorianCalendar(dateToString);
+        //XMLGregorianCalendar dateFrom = Utils.stringToXMLGregorianCalendar(dateFromString);
+        //XMLGregorianCalendar dateTo = Utils.stringToXMLGregorianCalendar(dateToString);
 
-        //XMLGregorianCalendar dateFrom = null;
-        //XMLGregorianCalendar dateTo = null;
+        XMLGregorianCalendar dateFrom = null;
+        XMLGregorianCalendar dateTo = null;
         SoapWebService soapWebService = new SoapWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));

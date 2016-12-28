@@ -38,7 +38,6 @@
         </div>
         <div id="request">
             <h3>Request:</h3>
-            <p>Date: <xsl:value-of select="/logMessages/request/date"/></p>
             <p>String: <xsl:value-of select="/logMessages/request/string"/></p>
             <p>Location: <xsl:value-of select="/logMessages/request/location"/></p>
             <p>DateIntervals:</p>

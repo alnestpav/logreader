@@ -1,7 +1,6 @@
 package ru.siblion.nesterov.logreader.type;
 
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
-import ru.siblion.nesterov.logreader.exceptions.TooManyThreadException;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,8 +38,9 @@ public class Request {
 
     private File outputFile;
 
-    private static int processCount = 0;
+    private static final int NUMBER_OF_THREADS = 10;
 
+    private static ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     private Request(String string, String location, List<DateInterval> dateIntervals, FileFormat fileFormat) {
         this.string = string;
@@ -94,14 +96,6 @@ public class Request {
         this.fileFormat = fileFormat;
     }
 
-    @XmlElement(name = "date")
-    public Date getDate() {
-        return date;
-    }
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
 
     public List<LogMessage> getListOfLogMessages() {
         List<LogMessage> logMessageList = null;
@@ -125,20 +119,7 @@ public class Request {
         objectToFileWriter.write(fileFormat, outputFile);
     }
 
-    public File getResponse() throws TooManyThreadException {
-        if (processCount >= 10) {
-                throw new TooManyThreadException();
-        }
-        System.out.println("processCount " + processCount);
-        Thread getLogMessagesThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                processCount++;
-                saveResultToFile();
-                processCount--;
-            }
-        }, "searching and writing logs");
-        getLogMessagesThread.start();	//Запуск потока, который ищет логи и выводит их в файл
+    public File getResponse() {
         return outputFile;
     }
 
