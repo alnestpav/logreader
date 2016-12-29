@@ -1,6 +1,6 @@
 package ru.siblion.nesterov.logreader.core;
 
-import ru.siblion.nesterov.logreader.test.MyLogger;
+import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.LogFile;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 

@@ -1,8 +1,7 @@
 package ru.siblion.nesterov.logreader.type;
 
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
-import ru.siblion.nesterov.logreader.test.MyLogger;
-import ru.siblion.nesterov.logreader.util.Utils;
+import ru.siblion.nesterov.logreader.util.MyLogger;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,7 +22,7 @@ import static ru.siblion.nesterov.logreader.core.LogReader.getLogMessages;
  */
 @XmlRootElement(name = "Request")
 public class Request {
-    @XmlElement(name = "string")
+
     private String string;
 
     @XmlElement(name = "location")
@@ -136,16 +135,14 @@ public class Request {
     }
 
     public File getResponse() {
-        logger.log(Level.INFO, "get response of request: " + this);
-        Thread getLogMessagesThread = new Thread(new Runnable() {
+        executorService.submit(new Runnable() {
+            @Override
             public void run() {
-                logger.log(Level.INFO, "create new thread");
-                System.out.println("Привет из побочного потока!");
+                System.out.println("NEW THREAD");
                 saveResultToFile();
             }
-        });
-        getLogMessagesThread.start();
-        logger.log(Level.INFO, "before return outputFile " + outputFile);
+        }, "searching and writing logs");
+        //executorService.shutdown();
         return outputFile;
     }
 

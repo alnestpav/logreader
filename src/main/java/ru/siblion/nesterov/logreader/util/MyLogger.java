@@ -1,4 +1,4 @@
-package ru.siblion.nesterov.logreader.test;
+package ru.siblion.nesterov.logreader.util;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;

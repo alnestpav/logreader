@@ -1,6 +1,6 @@
 package ru.siblion.nesterov.logreader.type;
 
-import ru.siblion.nesterov.logreader.test.MyLogger;
+import ru.siblion.nesterov.logreader.util.MyLogger;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

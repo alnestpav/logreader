@@ -1,6 +1,6 @@
 package ru.siblion.nesterov.logreader.ws;
 
-import ru.siblion.nesterov.logreader.test.MyLogger;
+import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.Request;
 
 import javax.ejb.Stateless;
