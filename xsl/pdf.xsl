@@ -49,11 +49,11 @@
 
     <xsl:template match="logMessage">
 
-        <xsl:variable name="message">
+        <xsl:variable name="edited-message">
             <xsl:call-template name="string-replace-all">
                 <xsl:with-param name="text" select="message" />
-                <xsl:with-param name="replace" select="Info"/>
-                <xsl:with-param name="by" select="Replace"/>
+                <xsl:with-param name="replace" select="'Info'"/>
+                <xsl:with-param name="by" select="'Replace'"/>
             </xsl:call-template>
         </xsl:variable>
 
@@ -64,7 +64,7 @@
                 </fo:inline>
             </fo:block>
             <fo:block space-after="1.0em" wrap-option="wrap" white-space="pre" white-space-collapse="false" white-space-treatment="preserve">
-              <xsl:value-of select="$message"/>
+              <xsl:value-of select="$edited-message"/>
             </fo:block>
         </fo:block>
       </xsl:template>
