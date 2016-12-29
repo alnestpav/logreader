@@ -10,11 +10,15 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="simpleA4">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block font-size="16pt" font-weight="bold" space-after="5mm">logreader 1.0.1 test</fo:block>
-            <fo:block>
-                <fo:external-graphic content-type="content-type:image/gif" src="file:/C:/Users/alexander/IdeaProjects/logreader/xsl/siblion_logo.gif"/>
-            </fo:block>
-          <fo:block font-family="courier new" font-size="14pt">
+            <fo:block-container text-align="center">
+                  <fo:block font-size="18pt" font-weight="bold" space-after="5mm">logreader 1.0.1</fo:block>
+                <fo:block>
+                    <fo:external-graphic content-type="content-type:image/gif" src="file:/C:/Users/alexander/IdeaProjects/logreader/xsl/siblion_logo.gif"/>
+                </fo:block>
+                <fo:block font-size="16pt" font-weight="bold" space-after="5mm">Siblion company</fo:block>
+                <fo:block font-size="14pt" space-after="5mm">Created by Alexander Nesterov</fo:block>
+            </fo:block-container>
+            <fo:block font-family="courier new" font-size="14pt">
               <xsl:apply-templates select="logMessage"/>>
           </fo:block>
         </fo:flow>
