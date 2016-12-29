@@ -47,6 +47,22 @@
     </xsl:template>
 
 
+    <xsl:template name="split-string">
+        <xsl:param name="string"/>
+        <xsl:param name="width" select="20"/>
+        <xsl:choose>
+            <xsl:when test="string-length($string) &gt; $width"><xsl:value-of select="substring($string,0,$width)"/>&#x200b;<xsl:call-template name="split-string">
+                <xsl:with-param name="string">
+                    <xsl:value-of select="substring($string,$width)"/>
+                </xsl:with-param>
+            </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$string"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
     <xsl:template match="logMessage">
 
         <xsl:variable name="message">
@@ -63,8 +79,15 @@
                     <xsl:value-of select="date"/>
                 </fo:inline>
             </fo:block>
-            <fo:block space-after="1.0em" wrap-option="wrap" white-space="pre" white-space-collapse="false" white-space-treatment="preserve">
-              <xsl:value-of select="$message"/>
+            <fo:block space-after="1.0em" linefeed-treatment="preserve" white-space="pre" wrap-option="wrap">&#x2028;<xsl:call-template name="split-string">
+                <xsl:with-param name="string">
+                    <xsl:call-template name="string-replace-all">
+                        <xsl:with-param name="text" select="$message" />
+                        <xsl:with-param name="replace" select="'&#x9;'" />
+                        <xsl:with-param name="by" select="' '" />
+                    </xsl:call-template>
+                </xsl:with-param>
+            </xsl:call-template>
             </fo:block>
         </fo:block>
       </xsl:template>

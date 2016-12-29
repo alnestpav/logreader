@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
-xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<xsl:template match="/">
-    <w:wordDocument
-   xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml"
-   xmlns:v="urn:schemas-microsoft-com:vml"
-   xmlns:o="urn:schemas-microsoft-com:office:office"
-   xml:space="preserve">
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml">
+
+    <xsl:template name="lineBreak">
+        <xsl:param name="input"/>
+        <xsl:choose>
+            <xsl:when test="contains($input, '&#10;')">
+                <xsl:value-of select="substring-before($input, '&#10;')"/><w:br/>
+                <xsl:call-template name="lineBreak">
+                    <xsl:with-param name="input" select="substring-after($input, '&#10;')"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$input"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="/">
+        <w:wordDocument
+       xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml"
+       xmlns:v="urn:schemas-microsoft-com:vml"
+       xmlns:o="urn:schemas-microsoft-com:office:office"
+       xml:space="preserve">
   <w:body>
       <w:p>
           <w:pPr>
@@ -66,7 +82,11 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <w:rPr>
               <w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" w:cs="Courier New"/>
           </w:rPr>
-        <w:t><xsl:value-of select="message"/></w:t>
+        <w:t xml:space="preserve">
+            <xsl:call-template name="lineBreak">
+	        <xsl:with-param name="input" select="message"/>
+	        </xsl:call-template>
+        </w:t>
       </w:r>
     </w:p>
 		<w:p>

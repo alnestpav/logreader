@@ -24,6 +24,7 @@ public class SoapWebService {
     public File getListOfLogMessages(@WebParam(name = "request") Request request) { // File или String лучше?
         logger.log(Level.INFO, "soap web webservice");
         try {
+            logger.log(Level.INFO, "getting request: " + request);
             request.configure();
             return request.getResponse();
         } catch (Exception e) {

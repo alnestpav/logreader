@@ -23,6 +23,7 @@ import static ru.siblion.nesterov.logreader.core.LogReader.getLogMessages;
 @XmlRootElement(name = "Request")
 public class Request {
 
+    @XmlElement(name = "string")
     private String string;
 
     @XmlElement(name = "location")
@@ -54,6 +55,7 @@ public class Request {
         this.fileFormat = fileFormat;
     }
     public  void configure() {
+        logger.log(Level.INFO, "Конфигурация запроса: " + this);
         this.date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
         String formattedDate = simpleDateFormat.format(date);

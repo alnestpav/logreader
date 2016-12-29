@@ -185,14 +185,12 @@ public class LogReader {
                 XMLGregorianCalendar logMessageDate = logMessage.getDate();
                 logger.log(Level.INFO, "CURRENT logMessageDate: " + logMessageDate);
                 if (dateFrom == null && dateTo == null) {
-                    System.out.println("add Log Message");
                     logMessageList.add(logMessage);
                     logger.log(Level.INFO, "Добавлено сообщение");
                     break;
                 }
                 if (dateFrom == null) {
                     if (logMessageDate.compare(dateTo) <= 0) {
-                        System.out.println("add Log Message");
                         logMessageList.add(logMessage);
                         logger.log(Level.INFO, "Добавлено сообщение");
                         break;
@@ -200,14 +198,12 @@ public class LogReader {
                 }
                 if (dateTo == null) {
                     if (logMessageDate.compare(dateFrom) >= 0) {
-                        System.out.println("add Log Message");
                         logMessageList.add(logMessage);
                         logger.log(Level.INFO, "Добавлено сообщение");
                         break;
                     }
                 }
                 if (logMessageDate.compare(dateFrom) >= 0 && logMessageDate.compare(dateTo) <= 0 ) {
-                    System.out.println("add Log Message");
                     logMessageList.add(logMessage);
                     logger.log(Level.INFO, "Добавлено сообщение");
                 }

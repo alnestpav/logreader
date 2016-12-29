@@ -6,6 +6,7 @@ import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.type.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
 import ru.siblion.nesterov.logreader.util.Utils;
+import ru.siblion.nesterov.logreader.ws.RestWebService;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
 
 
@@ -33,6 +34,7 @@ public class Test {
         XMLGregorianCalendar dateFrom = null;
         XMLGregorianCalendar dateTo = null;
         SoapWebService soapWebService = new SoapWebService();
+        RestWebService restWebService = new RestWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
         FileFormat[] fileFormats = { FileFormat.xml, FileFormat.doc, FileFormat.html, FileFormat.log, FileFormat.pdf, FileFormat.pdf, FileFormat.rtf};
@@ -40,7 +42,8 @@ public class Test {
             Request request = Request.getNewRequest(string, location, dateIntervals, fileFormat);
             File filePath = null;
             try {
-                filePath = soapWebService.getListOfLogMessages(request);
+                //filePath = soapWebService.getListOfLogMessages(request);
+                filePath = restWebService.getListOfLogMessages(request);
             } catch (Exception e) {
                 e.printStackTrace();
             }
