@@ -37,7 +37,7 @@ public class Test {
         RestWebService restWebService = new RestWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
-        FileFormat[] fileFormats = { FileFormat.pdf };
+        FileFormat[] fileFormats = { FileFormat.doc };
         for (FileFormat fileFormat : fileFormats) {
             Request request = Request.getNewRequest(string, location, dateIntervals, fileFormat);
             File filePath = null;
