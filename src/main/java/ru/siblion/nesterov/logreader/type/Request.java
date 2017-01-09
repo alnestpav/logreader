@@ -147,7 +147,7 @@ public class Request {
                 saveResultToFile();
             }
         }, "searching and writing logs");
-        //executorService.shutdown();
+        executorService.shutdown();
         return outputFile;
     }
 
