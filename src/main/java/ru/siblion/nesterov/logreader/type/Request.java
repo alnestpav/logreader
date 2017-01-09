@@ -150,7 +150,7 @@ public class Request {
 
     @Override
     public String toString() {
-        return "Request:\n" + "\tDate: " + date + "\n\tString: " + string + "\n\tLocation: " + location + "\n\tDateIntervals: " + dateIntervals + "";
+        return "Request:" + "\n\tString: " + string + "\n\tLocation: " + location + "\n\tDateIntervals: " + dateIntervals + "\n\tFileFormat: " + fileFormat;
     }
 
 }
