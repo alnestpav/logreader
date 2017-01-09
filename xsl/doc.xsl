@@ -66,7 +66,65 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:w="http://schemas.microso
               <w:t>Created by Alexander Nesterov</w:t>
           </w:r>
       </w:p>
+      <w:p>
+          <w:r>
+              <w:rPr>
+                  <w:b w:val="on"/>
+                  <w:sz w:val="28"/>
+                  <w:sz-cs w:val="28"/>
+              </w:rPr>
+              <w:t>Request:</w:t>
+              <w:br w:type="text-wrapping"/>
+          </w:r>
+      </w:p>
+      <w:p>
+          <w:r>
+              <w:t>String: <xsl:value-of select="/logMessages/request/string"/></w:t>
+          </w:r>
+      </w:p>
+      <w:p>
+          <w:r>
+              <w:t>Location: <xsl:value-of select="/logMessages/request/location"/></w:t>
+          </w:r>
+      </w:p>
+      <w:p>
+          <w:r>
+              <w:t>DateIntervals:</w:t>
+          </w:r>
+      </w:p>
+      <xsl:for-each select="/logMessages/request/dateIntervals">
+        <w:p>
+          <w:r>
+              <w:t>DateFrom: <xsl:value-of select="dateFrom"/></w:t>
+          </w:r>
+        </w:p>
+          <w:p>
+          <w:r>
+              <w:t>DateTo: <xsl:value-of select="dateTo"/></w:t>
+          </w:r>
+        </w:p>
+      </xsl:for-each>
+      <w:p>
+          <w:r>
+              <w:t>FileFormat: <xsl:value-of select="/logMessages/request/fileFormat"/></w:t>
+          </w:r>
+      </w:p>
+
+
+
+
       <w:br w:type="text-wrapping"/>
+      <w:p>
+          <w:r>
+              <w:rPr>
+                  <w:b w:val="on"/>
+                  <w:sz w:val="28"/>
+                  <w:sz-cs w:val="28"/>
+              </w:rPr>
+              <w:t>Log messages:</w:t>
+              <w:br w:type="text-wrapping"/>
+          </w:r>
+      </w:p>
   	<xsl:for-each select="/logMessages/logMessage">
 	<w:p>
       <w:r>
