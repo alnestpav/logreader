@@ -3,6 +3,8 @@ package ru.siblion.nesterov.logreader.type;
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
@@ -21,6 +23,7 @@ import static ru.siblion.nesterov.logreader.core.LogReader.getLogMessages;
  * Created by alexander on 15.12.2016.
  */
 @XmlRootElement(name = "Request")
+@XmlAccessorType(XmlAccessType.FIELD) // решает ошибку для локального теста "Class has two properties of the same name"
 public class Request {
 
     @XmlElement(name = "string")

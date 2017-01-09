@@ -20,7 +20,7 @@ public class LogReader {
     private static final Logger logger = MyLogger.getLogger();
 
     private static List<LogFile> getPositionsOfLinesWithString(String string, List<LogFile> logFiles) {
-        logger.log(Level.INFO, "log files:::: " + logFiles);
+        logger.log(Level.INFO, "log files:::: " + logFiles + "string=" + string);
         StringBuilder filesString = new StringBuilder();
         for (LogFile logFile: logFiles) {
             filesString.append(logFile.getFilePath() + " ");
@@ -47,9 +47,13 @@ public class LogReader {
                     line = reader.readLine();
                 }
                 if (!string.equals("####")) {
-                    logFiles.get(0).setPositionsOfString(linesWithStringNumbers);
+                    LogFile logFile = new LogFile(logFiles.get(0));
+                    logFile.setPositionsOfString(linesWithStringNumbers);
+                    logFiles.set(0, logFile);
                 } else {
-                    logFiles.get(0).setPrefixPositions(linesWithStringNumbers);
+                    LogFile logFile = new LogFile(logFiles.get(0));
+                    logFile.setPrefixPositions(linesWithStringNumbers);
+                    logFiles.set(0, logFile);;
                 }
                 return logFiles;
             }
@@ -66,13 +70,18 @@ public class LogReader {
                 fileNameMatcher = fileNamePattern.matcher(line);
                 fileNameMatcher.find();
                 String fileName = fileNameMatcher.group();
+                logger.log(Level.INFO, "fileName from findstr: " + fileName);
                 if (!fileName.equals(currentFileName)) { // проверить последний случай!
-                    for (LogFile logFile : logFiles) {
-                        if (logFile.getFilePath().equals(currentFileName)) {
+                    for (int i = 0; i < logFiles.size(); i++) {
+                        if (logFiles.get(i).getFilePath().equals(currentFileName)) {
                             if (!string.equals("####")) {
+                                LogFile logFile = new LogFile(logFiles.get(i));
                                 logFile.setPositionsOfString(linesWithStringNumbers);
+                                logFiles.set(i, logFile);
                             } else {
+                                LogFile logFile = new LogFile(logFiles.get(i));
                                 logFile.setPrefixPositions(linesWithStringNumbers);
+                                logFiles.set(i, logFile);;
                             }
                         }
                     }
@@ -86,12 +95,16 @@ public class LogReader {
 
                 line = reader.readLine();
             }
-            for (LogFile logFile : logFiles) {
-                if (logFile.getFilePath().equals(currentFileName)) {
+            for (int i = 0; i < logFiles.size(); i++) {
+                if (logFiles.get(i).getFilePath().equals(currentFileName)) {
                     if (!string.equals("####")) {
+                        LogFile logFile = new LogFile(logFiles.get(i));
                         logFile.setPositionsOfString(linesWithStringNumbers);
+                        logFiles.set(i, logFile);
                     } else {
+                        LogFile logFile = new LogFile(logFiles.get(i));
                         logFile.setPrefixPositions(linesWithStringNumbers);
+                        logFiles.set(i, logFile);;
                     }
                 }
             }
@@ -104,6 +117,7 @@ public class LogReader {
 
     private static Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
                                                           List<Integer> prefixPositions) {
+        logger.log(Level.INFO, "getBlockPostitions");
         Map<Integer, Integer> blockPositions = new TreeMap<>();
         int start;
         int end;
@@ -170,10 +184,12 @@ public class LogReader {
         getPositionsOfLinesWithString(string, logFiles);
         getPositionsOfLinesWithString("####", logFiles);
 
-        System.out.println(logFiles);
+        System.out.println("LOG FILES " + logFiles);
+        logger.log(Level.INFO, "количество лог файлов: " + logFiles.size());
         for (LogFile logFile : logFiles) {
+            logger.log(Level.INFO, "Log файл обрабатываю: " + logFile + " ))))");
             if (logFile.getPositionsOfString() == null || logFile.getPrefixPositions() == null ) {
-                break; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
+                continue; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
             }
             blockPositions = getBlockPositions(logFile.getPositionsOfString(), logFile.getPrefixPositions());
             logger.log(Level.INFO, "blockPositions " + blockPositions);
@@ -187,20 +203,20 @@ public class LogReader {
                 if (dateFrom == null && dateTo == null) {
                     logMessageList.add(logMessage);
                     logger.log(Level.INFO, "Добавлено сообщение");
-                    break;
+                    continue;
                 }
                 if (dateFrom == null) {
                     if (logMessageDate.compare(dateTo) <= 0) {
                         logMessageList.add(logMessage);
                         logger.log(Level.INFO, "Добавлено сообщение");
-                        break;
+                        continue;
                     }
                 }
                 if (dateTo == null) {
                     if (logMessageDate.compare(dateFrom) >= 0) {
                         logMessageList.add(logMessage);
                         logger.log(Level.INFO, "Добавлено сообщение");
-                        break;
+                        continue;
                     }
                 }
                 if (logMessageDate.compare(dateFrom) >= 0 && logMessageDate.compare(dateTo) <= 0 ) {
