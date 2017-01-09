@@ -24,6 +24,21 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:w="http://schemas.microso
        xmlns:o="urn:schemas-microsoft-com:office:office"
        xml:space="preserve">
   <w:body>
+      <w:sectPr>
+        <w:pgNumType w:start="1" w:fmt="decimal"/>
+        <w:ftr w:type="odd">
+            <w:p>
+                <w:pPr>
+                    <w:jc w:val="center"/>
+                </w:pPr>
+                <w:r><w:fldChar w:fldCharType="begin"/></w:r>
+                <w:r><w:instrText>PAGE</w:instrText></w:r>
+                <w:r><w:fldChar w:fldCharType="separate"/></w:r>
+                <w:r><w:rPr><w:noProof/></w:rPr><w:t>1</w:t></w:r>
+                <w:r><w:fldChar w:fldCharType="end"/></w:r>
+            </w:p>
+        </w:ftr>
+        </w:sectPr>
       <w:p>
           <w:pPr>
              <w:jc w:val="center"/>
@@ -109,10 +124,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:w="http://schemas.microso
               <w:t>FileFormat: <xsl:value-of select="/logMessages/request/fileFormat"/></w:t>
           </w:r>
       </w:p>
-
-
-
-
       <w:br w:type="text-wrapping"/>
       <w:p>
           <w:r>
