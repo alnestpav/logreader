@@ -21,8 +21,8 @@ import java.util.List;
 public class Test {
 
     public static void main(String[] args) {
-        String location = "webl_server1";
-        String string =  "jboss";
+        String location = "webl_domain";
+        String string =  "javax";
 /*        String dateFromString = "2016-12-14T15:48:28.432+03:00";
         String dateToString = "2016-12-14T15:48:31.734+03:00";*/
         String dateFromString = "14.12.2016, 10:47:53,548 AM MSK";
@@ -36,13 +36,13 @@ public class Test {
         RestWebService restWebService = new RestWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
-        FileFormat[] fileFormats = { FileFormat.rtf };
+        FileFormat[] fileFormats = { FileFormat.pdf };
         for (FileFormat fileFormat : fileFormats) {
             Request request = Request.getNewRequest(string, location, dateIntervals, fileFormat);
             File filePath = null;
             try {
-                //filePath = soapWebService.getListOfLogMessages(request);
-                filePath = restWebService.getListOfLogMessages(request);
+                filePath = soapWebService.getListOfLogMessages(request);
+                //filePath = restWebService.getListOfLogMessages(request);
             } catch (Exception e) {
                 e.printStackTrace();
             }
