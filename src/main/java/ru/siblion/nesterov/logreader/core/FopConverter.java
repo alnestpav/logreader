@@ -16,7 +16,7 @@ import ru.siblion.nesterov.logreader.type.Config;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 
-/* Класс для конвертации объекта в документ, используется для pdf и rtf */
+/* Класс для конвертации объекта в документ с помощью библиотеки Apache FOP, используется для pdf и rtf */
 public class FopConverter {
     private Config config;
 

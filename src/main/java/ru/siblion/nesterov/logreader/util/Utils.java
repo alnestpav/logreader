@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 /**
  * Created by alexander on 06.12.2016.
  */
+
+/* Класс, предоставляющий вспомогательные методы для других классов */
 public class Utils {
 
     private static final Logger logger = MyLogger.getLogger();

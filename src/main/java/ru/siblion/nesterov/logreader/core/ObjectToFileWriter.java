@@ -15,7 +15,8 @@ import java.io.*;
 /**
  * Created by alexander on 19.12.2016.
  */
-// класс для записи объекта в файл
+
+/*  Класс для записи объекта в файл */
 public class ObjectToFileWriter {
     private final static File configFile = new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\config\\logreader.xml");
     private Config config;

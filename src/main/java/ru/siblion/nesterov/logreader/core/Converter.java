@@ -13,6 +13,8 @@ import java.io.*;
 /**
  * Created by alexander on 21.12.2016.
  */
+
+/* Класс для конвертации объекта в документ, используется для doc и html */
 public class Converter {
     private Config config;
 
@@ -32,8 +34,6 @@ public class Converter {
             case doc: xslFile = config.getDocTemplate();
                 break;
             case html: xslFile = config.getHtmlTemplate();
-                break;
-            case rtf: xslFile = config.getRtfTemplate();
                 break;
         }
         try {

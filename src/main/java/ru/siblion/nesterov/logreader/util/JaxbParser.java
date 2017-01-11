@@ -11,6 +11,8 @@ import java.io.File;
 /**
  * Created by alexander on 19.12.2016.
  */
+
+/* Класс для конвертирования объекта в xml-представление и конвертирования xml-файла в объект */
 public class JaxbParser {
     public static void objectToXml(Object o, StreamResult streamResult) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(o.getClass());

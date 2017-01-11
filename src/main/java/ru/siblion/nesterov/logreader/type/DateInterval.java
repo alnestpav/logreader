@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 /**
  * Created by alexander on 15.12.2016.
  */
+
+/* Класс, инкапсулирующий интервал дат, используется в классе Request */
 @XmlRootElement(name = "DateInterval")
 public class DateInterval {
 

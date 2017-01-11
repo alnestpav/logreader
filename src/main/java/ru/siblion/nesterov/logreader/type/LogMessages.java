@@ -9,6 +9,9 @@ import java.util.List;
 /**
  * Created by alexander on 19.12.2016.
  */
+
+/* Класс, инкапсулирующий объект класса Request и список объектов класса LogMessage,
+* используется при записи в пользовательские лог-файлы, конвертируется в xml*/
 @XmlRootElement(name = "logMessages")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogMessages {

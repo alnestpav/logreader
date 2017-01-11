@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 /**
  * Created by alexander on 07.12.2016.
  */
+
+/* Класс, инкапсулирующий лог-сообщение */
 @XmlRootElement(name = "LogMessage")
 public class LogMessage implements Comparable<LogMessage> {
 

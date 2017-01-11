@@ -18,6 +18,8 @@ import java.util.List;
 /**
  * Created by alexander on 06.12.2016.
  */
+
+/* Класс для тестирования проекта без развертывания приложения на сервере */
 public class Test {
 
     public static void main(String[] args) {

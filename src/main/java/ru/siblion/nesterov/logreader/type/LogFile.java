@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 /**
  * Created by alexander on 15.12.2016.
  */
+
+/* Класс, инкапсулирующий лог-файл WebLogic, используется при получении лог-сообщений в классе LogReader */
 public class LogFile {
     private String filePath;
     private List<Integer> positionsOfString;

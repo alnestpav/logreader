@@ -22,7 +22,7 @@ public class LogReader {
     private static final Logger logger = MyLogger.getLogger();
 
     private static List<LogFile> getPositionsOfLinesWithString(String string, List<LogFile> logFiles) {
-        logger.log(Level.INFO, "log files:::: " + logFiles + "string=" + string);
+        logger.log(Level.INFO, "log files: " + logFiles + "string=" + string);
         StringBuilder filesString = new StringBuilder();
         for (LogFile logFile: logFiles) {
             filesString.append(logFile.getFilePath() + " ");
