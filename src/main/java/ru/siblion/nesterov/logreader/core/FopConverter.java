@@ -12,16 +12,25 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import ru.siblion.nesterov.logreader.type.Config;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 
 // класс для конвертации объекта в документ
 // используется для pdf и rtf
 public class FopConverter {
-    private static final String XSL_DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\xsl\\";
+    private final static File configFile = new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\config\\logreader.xml");
+    private static Config config;
 
     public static void convert(Object jaxbObject, FileFormat fileFormat, File file) throws IOException, FOPException,
             TransformerException, JAXBException {
+
+        try {
+            config = (Config) JaxbParser.xmlToObject(configFile, new Config()); // второй параметр возможно нужно поменять в сигнатуре метода
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
         StringWriter writer = new StringWriter();
         StreamResult streamResult = new StreamResult(writer);
         JaxbParser.objectToXml(jaxbObject, streamResult);
@@ -36,13 +45,13 @@ public class FopConverter {
             case pdf: {
                 out = new FileOutputStream(file);
                 fopOutputFormat = MimeConstants.MIME_PDF;
-                xslFile = new File(XSL_DIRECTORY + "pdf.xsl");
+                xslFile = config.getPdfTemplate();
                 break;
             }
             case rtf: {
                 out = new FileOutputStream(file);
                 fopOutputFormat = MimeConstants.MIME_RTF;
-                xslFile = new File(XSL_DIRECTORY + "rtf.xsl"); //  rtf шаблон сделать
+                xslFile = config.getRtfTemplate();
                 break;
             }
         }

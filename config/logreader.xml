@@ -2,4 +2,8 @@
 <log-files>
     <directory>C:\Users\alexander\IdeaProjects\logreader\temp\</directory>
     <life-time>10</life-time>
+    <doc-template>C:\Users\alexander\IdeaProjects\logreader\xsl\doc.xsl</doc-template>
+    <html-template>C:\Users\alexander\IdeaProjects\logreader\xsl\html.xsl</html-template>
+    <pdf-template>C:\Users\alexander\IdeaProjects\logreader\xsl\pdf.xsl</pdf-template>
+    <rtf-template>C:\Users\alexander\IdeaProjects\logreader\xsl\rtf.xsl</rtf-template>
 </log-files>

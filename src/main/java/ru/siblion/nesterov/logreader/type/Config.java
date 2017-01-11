@@ -19,6 +19,19 @@ public class Config {
     @XmlElement(name = "life-time")
     private int lifeTime; // в секундах
 
+    @XmlElement(name = "doc-template")
+    private File docTemplate;
+
+    @XmlElement(name = "html-template")
+    private File htmlTemplate;
+
+    @XmlElement(name = "pdf-template")
+    private File pdfTemplate;
+
+    @XmlElement(name = "rtf-template")
+    private File rtfTemplate;
+
+
     public Config() {
 
     }
@@ -38,4 +51,21 @@ public class Config {
     public void setLifeTime(int lifeTime) {
         this.lifeTime = lifeTime;
     }
+
+    public File getDocTemplate() { return docTemplate; }
+
+    public void setDocTemplate(File docTemplate) {this.docTemplate = docTemplate; }
+
+    public File getHtmlTemplate() { return htmlTemplate; }
+
+    public void setHtmlTemplate(File htmlTemplate) {this.htmlTemplate = htmlTemplate; }
+
+    public File getPdfTemplate() { return pdfTemplate; }
+
+    public void setPdfTemplate(File pdfTemplate) {this.pdfTemplate = pdfTemplate; }
+
+    public File getRtfTemplate() { return rtfTemplate; }
+
+    public void setRtfTemplate(File rtfTemplate) {this.rtfTemplate = rtfTemplate; }
+
 }
