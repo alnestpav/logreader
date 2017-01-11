@@ -3,10 +3,7 @@ package ru.siblion.nesterov.logreader.type;
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -42,8 +39,10 @@ public class Request {
 
     private static final String DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\";
 
+    @XmlTransient
     private File outputFile;
 
+    @XmlTransient
     private Date date;
 
     private static final int NUMBER_OF_THREADS = 10;
@@ -147,7 +146,7 @@ public class Request {
                 saveResultToFile();
             }
         }, "searching and writing logs");
-        executorService.shutdown();
+        //executorService.shutdown(); // для лок теста нужен, для веб - нет
         return outputFile;
     }
 

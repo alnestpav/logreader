@@ -25,7 +25,6 @@ public class DateInterval {
         this.dateTo = dateTo;
     }
 
-
     public DateInterval() { // Нужен для JAXB
 
     }
