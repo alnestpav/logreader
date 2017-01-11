@@ -21,7 +21,7 @@ public class LogReader {
 
     private static final Logger logger = MyLogger.getLogger();
 
-    private static List<LogFile> getPositionsOfLinesWithString(String string, List<LogFile> logFiles) {
+    private static void getPositionsOfLinesWithString(String string, List<LogFile> logFiles) {
         logger.log(Level.INFO, "log files: " + logFiles + "string=" + string);
         StringBuilder filesString = new StringBuilder();
         for (LogFile logFile: logFiles) {
@@ -57,7 +57,7 @@ public class LogReader {
                     logFile.setPrefixPositions(linesWithStringNumbers);
                     logFiles.set(0, logFile);;
                 }
-                return logFiles;
+                return;
             }
             Pattern lineNumberPattern = Pattern.compile(":\\d+");
             Matcher lineNumberMatcher;
@@ -102,11 +102,9 @@ public class LogReader {
                     }
                 }
             }
-
         } catch(IOException e) {
             logger.log(Level.SEVERE, "Ошибка при получении номеров строк в файле", e) ;
         }
-        return logFiles;
     }
 
     private static Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
