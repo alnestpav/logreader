@@ -16,21 +16,16 @@ import ru.siblion.nesterov.logreader.type.Config;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 
-// класс для конвертации объекта в документ
-// используется для pdf и rtf
+/* Класс для конвертации объекта в документ, используется для pdf и rtf */
 public class FopConverter {
-    private final static File configFile = new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\config\\logreader.xml");
-    private static Config config;
+    private Config config;
 
-    public static void convert(Object jaxbObject, FileFormat fileFormat, File file) throws IOException, FOPException,
+    public FopConverter(Config config) {
+        this.config = config;
+    }
+
+    public void convert(Object jaxbObject, FileFormat fileFormat, File file) throws IOException, FOPException,
             TransformerException, JAXBException {
-
-        try {
-            config = (Config) JaxbParser.xmlToObject(configFile, new Config()); // второй параметр возможно нужно поменять в сигнатуре метода
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
-
         StringWriter writer = new StringWriter();
         StreamResult streamResult = new StreamResult(writer);
         JaxbParser.objectToXml(jaxbObject, streamResult);

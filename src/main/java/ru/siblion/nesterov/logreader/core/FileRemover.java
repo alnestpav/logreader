@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/* Класс для удаления пользовательских лог-файлов */
 @Startup
 @Singleton
 public class FileRemover {

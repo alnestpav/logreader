@@ -21,6 +21,8 @@ import java.util.regex.Pattern;
 /**
  * Created by alexander on 14.12.2016.
  */
+
+// класс для поиска лог-файлов WebLogic
 public class FileSearcher {
 
     private String domainDirectory;

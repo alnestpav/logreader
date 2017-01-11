@@ -14,17 +14,13 @@ import java.io.*;
  * Created by alexander on 21.12.2016.
  */
 public class Converter {
-    private final static File configFile = new File("C:\\Users\\alexander\\IdeaProjects\\logreader\\config\\logreader.xml");
-    private static Config config;
+    private Config config;
 
-    public static void convert(Object jaxbObject, FileFormat fileFormat, File file) throws JAXBException {
+    public Converter(Config config) {
+        this.config = config;
+    }
 
-        try {
-            config = (Config) JaxbParser.xmlToObject(configFile, new Config()); // второй параметр возможно нужно поменять в сигнатуре метода
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
-
+    public void convert(Object jaxbObject, FileFormat fileFormat, File file) throws JAXBException {
         StringWriter writer = new StringWriter();
         StreamResult streamResult = new StreamResult(writer);
         JaxbParser.objectToXml(jaxbObject, streamResult);

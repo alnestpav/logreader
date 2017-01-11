@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 /**
  * Created by alexander on 13.12.2016.
  */
+
+/* Класс для получения лог-сообщений */
 public class LogReader {
 
     private static final Logger logger = MyLogger.getLogger();
