@@ -22,7 +22,7 @@ public class Test {
 
     public static void main(String[] args) {
         String location = "webl_domain";
-        String string =  "javax";
+        String string =  "AAAAAA";
 /*        String dateFromString = "2016-12-14T15:48:28.432+03:00";
         String dateToString = "2016-12-14T15:48:31.734+03:00";*/
         String dateFromString = "14.12.2016, 10:47:53,548 AM MSK";

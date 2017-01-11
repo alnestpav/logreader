@@ -146,7 +146,8 @@ public class Request {
                 saveResultToFile();
             }
         }, "searching and writing logs");
-        executorService.shutdown(); // для лок теста нужен, для веб - нет
+        //executorService.shutdown(); // для лок теста нужен, для веб - нет
+        logger.log(Level.INFO, "Main Process");
         return outputFile;
     }
 
