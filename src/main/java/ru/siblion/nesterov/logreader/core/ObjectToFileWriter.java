@@ -1,16 +1,22 @@
 package ru.siblion.nesterov.logreader.core;
 
 import org.apache.fop.apps.FOPException;
+import ru.siblion.nesterov.logreader.test.ExportFromJar;
 import ru.siblion.nesterov.logreader.type.Config;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.type.LogMessages;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
+import ru.siblion.nesterov.logreader.util.MyLogger;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static ru.siblion.nesterov.logreader.test.ExportFromJar.exportResource;
 
 /**
  * Created by alexander on 19.12.2016.
@@ -22,8 +28,15 @@ public class ObjectToFileWriter {
     private Config config;
     private Object object;
 
+    private static final Logger logger = MyLogger.getLogger();
+
     public ObjectToFileWriter(Object object) {
         this.object = object;
+        try {
+            logger.log(Level.INFO, "Export from Jar: " + exportResource("doc.xsl"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void readConfig() {

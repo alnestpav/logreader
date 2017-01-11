@@ -25,6 +25,17 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>xsl</directory>
+                <includes>
+                    <include>doc.xsl</include>
+                    <include>html.xsl</include>
+                    <include>pdf.xsl</include>
+                    <include>rtf.xsl</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -74,6 +85,17 @@
                 <version>3.0.0</version>
                 <configuration>
                     <webappDirectory>/sample/servlet/container/deploy/directory</webappDirectory>
+                    <webResources>
+                        <resource>
+                            <directory>xsl</directory>
+                            <includes>
+                                <include>doc.xsl</include>
+                                <include>html.xsl</include>
+                                <include>pdf.xsl</include>
+                                <include>rtf.xsl</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
         </plugins>
