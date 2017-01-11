@@ -16,7 +16,6 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static ru.siblion.nesterov.logreader.test.ExportFromJar.exportResource;
 
 /**
  * Created by alexander on 19.12.2016.
@@ -32,8 +31,10 @@ public class ObjectToFileWriter {
 
     public ObjectToFileWriter(Object object) {
         this.object = object;
+        logger.log(Level.INFO, "Starting Export from Jar");
         try {
-            logger.log(Level.INFO, "Export from Jar: " + exportResource("doc.xsl"));
+            ExportFromJar.exportResource("doc.xsl");
+            logger.log(Level.INFO, "Export from Jar!!!!!!");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,13 +1,19 @@
 package ru.siblion.nesterov.logreader.test;
 
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Created by alexander on 11.01.2017.
  */
+
+@Startup
+@Singleton
 public class ExportFromJar {
     /**
      * Export a resource embedded into a Jar file to the local file path.
@@ -16,31 +22,8 @@ public class ExportFromJar {
      * @return The path to the exported resource
      * @throws Exception
      */
-    static public String exportResource(String resourceName) throws Exception {
-        InputStream stream = null;
-        OutputStream resStreamOut = null;
-        String jarFolder;
-        try {
-            stream = ExportFromJar.class.getResourceAsStream(resourceName);//note that each / is a directory down in the "jar tree" been the jar the root of the tree
-            if(stream == null) {
-                throw new Exception("Cannot get resource \"" + resourceName + "\" from Jar file.");
-            }
-
-            int readBytes;
-            byte[] buffer = new byte[4096];
-            jarFolder = new File(ExportFromJar.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile().getPath().replace('\\', '/');
-            resStreamOut = new FileOutputStream(jarFolder + resourceName);
-            while ((readBytes = stream.read(buffer)) > 0) {
-                resStreamOut.write(buffer, 0, readBytes);
-            }
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            stream.close();
-            resStreamOut.close();
-        }
-
-        return jarFolder + resourceName;
+    static public void exportResource(String resourceName) throws Exception {
+        InputStream file = ExportFromJar.class.getResourceAsStream(resourceName);
+        Files.copy(file, Paths.get("C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain\\xsl\\pdf.xsl"));
     }
-
 }
