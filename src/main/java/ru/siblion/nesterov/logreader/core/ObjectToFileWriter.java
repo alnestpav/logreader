@@ -14,7 +14,7 @@ import java.io.*;
 /**
  * Created by alexander on 19.12.2016.
  */
-// класс для записи объектов в файлы
+// класс для записи объекта в файл
 public class ObjectToFileWriter {
     private Object object;
 

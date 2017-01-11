@@ -11,12 +11,13 @@ import java.util.logging.SimpleFormatter;
  */
 public class MyLogger {
     private static Logger logger;
+    private static final String OUTPUT_FILE = "C:\\Users\\alexander\\IdeaProjects\\logreader\\messages.log";
 
     private MyLogger() {
         logger = Logger.getLogger("MyLogger");
         Handler fileHandler = null;
         try {
-            fileHandler = new FileHandler("C:\\Users\\alexander\\IdeaProjects\\logreader\\messages6.log", true);
+            fileHandler = new FileHandler(OUTPUT_FILE, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
