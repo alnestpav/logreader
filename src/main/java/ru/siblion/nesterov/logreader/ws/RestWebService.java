@@ -28,7 +28,6 @@ public class RestWebService {
         logger.log(Level.INFO, "rest web webservice");
         try {
             logger.log(Level.INFO, "getting request: " + request);
-            request.configure();
             return request.getResponse();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Какая-то ошибка", e);

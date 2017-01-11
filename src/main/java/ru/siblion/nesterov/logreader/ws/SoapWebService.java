@@ -25,7 +25,6 @@ public class SoapWebService {
         logger.log(Level.INFO, "soap web webservice");
         try {
             logger.log(Level.INFO, "getting request: " + request);
-            request.configure();
             return request.getResponse();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Какая-то ошибка", e);

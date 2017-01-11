@@ -23,7 +23,7 @@ import java.util.List;
 public class Test {
 
     public static void main(String[] args) {
-        String location = "webl_server1";
+        String location = "webl_server2";
         String string =  "java";
 /*        String dateFromString = "2016-12-14T15:48:28.432+03:00";
         String dateToString = "2016-12-14T15:48:31.734+03:00";*/
@@ -38,7 +38,7 @@ public class Test {
         RestWebService restWebService = new RestWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
-        FileFormat[] fileFormats = { FileFormat.pdf };
+        FileFormat[] fileFormats = { FileFormat.pdf};
         for (FileFormat fileFormat : fileFormats) {
             Request request = Request.getNewRequest(string, location, dateIntervals, fileFormat);
             File filePath = null;

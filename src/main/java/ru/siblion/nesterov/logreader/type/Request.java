@@ -58,7 +58,9 @@ public class Request {
         this.dateIntervals = dateIntervals;
         this.fileFormat = fileFormat;
     }
-    public  void configure() {
+
+    /* Метод инициализирует поля date и outputFile, необходим для работы веб-сервисов */
+    public void initSomeFields() {
         logger.log(Level.INFO, "Конфигурация запроса: " + this);
         this.date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
@@ -141,6 +143,7 @@ public class Request {
     }
 
     public File getResponse() {
+        initSomeFields();
         executorService.submit(new Runnable() {
             @Override
             public void run() {
