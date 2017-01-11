@@ -74,16 +74,12 @@ public class LogReader {
                 String fileName = fileNameMatcher.group();
                 logger.log(Level.INFO, "fileName from findstr: " + fileName);
                 if (!fileName.equals(currentFileName)) { // проверить последний случай!
-                    for (int i = 0; i < logFiles.size(); i++) {
-                        if (logFiles.get(i).getFilePath().equals(currentFileName)) {
+                    for (LogFile logFile : logFiles) {
+                        if (logFile.getFilePath().equals(currentFileName)) {
                             if (!string.equals("####")) {
-                                LogFile logFile = new LogFile(logFiles.get(i));
                                 logFile.setPositionsOfString(linesWithStringNumbers);
-                                logFiles.set(i, logFile);
                             } else {
-                                LogFile logFile = new LogFile(logFiles.get(i));
                                 logFile.setPrefixPositions(linesWithStringNumbers);
-                                logFiles.set(i, logFile);;
                             }
                         }
                     }
@@ -97,16 +93,12 @@ public class LogReader {
 
                 line = reader.readLine();
             }
-            for (int i = 0; i < logFiles.size(); i++) {
-                if (logFiles.get(i).getFilePath().equals(currentFileName)) {
+            for (LogFile logFile : logFiles) {
+                if (logFile.getFilePath().equals(currentFileName)) {
                     if (!string.equals("####")) {
-                        LogFile logFile = new LogFile(logFiles.get(i));
                         logFile.setPositionsOfString(linesWithStringNumbers);
-                        logFiles.set(i, logFile);
                     } else {
-                        LogFile logFile = new LogFile(logFiles.get(i));
                         logFile.setPrefixPositions(linesWithStringNumbers);
-                        logFiles.set(i, logFile);;
                     }
                 }
             }
