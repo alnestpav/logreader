@@ -35,20 +35,5 @@ public class RestWebService {
         }
         return null;
     }
-
-    @GET
-    @Produces(value = {"application/xml,application/json"})
-    public Request test() {
-        String location = "webl_domain";
-        String string = "javax";
-        String dateFromString = "15.12.2016, 10:47:53,548 AM MSK";
-        String dateToString = "15.12.2016, 10:48:00,477 AM MSK";
-        XMLGregorianCalendar dateFrom = Utils.stringToXMLGregorianCalendar(dateFromString);
-        XMLGregorianCalendar dateTo = Utils.stringToXMLGregorianCalendar(dateToString);
-        List<DateInterval> dateIntervals = new ArrayList<>();
-        dateIntervals.add(new  DateInterval(dateFrom, dateTo));
-        Request request = Request.getNewRequest(string, location, dateIntervals, FileFormat.doc);
-        return request;
-    }
 }
 

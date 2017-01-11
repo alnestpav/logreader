@@ -64,16 +64,6 @@ public class LogMessage implements Comparable<LogMessage> {
         return xmlGregorianDate;
     }
 
-    private static XMLGregorianCalendar parseDate_OLD(String block) {
-        String dateRegExp = "\\d\\d.\\d\\d.\\d\\d\\d\\d, \\d\\d?:\\d\\d:\\d\\d,\\d+ (PM|AM) (MSK)";
-        Pattern p = Pattern.compile(dateRegExp);
-        Matcher m = p.matcher(block);
-        m.find();
-        String stringDate =  m.group();
-        XMLGregorianCalendar date = Utils.stringToXMLGregorianCalendar(stringDate);
-        return date;
-    }
-
     public XMLGregorianCalendar getDate() {
         return date;
     }
