@@ -13,8 +13,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static ru.siblion.nesterov.logreader.test.ExportFromJar.exportResources;
 
 
 /**
@@ -27,17 +28,9 @@ public class ObjectToFileWriter {
     private Config config;
     private Object object;
 
-    private static final Logger logger = MyLogger.getLogger();
-
     public ObjectToFileWriter(Object object) {
         this.object = object;
-        logger.log(Level.INFO, "Starting Export from Jar");
-        try {
-            ExportFromJar.exportResource("doc.xsl");
-            logger.log(Level.INFO, "Export from Jar!!!!!!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        exportResources();
     }
 
     public void readConfig() {
