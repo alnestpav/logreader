@@ -1,6 +1,6 @@
 package ru.siblion.nesterov.logreader.type;
 
-import ru.siblion.nesterov.logreader.test.ExportFromJar;
+import ru.siblion.nesterov.logreader.test.ExportFromArchive;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 
@@ -82,7 +82,7 @@ public class Config { // сделать синглтоном
     public static Config getConfig(File configFile) {
         Config config = null;
         try {
-            ExportFromJar.exportConfig();
+            ExportFromArchive.exportConfig();
             config = (Config) JaxbParser.xmlToObject(configFile, new Config());
         } catch (JAXBException e) {
             logger.log(Level.WARNING, "Config файл не найден", e) ;

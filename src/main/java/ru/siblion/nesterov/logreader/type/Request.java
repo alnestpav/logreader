@@ -1,13 +1,20 @@
 package ru.siblion.nesterov.logreader.type;
 
+import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+import ru.siblion.nesterov.logreader.core.FileSearcher;
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 
 import javax.xml.bind.annotation.*;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,6 +51,9 @@ public class Request {
 
     @XmlTransient
     private Date date;
+
+    @XmlTransient
+    private boolean needsToCache; // нужно ли кешировать лог-файл, получаемый при запросе
 
 
     //private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
@@ -148,12 +158,39 @@ public class Request {
         objectToFileWriter.write(fileFormat, outputFile);
     }
 
+    private boolean checkCacheFile() {
+        for (DateInterval dateInterval: dateIntervals) {
+            Date currentDate = new Date();
+            XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
+            GregorianCalendar gregorianCalendar = new GregorianCalendar();
+            gregorianCalendar.setTime(date);
+            if (dateInterval.getDateTo().compare(xmlGregorianDate) < 0) {
+                needsToCache = true;
+            }
+        }
+        return needsToCache; // возможно стоит поменять тип возвращаемого значения
+    }
+
+    private String searchCacheFile() {
+        FileSearcher fileSearcher = new FileSearcher();
+        List<String> files = fileSearcher.getFilesMatching(config.getDirectory(), ".*.rtf");
+        System.out.println(files.get(0));
+        return files.get(0).toString();
+    }
+
     public File getResponse() {
         initSomeFields();
         executorService.submit(new Runnable() {
             @Override
             public void run() {
                 System.out.println("NEW THREAD");
+
+                if (checkCacheFile() == true) {
+                   System.out.println(searchCacheFile());
+                }
+
+
+
                 saveResultToFile();
             }
         }, "searching and writing logs");

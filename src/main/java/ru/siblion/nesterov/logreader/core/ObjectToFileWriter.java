@@ -1,7 +1,7 @@
 package ru.siblion.nesterov.logreader.core;
 
 import org.apache.fop.apps.FOPException;
-import ru.siblion.nesterov.logreader.test.ExportFromJar;
+import ru.siblion.nesterov.logreader.test.ExportFromArchive;
 import ru.siblion.nesterov.logreader.type.Config;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.type.LogMessage;
@@ -29,7 +29,7 @@ public class ObjectToFileWriter {
 
     public ObjectToFileWriter(Object object) {
         this.object = object;
-        ExportFromJar.exportXsls();
+        ExportFromArchive.exportXsls();
         config = Config.getConfig(configFile);
     }
 

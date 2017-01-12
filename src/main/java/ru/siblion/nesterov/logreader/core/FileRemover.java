@@ -22,20 +22,17 @@ import java.util.logging.Logger;
 @Startup
 @Singleton
 public class FileRemover {
-    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
-    private final static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
-    private Config config;
+    //private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
+    private final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
+    private static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
+    private static Config config = Config.getConfig(configFile);
 
     private static final Logger logger = MyLogger.getLogger();
 
     @Schedule(minute="0", hour="0") // запуск метода каждый день в полночь
     public void removeOldFiles() {
         logger.log(Level.INFO, "Удаление старых лог-файлов");
-        try {
-            config = (Config) JaxbParser.xmlToObject(configFile, new Config()); // второй параметр возможно нужно поменять в сигнатуре метода
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
+        config = Config.getConfig(configFile);
         System.out.println(config.getDirectory());
         System.out.println(config.getLifeTime());
 

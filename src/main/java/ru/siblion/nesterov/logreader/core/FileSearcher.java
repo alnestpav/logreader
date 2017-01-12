@@ -120,7 +120,8 @@ public class FileSearcher {
 
     }
 
-    private List<String> getFilesMatching(File root, String regExp) {
+    /* Возможно стоит перенести метод в класс Utils, так как он также используется в классе Request */
+    public List<String> getFilesMatching(File root, String regExp) {
         try {
             if (!root.isDirectory()) {
                 throw new IllegalArgumentException(root + " это не директория.");
