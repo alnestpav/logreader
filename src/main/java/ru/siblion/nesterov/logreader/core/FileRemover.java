@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 @Singleton
 public class FileRemover {
     private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
-    private final static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config.xml");
+    private final static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
     private Config config;
 
     private static final Logger logger = MyLogger.getLogger();

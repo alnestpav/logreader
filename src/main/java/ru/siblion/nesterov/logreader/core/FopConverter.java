@@ -22,6 +22,7 @@ public class FopConverter {
 
     public FopConverter(Config config) {
         this.config = config;
+        System.out.println("dir " + config.getDirectory());
     }
 
     public void convert(Object jaxbObject, FileFormat fileFormat, File file) throws IOException, FOPException,
