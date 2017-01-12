@@ -1,5 +1,8 @@
 package ru.siblion.nesterov.logreader.type;
 
+import ru.siblion.nesterov.logreader.util.JaxbParser;
+
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -11,7 +14,7 @@ import java.io.File;
  */
 @XmlRootElement(name = "log-files")
 @XmlAccessorType(XmlAccessType.FIELD)
-/* Класс для работы с config-файлом config/logreader.xml,
+/* Класс для работы с config-файлом resources/config/config.xml,
 * в котором записаны некоторые параметры для записи пользовательских лог-файлов */
 public class Config {
     @XmlElement(name = "directory")
@@ -68,5 +71,16 @@ public class Config {
     public File getRtfTemplate() { return rtfTemplate; }
 
     public void setRtfTemplate(File rtfTemplate) {this.rtfTemplate = rtfTemplate; }
+
+
+    public static Config getConfig(File configFile) {
+        Config config = null;
+        try {
+            config = (Config) JaxbParser.xmlToObject(configFile, new Config());
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+        return config;
+    }
 
 }
