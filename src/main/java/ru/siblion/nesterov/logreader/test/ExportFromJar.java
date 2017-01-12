@@ -1,5 +1,6 @@
 package ru.siblion.nesterov.logreader.test;
 
+import ru.siblion.nesterov.logreader.type.Config;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 
 import javax.ejb.Singleton;
@@ -23,11 +24,14 @@ public class ExportFromJar {
     //private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
     private final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
 
+    private final static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
+    private static Config config;
+
     private final static File DIRECTORY = new File(DOMAIN_DIRECTORY + "\\logreader\\");
 
     private static final Logger logger = MyLogger.getLogger();
 
-    static public void exportResource(String resourceName) throws Exception {
+    static public void exportResource(String resourceName, String copyFilePath) throws Exception {
         /*Pattern fileNamePattern = Pattern.compile("\\w+\\ ");
         Matcher fileNamePatternMatcher;
 
@@ -36,23 +40,31 @@ public class ExportFromJar {
         String fileName = fileNamePatternMatcher.group();
         System.out.println(fileName);
         DIRECTORY.mkdir(); // переписать с помощью nio*/
-        String filePath = DIRECTORY + resourceName;
         String resource = resourceName.replace('\\', '/'); // метод getResourceAsStream использует '/' для разделения в пути файла
         InputStream file = ExportFromJar.class.getResourceAsStream(resource);
-        Files.copy(file, Paths.get(filePath));
+        Files.copy(file, Paths.get(copyFilePath));
     }
 
-    static public void exportResources() {
-        logger.log(Level.INFO, "Starting Export from jar");
-        new File(DOMAIN_DIRECTORY + "\\logreader\\xsl").mkdirs();
+    static public void exportConfig() {
         new File(DOMAIN_DIRECTORY + "\\logreader\\config").mkdirs();
         try {
-            ExportFromJar.exportResource("\\config\\config.xml");
-            ExportFromJar.exportResource("\\xsl\\doc.xsl");
-            ExportFromJar.exportResource("\\xsl\\html.xsl");
-            ExportFromJar.exportResource("\\xsl\\pdf.xsl");
-            ExportFromJar.exportResource("\\xsl\\rtf.xsl");
-            ExportFromJar.exportResource("\\xsl\\siblion_logo.gif");
+            ExportFromJar.exportResource("\\config\\config.xml", DIRECTORY + "\\config\\config.xml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static public void exportXsls() {
+        logger.log(Level.INFO, "Starting Export xsls from jar");
+        config = Config.getConfig(configFile);
+        new File(DOMAIN_DIRECTORY + "\\logreader\\xsl").mkdirs();
+        new File(DOMAIN_DIRECTORY + "\\logreader\\logs").mkdirs();
+        try {
+            ExportFromJar.exportResource("\\xsl\\doc.xsl", DIRECTORY + "\\xsl\\doc.xsl");
+            ExportFromJar.exportResource("\\xsl\\html.xsl", DIRECTORY + "\\xsl\\html.xsl");
+            ExportFromJar.exportResource("\\xsl\\pdf.xsl", DIRECTORY + "\\xsl\\pdf.xsl");
+            ExportFromJar.exportResource("\\xsl\\rtf.xsl", DIRECTORY + "\\xsl\\rtf.xsl");;
+            ExportFromJar.exportResource("\\xsl\\siblion_logo.gif", config.getDirectory() + "\\siblion_logo.gif");
             logger.log(Level.INFO, "Export from jar!!!!!!");
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Ошибка при экспорте из jar ", e) ;

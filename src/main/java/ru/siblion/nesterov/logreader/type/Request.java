@@ -39,13 +39,19 @@ public class Request {
 
     private static final Logger logger = MyLogger.getLogger(); // проверить правильно работает в xml
 
-    private static final String DIRECTORY = "C:\\Users\\alexander\\IdeaProjects\\logreader\\temp\\";
-
     @XmlTransient
     private File outputFile;
 
     @XmlTransient
     private Date date;
+
+
+    //private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
+    private final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
+    private static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
+    private static Config config = Config.getConfig(configFile);
+
+    private static final String DIRECTORY = config.getDirectory().toString(); // возможно изменить getDirectory возвр. знач. на String
 
     private static final int NUMBER_OF_THREADS = 10;
 
@@ -65,7 +71,7 @@ public class Request {
         this.date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
         String formattedDate = simpleDateFormat.format(date);
-        outputFile =  new File(DIRECTORY + formattedDate + "-" + this.hashCode() + "." + fileFormat);
+        outputFile =  new File(DIRECTORY + "\\" + formattedDate + "-" + this.hashCode() + "." + fileFormat);
     }
 
     public static Request getNewRequest(String string, String location,
