@@ -59,7 +59,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:w="http://schemas.microso
         <w:r>
           <w:pict>
               <v:shape id="_x0000_i1025" type="_x0000_t75" style="width:220pt;height:146pt">
-                  <v:imagedata src="C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\xsl\siblion_logo.gif" o:title="FolderN"/>
+                  <v:imagedata src="siblion_logo.gif" o:title="FolderN"/>
               </v:shape>
           </w:pict>
         </w:r>

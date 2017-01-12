@@ -13,7 +13,7 @@
                     <fo:block-container text-align="center">
                         <fo:block font-size="18pt" font-weight="bold" space-after="5mm">logreader 1.0.1</fo:block>
                         <fo:block>
-                            <fo:external-graphic content-type="content-type:image/gif" src="file:/C:/Oracle/Middleware/Oracle_Home/user_projects/domains/webl_domain/logreader/xsl/siblion_logo.gif"/>
+                            <fo:external-graphic content-type="content-type:image/gif" src="http://www.profyrost.ru/img/images_content/3393_275_std.gif"/>
                         </fo:block>
                         <fo:block font-size="16pt" font-weight="bold" space-after="5mm">Siblion company</fo:block>
                         <fo:block font-size="14pt" space-after="5mm">Created by Alexander Nesterov</fo:block>

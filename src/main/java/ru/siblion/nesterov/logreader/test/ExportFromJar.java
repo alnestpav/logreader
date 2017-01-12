@@ -65,7 +65,7 @@ public class ExportFromJar {
             ExportFromJar.exportResource("\\xsl\\pdf.xsl", DIRECTORY + "\\xsl\\pdf.xsl");
             ExportFromJar.exportResource("\\xsl\\rtf.xsl", DIRECTORY + "\\xsl\\rtf.xsl");
 
-            ExportFromJar.exportResource("\\xsl\\siblion_logo.gif", DIRECTORY + "\\xsl\\siblion_logo.gif");;
+            //ExportFromJar.exportResource("\\xsl\\siblion_logo.gif", DIRECTORY + "\\xsl\\siblion_logo.gif");;
             ExportFromJar.exportResource("\\xsl\\siblion_logo.gif", config.getDirectory() + "\\siblion_logo.gif");
             logger.log(Level.INFO, "Export from jar!!!!!!");
         } catch (Exception e) {
