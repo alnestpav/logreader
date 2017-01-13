@@ -5,12 +5,10 @@ package ru.siblion.nesterov.logreader.core;
  */
 import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.Config;
-import ru.siblion.nesterov.logreader.util.JaxbParser;
 
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

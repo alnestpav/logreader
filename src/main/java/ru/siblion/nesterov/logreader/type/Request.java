@@ -1,16 +1,12 @@
 package ru.siblion.nesterov.logreader.type;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
-import ru.siblion.nesterov.logreader.core.FileSearcher;
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;

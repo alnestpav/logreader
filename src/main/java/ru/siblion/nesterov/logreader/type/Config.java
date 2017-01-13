@@ -1,6 +1,6 @@
 package ru.siblion.nesterov.logreader.type;
 
-import ru.siblion.nesterov.logreader.test.ExportFromArchive;
+import ru.siblion.nesterov.logreader.util.ExportFromArchive;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 

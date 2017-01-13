@@ -1,13 +1,11 @@
 package ru.siblion.nesterov.logreader.test;
 
 
-import ru.siblion.nesterov.logreader.core.FileRemover;
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.type.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
 import ru.siblion.nesterov.logreader.type.Response;
-import ru.siblion.nesterov.logreader.util.JaxbParser;
 import ru.siblion.nesterov.logreader.ws.RestWebService;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
 

@@ -1,17 +1,10 @@
 package ru.siblion.nesterov.logreader.ws;
 
-import ru.siblion.nesterov.logreader.type.DateInterval;
-import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.type.Response;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.Request;
-import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.ws.rs.*;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

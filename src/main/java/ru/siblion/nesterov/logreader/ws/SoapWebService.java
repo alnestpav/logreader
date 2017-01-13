@@ -9,7 +9,6 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
-import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +21,7 @@ public class SoapWebService {
     private static final Logger logger = MyLogger.getLogger();
 
     @WebMethod(operationName = "getListOfLogMessages")
-    public Response getListOfLogMessages(@WebParam(name = "request") Request request) { // File или String лучше?
+    public Response getListOfLogMessages(@WebParam(name = "request") Request request) {
         logger.log(Level.INFO, "soap web webservice");
         try {
             logger.log(Level.INFO, "getting request: " + request);

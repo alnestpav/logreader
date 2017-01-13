@@ -1,7 +1,6 @@
-package ru.siblion.nesterov.logreader.test;
+package ru.siblion.nesterov.logreader.util;
 
 import ru.siblion.nesterov.logreader.type.Config;
-import ru.siblion.nesterov.logreader.util.MyLogger;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;

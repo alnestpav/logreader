@@ -1,7 +1,6 @@
 package ru.siblion.nesterov.logreader.type;
 
 import ru.siblion.nesterov.logreader.util.MyLogger;
-import sun.rmi.runtime.Log;
 
 import java.util.ArrayList;
 import java.util.List;

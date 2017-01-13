@@ -23,6 +23,8 @@ public class Utils {
     private final static String XML_GREGORIAN_CALENDAR_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"; // проверить H или k
     private final static String STRING_DATE_FORMAT = "dd.MM.yyyy, hh:mm:ss,SSS aa zzz"; // проверить h 11/12
 
+
+    /* Метод используется при тестировании проекта в классе Test, когда в запрос добавляется интервал дат */
     public static XMLGregorianCalendar stringToXMLGregorianCalendar(String stringDate) {
         XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
         SimpleDateFormat format = new SimpleDateFormat(STRING_DATE_FORMAT);

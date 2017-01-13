@@ -12,11 +12,12 @@ import java.util.List;
  * Created by alexander on 13.01.2017.
  */
 
+/* Класс, инкапсулирующий ответ на запрос пользователя */
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Response {
     @XmlElement(name = "outputFile")
-    private File outputFile;
+    private File outputFile; // File или String лучше?
 
     @XmlElement(name = "logMessage")
     private List<LogMessage> logMessages = null;
