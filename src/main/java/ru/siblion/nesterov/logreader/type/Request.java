@@ -1,10 +1,13 @@
 package ru.siblion.nesterov.logreader.type;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+import ru.siblion.nesterov.logreader.core.FileSearcher;
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 
 import javax.xml.bind.annotation.*;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -49,12 +52,10 @@ public class Request {
     private Date date;
 
     @XmlTransient
-    private boolean needsToCache; // нужно ли кешировать лог-файл, получаемый при запросе
+    private boolean needsToCache = false; // нужно ли кешировать лог-файл, получаемый при запросе
 
     @XmlTransient
     private Response response = new Response();
-
-
 
 
     //private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
@@ -82,7 +83,7 @@ public class Request {
         this.date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
         String formattedDate = simpleDateFormat.format(date);
-        outputFile =  new File(DIRECTORY + "\\" + formattedDate + "-" + this.hashCode() + "." + fileFormat);
+        outputFile =  new File(DIRECTORY + "\\log-d" + formattedDate + "h" + this.hashCode() + "." + fileFormat);
     }
 
     public static Request getNewRequest(String string, String location,
@@ -164,20 +165,29 @@ public class Request {
             Date currentDate = new Date();
             XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
             GregorianCalendar gregorianCalendar = new GregorianCalendar();
-            gregorianCalendar.setTime(date);
-            if (dateInterval.getDateTo().compare(xmlGregorianDate) < 0) {
+            gregorianCalendar.setTime(currentDate);
+            XMLGregorianCalendar dateTo = dateInterval.getDateTo();
+            try {
+                xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
+            } catch (DatatypeConfigurationException e) {
+                logger.log(Level.SEVERE, "Ошибка при получения экземпляра XMLGregorianCalendar", e) ;
+            }
+            if (dateTo != null && dateTo.compare(xmlGregorianDate) < 0) {
                 needsToCache = true;
             }
         }
         return needsToCache; // возможно стоит поменять тип возвращаемого значения
     }
 
-    /*private String searchCacheFile() {
+    private File searchCacheFile() {
         FileSearcher fileSearcher = new FileSearcher();
-        List<String> files = fileSearcher.getFilesMatching(config.getDirectory(), ".*.rtf");
-        System.out.println(files.get(0));
-        return files.get(0).toString();
-    }*/
+        List<String> files = fileSearcher.getFilesMatching(config.getDirectory(), ".+" + hashCode() + "\\." + fileFormat);
+        if (files.isEmpty()) {
+            return null;
+        } else {
+            return new File(files.get(0));
+        }
+    }
 
     public Response getResponse() {
         initSomeFields();
@@ -190,10 +200,12 @@ public class Request {
                 public void run() {
                     System.out.println("NEW THREAD");
 
-                /*if (checkCacheFile() == true) {
-                   System.out.println(searchCacheFile());
-                }*/
+                if (checkCacheFile() == true && searchCacheFile() != null) {
+                    outputFile = searchCacheFile();
+                } else {
                     saveResultToFile();
+                }
+
                 }
             }, "searching and writing logs");
             //executorService.shutdown(); // для лок теста нужен, для веб - нет
@@ -207,4 +219,12 @@ public class Request {
         return "Request:" + "\n\tString: " + string + "\n\tLocation: " + location + "\n\tDateIntervals: " + dateIntervals + "\n\tFileFormat: " + fileFormat;
     }
 
+    @Override
+    public int hashCode() {
+        int result = string != null ? string.hashCode() : 0;
+        result = 31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (dateIntervals != null ? dateIntervals.hashCode() : 0);
+        result = 31 * result + (fileFormat != null ? fileFormat.hashCode() : 0);
+        return result;
+    }
 }

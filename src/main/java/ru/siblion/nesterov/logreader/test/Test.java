@@ -6,6 +6,7 @@ import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.type.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
 import ru.siblion.nesterov.logreader.type.Response;
+import ru.siblion.nesterov.logreader.util.Utils;
 import ru.siblion.nesterov.logreader.ws.RestWebService;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
 
@@ -25,16 +26,17 @@ public class Test {
 
     public static void main(String[] args) {
         String location = "webl_server2";
-        String string =  "java";
+        String string =  "javax";
 /*        String dateFromString = "2016-12-14T15:48:28.432+03:00";
         String dateToString = "2016-12-14T15:48:31.734+03:00";*/
         String dateFromString = "14.12.2016, 10:47:53,548 AM MSK";
-        String dateToString = "26.12.2016, 10:48:00,477 AM MSK";
-        //XMLGregorianCalendar dateFrom = Utils.stringToXMLGregorianCalendar(dateFromString);
-        //XMLGregorianCalendar dateTo = Utils.stringToXMLGregorianCalendar(dateToString);
-
+        String dateToString = "13.12.2016, 4:14:06,807 PM MSK";
         XMLGregorianCalendar dateFrom = null;
-        XMLGregorianCalendar dateTo = null;
+        XMLGregorianCalendar dateTo = Utils.stringToXMLGregorianCalendar(dateToString);
+        System.out.println(dateTo);
+
+        /*XMLGregorianCalendar dateFrom = null;
+        XMLGregorianCalendar dateTo = null;*/
         SoapWebService soapWebService = new SoapWebService();
         RestWebService restWebService = new RestWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
