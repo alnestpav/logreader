@@ -1,5 +1,6 @@
 package ru.siblion.nesterov.logreader.ws;
 
+import ru.siblion.nesterov.logreader.type.Response;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.Request;
 
@@ -21,11 +22,10 @@ public class SoapWebService {
     private static final Logger logger = MyLogger.getLogger();
 
     @WebMethod(operationName = "getListOfLogMessages")
-    public File getListOfLogMessages(@WebParam(name = "request") Request request) { // File или String лучше?
+    public Response getListOfLogMessages(@WebParam(name = "request") Request request) { // File или String лучше?
         logger.log(Level.INFO, "soap web webservice");
         try {
             logger.log(Level.INFO, "getting request: " + request);
-
             return request.getResponse();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Какая-то ошибка", e);

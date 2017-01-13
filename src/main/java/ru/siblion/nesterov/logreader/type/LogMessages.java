@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 /* Класс, инкапсулирующий объект класса Request и список объектов класса LogMessage,
-* используется при записи в пользовательские лог-файлы, конвертируется в xml*/
+* используется при записи в пользовательские лог-файлы, конвертируется в xml */
 @XmlRootElement(name = "logMessages")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogMessages {

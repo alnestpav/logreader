@@ -55,6 +55,11 @@ public class Request {
     @XmlTransient
     private boolean needsToCache; // нужно ли кешировать лог-файл, получаемый при запросе
 
+    @XmlTransient
+    private Response response;
+
+
+
 
     //private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
     private final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
@@ -171,32 +176,37 @@ public class Request {
         return needsToCache; // возможно стоит поменять тип возвращаемого значения
     }
 
-    private String searchCacheFile() {
+    /*private String searchCacheFile() {
         FileSearcher fileSearcher = new FileSearcher();
         List<String> files = fileSearcher.getFilesMatching(config.getDirectory(), ".*.rtf");
         System.out.println(files.get(0));
         return files.get(0).toString();
-    }
+    }*/
 
-    public File getResponse() {
+    public Response getResponse() {
         initSomeFields();
         executorService.submit(new Runnable() {
             @Override
             public void run() {
                 System.out.println("NEW THREAD");
 
-                if (checkCacheFile() == true) {
+                /*if (checkCacheFile() == true) {
                    System.out.println(searchCacheFile());
+                }*/
+
+
+                if (fileFormat == null) {
+                    response.setLogMessages(getListOfLogMessages());
+                } else {
+                    saveResultToFile();
+                    response.setOutputFile(outputFile);
                 }
 
-
-
-                saveResultToFile();
             }
         }, "searching and writing logs");
         //executorService.shutdown(); // для лок теста нужен, для веб - нет
         logger.log(Level.INFO, "Main Process");
-        return outputFile;
+        return response;
     }
 
     @Override

@@ -5,6 +5,7 @@ import ru.siblion.nesterov.logreader.core.FileRemover;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.type.Request;
 import ru.siblion.nesterov.logreader.type.DateInterval;
+import ru.siblion.nesterov.logreader.type.Response;
 import ru.siblion.nesterov.logreader.ws.RestWebService;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
 
@@ -41,14 +42,15 @@ public class Test {
         FileFormat[] fileFormats = { FileFormat.rtf };
         for (FileFormat fileFormat : fileFormats) {
             Request request = Request.getNewRequest(string, location, dateIntervals, fileFormat);
-            File filePath = null;
+            Response response = null;
             try {
-                filePath = soapWebService.getListOfLogMessages(request);
+                response = soapWebService.getListOfLogMessages(request);
                 //filePath = restWebService.getListOfLogMessages(request);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            System.out.println(filePath);
+            System.out.println(response.getLogMessages());
+            System.out.println(response.getOutputFile());
             FileRemover fileRemover = new FileRemover();
             fileRemover.removeOldFiles();
         }

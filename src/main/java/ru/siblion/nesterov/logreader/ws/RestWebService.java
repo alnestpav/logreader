@@ -2,6 +2,7 @@ package ru.siblion.nesterov.logreader.ws;
 
 import ru.siblion.nesterov.logreader.type.DateInterval;
 import ru.siblion.nesterov.logreader.type.FileFormat;
+import ru.siblion.nesterov.logreader.type.Response;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.Request;
 import ru.siblion.nesterov.logreader.util.Utils;
@@ -24,7 +25,7 @@ public class RestWebService {
     @POST
     @Consumes(value = {"application/xml,application/json"})
     @Produces(value = {"application/xml,application/json"})
-    public File getListOfLogMessages(Request request) {
+    public Response getListOfLogMessages(Request request) {
         logger.log(Level.INFO, "rest web webservice");
         try {
             logger.log(Level.INFO, "getting request: " + request);
