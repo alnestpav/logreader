@@ -56,7 +56,7 @@ public class Request {
     private boolean needsToCache; // нужно ли кешировать лог-файл, получаемый при запросе
 
     @XmlTransient
-    private Response response;
+    private Response response = new Response();
 
 
 
@@ -185,26 +185,23 @@ public class Request {
 
     public Response getResponse() {
         initSomeFields();
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("NEW THREAD");
+        if (fileFormat == null) {
+            response.setLogMessages(getListOfLogMessages());
+        } else {
+            response.setOutputFile(outputFile);
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("NEW THREAD");
 
                 /*if (checkCacheFile() == true) {
                    System.out.println(searchCacheFile());
                 }*/
-
-
-                if (fileFormat == null) {
-                    response.setLogMessages(getListOfLogMessages());
-                } else {
                     saveResultToFile();
-                    response.setOutputFile(outputFile);
                 }
-
-            }
-        }, "searching and writing logs");
-        //executorService.shutdown(); // для лок теста нужен, для веб - нет
+            }, "searching and writing logs");
+            //executorService.shutdown(); // для лок теста нужен, для веб - нет
+        }
         logger.log(Level.INFO, "Main Process");
         return response;
     }
