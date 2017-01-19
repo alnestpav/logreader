@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <log-files>
-    <directory>\logs\</directory>
+    <directory>C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\logs\</directory>
     <life-time>10</life-time>
     <doc-template>C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\xsl\doc.xsl</doc-template>
     <html-template>C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\xsl\html.xsl</html-template>
