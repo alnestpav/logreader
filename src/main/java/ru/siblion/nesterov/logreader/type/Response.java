@@ -19,7 +19,7 @@ public class Response {
     @XmlElement(name = "outputFile")
     private File outputFile; // File или String лучше?
 
-    @XmlElement(name = "logMessage")
+    @XmlElement(name = "logMessages") // в клиенте создается метод getLogMessage, проверить почему
     private List<LogMessage> logMessages = null;
 
     public Response() {

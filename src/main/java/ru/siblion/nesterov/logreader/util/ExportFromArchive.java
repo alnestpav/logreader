@@ -14,9 +14,9 @@ import java.util.logging.Logger;
 /**
  * Created by alexander on 11.01.2017.
  */
-
-@Startup
-@Singleton
+// Вернуть, ошибка при развертывании была, поэтому закомментил
+//@Startup
+//@Singleton
 public class ExportFromArchive {
     //private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
     private final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test

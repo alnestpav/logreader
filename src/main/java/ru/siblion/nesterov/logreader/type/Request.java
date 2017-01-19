@@ -192,8 +192,10 @@ public class Request {
     public Response getResponse() {
         initSomeFields();
         if (fileFormat == null) {
+             System.out.println("fileFormat==null");
             response.setLogMessages(getListOfLogMessages());
         } else {
+            System.out.println("fileFormat!=null");
             response.setOutputFile(outputFile);
             executorService.submit(new Runnable() {
                 @Override

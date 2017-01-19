@@ -5,6 +5,8 @@ import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.Request;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,6 +18,7 @@ public class RestWebService {
     private static final Logger logger = MyLogger.getLogger();
 
     @POST
+    @Path("/getResponse")
     @Consumes(value = {"application/xml,application/json"})
     @Produces(value = {"application/xml,application/json"})
     public Response getListOfLogMessages(Request request) {
@@ -27,6 +30,16 @@ public class RestWebService {
             logger.log(Level.SEVERE, "Какая-то ошибка", e);
         }
         return null;
+    }
+
+    @GET
+    @Path("/getFile")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public javax.ws.rs.core.Response getFile(String fileName) {
+        File file = new File(fileName);
+        javax.ws.rs.core.Response.ResponseBuilder response = javax.ws.rs.core.Response.ok((Object) file);
+        response.header("Content-Disposition", "attachment; filename=" + fileName);
+        return response.build();
     }
 }
 
