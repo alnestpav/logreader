@@ -118,7 +118,7 @@ public class Request {
     public List<DateInterval> getDateIntervals() {
         return dateIntervals;
     }
-    public void setDateFrom(List<DateInterval> dateIntervals) {
+    public void setDateIntervals(List<DateInterval> dateIntervals) {
         this.dateIntervals = dateIntervals;
     }
 

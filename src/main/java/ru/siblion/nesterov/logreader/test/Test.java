@@ -25,18 +25,17 @@ import java.util.List;
 public class Test {
 
     public static void main(String[] args) {
-        String location = "webl_server2";
-        String string =  "javax";
+        String location = "webl_server1";
+        String string =  "java";
 /*        String dateFromString = "2016-12-14T15:48:28.432+03:00";
         String dateToString = "2016-12-14T15:48:31.734+03:00";*/
         String dateFromString = "14.12.2016, 10:47:53,548 AM MSK";
         String dateToString = "13.12.2016, 4:14:06,807 PM MSK";
-        XMLGregorianCalendar dateFrom = null;
-        XMLGregorianCalendar dateTo = Utils.stringToXMLGregorianCalendar(dateToString);
-        System.out.println(dateTo);
-
         /*XMLGregorianCalendar dateFrom = null;
-        XMLGregorianCalendar dateTo = null;*/
+        XMLGregorianCalendar dateTo = Utils.stringToXMLGregorianCalendar(dateToString);*/
+
+        XMLGregorianCalendar dateFrom = null;
+        XMLGregorianCalendar dateTo = null;
         SoapWebService soapWebService = new SoapWebService();
         RestWebService restWebService = new RestWebService();
         List<DateInterval> dateIntervals = new ArrayList<>();
