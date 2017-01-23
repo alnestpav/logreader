@@ -6,8 +6,14 @@ import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.Request;
 
 import javax.ws.rs.*;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,13 +51,14 @@ public class RestWebService {
         config = Config.getConfig(configFile);
         String directory = config.getDirectory().toString();
         System.out.println("dir + filename " + directory + fileName);
-        File file = new File(directory + fileName);
+        File file = new File(directory + "\\" + fileName);
         javax.ws.rs.core.Response.ResponseBuilder response = null;
         if (file.exists()) {
-            response = javax.ws.rs.core.Response.ok((Object) file);
+            response = javax.ws.rs.core.Response.ok(file);
         }
         response.header("Content-Disposition", "attachment; filename=" + fileName);
         return response.build();
     }
+
 }
 
