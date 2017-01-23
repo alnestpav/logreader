@@ -6,14 +6,8 @@ import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.Request;
 
 import javax.ws.rs.*;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,8 +18,8 @@ import java.util.logging.Logger;
 public class RestWebService {
     private static final Logger logger = MyLogger.getLogger();
 
-    //private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
-    private final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
+    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
+    //private final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
     private static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
     private static Config config = Config.getConfig(configFile);
 

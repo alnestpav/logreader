@@ -31,8 +31,8 @@ public class FileSearcher {
     private static final Logger logger = MyLogger.getLogger();
 
     public FileSearcher() {
-        //domainDirectory = (new File("").getAbsolutePath()); // если запускать на сервере
-        domainDirectory = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
+        domainDirectory = (new File("").getAbsolutePath()); // если запускать на сервере
+        //domainDirectory = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
         Pattern domainPattern = Pattern.compile("\\\\\\w+$");
         Matcher domainMatcher = domainPattern.matcher(domainDirectory);
         domainMatcher.find();

@@ -21,8 +21,8 @@ import java.io.*;
 
 /*  Класс для записи объекта в файл */
 public class ObjectToFileWriter {
-    //private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
-    private final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
+    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
+    //private final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
     private final static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
     private static Config config;
     private Object object;
