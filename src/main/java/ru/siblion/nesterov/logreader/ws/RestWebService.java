@@ -50,7 +50,6 @@ public class RestWebService {
     public javax.ws.rs.core.Response getFile(@PathParam("fileName") String fileName) {
         config = Config.getConfig(configFile);
         String directory = config.getDirectory().toString();
-        System.out.println("dir + filename " + directory + fileName);
         File file = new File(directory + "\\" + fileName);
         javax.ws.rs.core.Response.ResponseBuilder response = null;
         if (file.exists()) {
