@@ -22,6 +22,9 @@ public class Response {
     @XmlElement(name = "logMessages") // в клиенте создается метод getLogMessage, проверить почему
     private List<LogMessage> logMessages = null;
 
+    @XmlElement(name = "message")
+    private String message;
+
     public Response() {
 
     }
@@ -40,5 +43,13 @@ public class Response {
 
     public void setLogMessages(List<LogMessage> logMessages) {
         this.logMessages = logMessages;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

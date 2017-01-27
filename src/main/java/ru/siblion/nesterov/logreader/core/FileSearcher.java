@@ -7,6 +7,7 @@ import org.w3c.dom.NodeList;
 import ru.siblion.nesterov.logreader.type.LocationType;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.LogFile;
+import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -74,7 +75,7 @@ public class FileSearcher {
         for (String server : servers) {
             serverLogDirectory = new File(domainDirectory + "\\servers\\" + server + "\\logs\\");
             String LogFileRegExp = (server + ".log[0-9]*|" + domainName + ".log[0-9]*");
-            List<String> listOfLogFiles = getFilesMatching(serverLogDirectory, LogFileRegExp);
+            List<String> listOfLogFiles = Utils.getFilesMatching(serverLogDirectory, LogFileRegExp);
             for (String logFilePath : listOfLogFiles) {
                 logFiles.add(new LogFile(logFilePath));
             }
@@ -112,7 +113,7 @@ public class FileSearcher {
         for (String server : servers) {
             serverLogDirectory = new File(domainDirectory + "\\servers\\" + server + "\\logs\\");
             String LogFileRegExp = (server + ".log[0-9]*");
-            List<String> listOfLogFiles = getFilesMatching(serverLogDirectory, LogFileRegExp);
+            List<String> listOfLogFiles = Utils.getFilesMatching(serverLogDirectory, LogFileRegExp);
             for (String logFilePath : listOfLogFiles) {
                 logFiles.add(new LogFile(logFilePath));
             }
@@ -127,37 +128,12 @@ public class FileSearcher {
         File serverLogDirectory = new File(domainDirectory + "\\servers\\" + serverName + "\\logs\\");
         if (serverLogDirectory.exists()) {
             List<LogFile> logFiles = new ArrayList<>();
-            for (String logFilePath : getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
+            for (String logFilePath : Utils.getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
                 logFiles.add(new LogFile(logFilePath));
             }
             return logFiles;
         }
         return null;
-    }
-
-    /* Возможно стоит перенести метод в класс Utils, так как он также используется в классе Request */
-    public List<String> getFilesMatching(File root, String regExp) {
-        try {
-            if (!root.isDirectory()) {
-                throw new IllegalArgumentException(root + " это не директория.");
-            }
-        } catch(IllegalArgumentException e) {
-            logger.log(Level.SEVERE, "Ошибка при поиске файлов в некоторой папке", e) ;
-        }
-        final Pattern p = Pattern.compile(regExp);
-
-        File[] files = root.listFiles(new FileFilter(){
-            @Override
-            public boolean accept(File file) {
-                return p.matcher(file.getName()).matches();
-            }
-        });
-
-        List<String> filesMatching = new ArrayList<>();
-        for (File file : files) {
-            filesMatching.add(file.toString());
-        }
-        return filesMatching;
     }
 
     public List<LogFile> getLogFiles(LocationType locationType, String location) throws Exception {

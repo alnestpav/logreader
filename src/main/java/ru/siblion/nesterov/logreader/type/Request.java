@@ -1,9 +1,9 @@
 package ru.siblion.nesterov.logreader.type;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
-import ru.siblion.nesterov.logreader.core.FileSearcher;
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
 import ru.siblion.nesterov.logreader.util.MyLogger;
+import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -195,8 +195,7 @@ public class Request {
     }
 
     private File searchCacheFile() {
-        FileSearcher fileSearcher = new FileSearcher();
-        List<String> files = fileSearcher.getFilesMatching(config.getDirectory(), ".+" + hashCode() + "\\." + fileFormat);
+        List<String> files = Utils.getFilesMatching(config.getDirectory(), ".+" + hashCode() + "\\." + fileFormat);
         if (files.isEmpty()) {
             return null;
         } else {
