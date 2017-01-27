@@ -162,16 +162,13 @@ public class LogReader {
                                                   XMLGregorianCalendar dateFrom,
                                                   XMLGregorianCalendar dateTo) throws Exception {
         logger.log(Level.INFO, "Получить лог сообщения");
-        Map<Integer, Integer> blockPositions;
-        FileSearcher fileSearcher = new FileSearcher();
         List<LogMessage> logMessageList = new ArrayList<>();
+
+        FileSearcher fileSearcher = new FileSearcher();
         List<LogFile> logFiles = fileSearcher.getLogFiles(locationType, location);
-        logger.log(Level.SEVERE, "logFiles " + logFiles) ;
+
         if (logFiles.size() == 0) {
-            LogMessage logMessage = new LogMessage();
-            logMessage.setMessage("Неверный параметр location");
             logger.log(Level.INFO, "Неверный параметр location");
-            logMessageList.add(logMessage);
             return logMessageList;
         }
 
@@ -185,6 +182,7 @@ public class LogReader {
             if (logFile.getPositionsOfString() == null || logFile.getPrefixPositions() == null ) {
                 continue; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
             }
+            Map<Integer, Integer> blockPositions;
             blockPositions = getBlockPositions(logFile.getPositionsOfString(), logFile.getPrefixPositions());
             logger.log(Level.INFO, "blockPositions " + blockPositions);
             String currentBlock;

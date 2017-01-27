@@ -122,18 +122,16 @@ public class FileSearcher {
 
     }
 
-
     private List<LogFile> getServerLogFiles(String location) {
+        List<LogFile> logFiles = new ArrayList<>();
         String serverName = location;
         File serverLogDirectory = new File(domainDirectory + "\\servers\\" + serverName + "\\logs\\");
         if (serverLogDirectory.exists()) {
-            List<LogFile> logFiles = new ArrayList<>();
             for (String logFilePath : Utils.getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
                 logFiles.add(new LogFile(logFilePath));
             }
-            return logFiles;
         }
-        return null;
+        return logFiles;
     }
 
     public List<LogFile> getLogFiles(LocationType locationType, String location) throws Exception {
