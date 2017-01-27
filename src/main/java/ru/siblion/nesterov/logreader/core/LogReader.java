@@ -32,9 +32,10 @@ public class LogReader {
         this.message = message;
     }
 
-    private void getPositionsOfLinesWithString(String string, List<LogFile> logFiles) {
+    private void getPositionsOfLinesWithString(String string) {
         logger.log(Level.INFO, "log files: " + logFiles + "string=" + string);
         StringBuilder filesString = new StringBuilder();
+        System.out.println("LOGFILES " + logFiles);
         for (LogFile logFile: logFiles) {
             filesString.append(logFile.getFilePath() + " ");
         }
@@ -119,7 +120,7 @@ public class LogReader {
     }
 
     private Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
-                                                          List<Integer> prefixPositions) {
+                                                    List<Integer> prefixPositions) {
         logger.log(Level.INFO, "getBlockPostitions");
         Map<Integer, Integer> blockPositions = new TreeMap<>();
         int start;
@@ -197,8 +198,7 @@ public class LogReader {
             logger.log(Level.INFO, "date Interval " + dateInterval);
             try {
                 logger.log(Level.INFO, "Пробую получить лист логов");
-                LogReader logReader = new LogReader();
-                logMessageList = logReader.getLogMessages(string, dateInterval.getDateFrom(), dateInterval.getDateTo());
+                logMessageList = getLogMessages(string, dateInterval.getDateFrom(), dateInterval.getDateTo());
                 Collections.sort(logMessageList);
                 logger.log(Level.INFO, "Отсортировал: " + logMessageList);
             } catch (Exception e) {
@@ -209,12 +209,12 @@ public class LogReader {
     }
 
     public List<LogMessage> getLogMessages(String string,
-                                                  XMLGregorianCalendar dateFrom,
-                                                  XMLGregorianCalendar dateTo) throws Exception {
+                                           XMLGregorianCalendar dateFrom,
+                                           XMLGregorianCalendar dateTo) throws Exception {
 
 
-        getPositionsOfLinesWithString(string, logFiles);
-        getPositionsOfLinesWithString("####", logFiles);
+        getPositionsOfLinesWithString(string);
+        getPositionsOfLinesWithString("####");
 
         System.out.println("LOG FILES " + logFiles);
         logger.log(Level.INFO, "количество лог файлов: " + logFiles.size());
