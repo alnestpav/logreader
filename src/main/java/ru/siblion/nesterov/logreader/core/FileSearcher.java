@@ -134,7 +134,7 @@ public class FileSearcher {
         return logFiles;
     }
 
-    public List<LogFile> getLogFiles(LocationType locationType, String location) throws Exception {
+    public List<LogFile> getLogFiles(LocationType locationType, String location) {
         System.out.println("LocationType: " + locationType);
         switch(locationType) {
             case domain: return getDomainLogFiles();

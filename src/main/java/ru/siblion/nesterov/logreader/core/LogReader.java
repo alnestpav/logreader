@@ -1,10 +1,7 @@
 package ru.siblion.nesterov.logreader.core;
 
-import ru.siblion.nesterov.logreader.type.LocationType;
-import ru.siblion.nesterov.logreader.type.Response;
+import ru.siblion.nesterov.logreader.type.*;
 import ru.siblion.nesterov.logreader.util.MyLogger;
-import ru.siblion.nesterov.logreader.type.LogFile;
-import ru.siblion.nesterov.logreader.type.LogMessage;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
@@ -22,6 +19,8 @@ import java.util.regex.Pattern;
 public class LogReader {
 
     private String message;
+
+    private List<LogFile> logFiles;
 
     private static final Logger logger = MyLogger.getLogger();
 
@@ -167,16 +166,20 @@ public class LogReader {
         return block.toString();
     }
 
-    public List<LogMessage> getLogMessages(String string,
-                                                  LocationType locationType,
-                                                  String location,
-                                                  XMLGregorianCalendar dateFrom,
-                                                  XMLGregorianCalendar dateTo) throws Exception {
+    public List<LogMessage> getAllLogMessages(Request request) {
         logger.log(Level.INFO, "Получить лог сообщения");
         List<LogMessage> logMessageList = new ArrayList<>();
 
+
+        LocationType locationType = request.getLocationType();
+        String location = request.getLocation();
+        System.out.println("locationType " + locationType);
+        System.out.println("location " + location);
+
         FileSearcher fileSearcher = new FileSearcher();
-        List<LogFile> logFiles = fileSearcher.getLogFiles(locationType, location);
+        logFiles = fileSearcher.getLogFiles(locationType, location);
+
+        System.out.println("logFiles " + logFiles);
 
         if (logFiles.size() == 0) {
             message = "Неверный параметр location";
@@ -184,11 +187,39 @@ public class LogReader {
             return logMessageList;
         }
 
+        List<DateInterval> dateIntervals = request.getDateIntervals();
+        String string = request.getString();
+
+
+        logger.log(Level.INFO, "Начинается получение листа логов");
+        logger.log(Level.INFO, "DateIntervals " + dateIntervals);
+        for (DateInterval dateInterval : dateIntervals) {
+            logger.log(Level.INFO, "date Interval " + dateInterval);
+            try {
+                logger.log(Level.INFO, "Пробую получить лист логов");
+                LogReader logReader = new LogReader();
+                logMessageList = logReader.getLogMessages(string, dateInterval.getDateFrom(), dateInterval.getDateTo());
+                Collections.sort(logMessageList);
+                logger.log(Level.INFO, "Отсортировал: " + logMessageList);
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "Проблема при получении лог-сообщения", e) ;
+            }
+        }
+        return logMessageList;
+    }
+
+    public List<LogMessage> getLogMessages(String string,
+                                                  XMLGregorianCalendar dateFrom,
+                                                  XMLGregorianCalendar dateTo) throws Exception {
+
+
         getPositionsOfLinesWithString(string, logFiles);
         getPositionsOfLinesWithString("####", logFiles);
 
         System.out.println("LOG FILES " + logFiles);
         logger.log(Level.INFO, "количество лог файлов: " + logFiles.size());
+
+        List<LogMessage> logMessageList = new ArrayList<>();
         for (LogFile logFile : logFiles) {
             logger.log(Level.INFO, "Log файл обрабатываю: " + logFile + " ))))");
             if (logFile.getPositionsOfString() == null || logFile.getPrefixPositions() == null ) {

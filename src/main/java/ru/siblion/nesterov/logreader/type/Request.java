@@ -144,24 +144,9 @@ public class Request {
 
 
     public List<LogMessage> getListOfLogMessages() {
-        logger.log(Level.INFO, "Начинается получение листа логов");
-        List<LogMessage> logMessageList = null;
-        logger.log(Level.INFO, "DateIntervals " + dateIntervals);
-        for (DateInterval dateInterval : dateIntervals) {
-            logger.log(Level.INFO, "date Interval " + dateInterval);
-            try {
-                logger.log(Level.INFO, "Пробую получить лист логов");
-                LogReader logReader = new LogReader();
-                logMessageList = logReader.getLogMessages(string, locationType, location, dateInterval.getDateFrom(), dateInterval.getDateTo());
-                Collections.sort(logMessageList);
-                response.setMessage(logReader.getMessage());
-                logger.log(Level.INFO, "Отсортировал: " + logMessageList);
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, "Проблема при получении лог-сообщения", e) ;
-            }
-        }
-
-
+        LogReader logReader = new LogReader();
+        List<LogMessage>  logMessageList = logReader.getAllLogMessages(this);
+        response.setMessage(logReader.getMessage());
         logger.log(Level.INFO, "Запрос " + this + " успешно завершен");
         return logMessageList;
     }
