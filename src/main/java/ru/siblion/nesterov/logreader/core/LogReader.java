@@ -1,5 +1,6 @@
 package ru.siblion.nesterov.logreader.core;
 
+import ru.siblion.nesterov.logreader.type.LocationType;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.LogFile;
 import ru.siblion.nesterov.logreader.type.LogMessage;
@@ -156,6 +157,7 @@ public class LogReader {
     }
 
     public static List<LogMessage> getLogMessages(String string,
+                                                  LocationType locationType,
                                                   String location,
                                                   XMLGregorianCalendar dateFrom,
                                                   XMLGregorianCalendar dateTo) throws Exception {
@@ -163,7 +165,7 @@ public class LogReader {
         Map<Integer, Integer> blockPositions;
         FileSearcher fileSearcher = new FileSearcher();
         List<LogMessage> logMessageList = new ArrayList<>();
-        List<LogFile> logFiles = fileSearcher.getLogFiles(location);
+        List<LogFile> logFiles = fileSearcher.getLogFiles(locationType, location);
         logger.log(Level.SEVERE, "logFiles " + logFiles) ;
         if (logFiles.size() == 0) {
             LogMessage logMessage = new LogMessage();

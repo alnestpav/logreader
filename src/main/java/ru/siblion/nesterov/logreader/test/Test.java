@@ -2,10 +2,7 @@ package ru.siblion.nesterov.logreader.test;
 
 
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
-import ru.siblion.nesterov.logreader.type.FileFormat;
-import ru.siblion.nesterov.logreader.type.Request;
-import ru.siblion.nesterov.logreader.type.DateInterval;
-import ru.siblion.nesterov.logreader.type.Response;
+import ru.siblion.nesterov.logreader.type.*;
 import ru.siblion.nesterov.logreader.util.Utils;
 import ru.siblion.nesterov.logreader.ws.RestWebService;
 import ru.siblion.nesterov.logreader.ws.SoapWebService;
@@ -26,6 +23,7 @@ public class Test {
 
     public static void main(String[] args) {
         String location = "webl_server1";
+        LocationType locationType  = LocationType.server;
         String string =  "java";
 /*        String dateFromString = "2016-12-14T15:48:28.432+03:00";
         String dateToString = "2016-12-14T15:48:31.734+03:00";*/
@@ -42,7 +40,7 @@ public class Test {
         dateIntervals.add(new  DateInterval(dateFrom, dateTo));
         FileFormat[] fileFormats = { FileFormat.pdf };
         for (FileFormat fileFormat : fileFormats) {
-            Request request = Request.getNewRequest(string, location, dateIntervals, fileFormat);
+            Request request = Request.getNewRequest(string, locationType, location, dateIntervals, fileFormat);
             Response response = null;
             try {
                 response = soapWebService.getListOfLogMessages(request);

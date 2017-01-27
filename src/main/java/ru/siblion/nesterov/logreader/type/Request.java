@@ -34,6 +34,9 @@ public class Request {
     @XmlElement(name = "string")
     private String string;
 
+    @XmlElement(name = "locationType")
+    private LocationType locationType;
+
     @XmlElement(name = "location")
     private String location;
 
@@ -69,9 +72,10 @@ public class Request {
 
     private static ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    private Request(String string, String location, List<DateInterval> dateIntervals, FileFormat fileFormat) {
+    private Request(String string, LocationType locationType, String location, List<DateInterval> dateIntervals, FileFormat fileFormat) {
         logger.log(Level.INFO, "Конструктор " + "string " + string + "location " + location + "dateIntervals " + dateIntervals + "fileFormat " + fileFormat);
         this.string = string;
+        this.locationType = locationType;
         this.location = location;
         this.dateIntervals = dateIntervals;
         this.fileFormat = fileFormat;
@@ -86,10 +90,10 @@ public class Request {
         outputFile =  new File(DIRECTORY + "\\log-d" + formattedDate + "h" + this.hashCode() + "." + fileFormat);
     }
 
-    public static Request getNewRequest(String string, String location,
+    public static Request getNewRequest(String string, LocationType locationType, String location,
                                         List<DateInterval> dateIntervals, FileFormat fileFormat) {
         logger.log(Level.INFO, "Инициализация запроса... ");
-        Request request = new Request(string, location, dateIntervals, fileFormat);
+        Request request = new Request(string, locationType, location, dateIntervals, fileFormat);
         logger.log(Level.INFO, "Создан новый запрос " + request);
 
         return request;
@@ -130,6 +134,13 @@ public class Request {
         this.fileFormat = fileFormat;
     }
 
+    public LocationType getLocationType() {
+        return locationType;
+    }
+    public void setLocationType(LocationType locationType) {
+        this.locationType = locationType;
+    }
+
 
     public List<LogMessage> getListOfLogMessages() {
         logger.log(Level.INFO, "Начинается получение листа логов");
@@ -139,7 +150,7 @@ public class Request {
             logger.log(Level.INFO, "date Interval " + dateInterval);
             try {
                 logger.log(Level.INFO, "Пробую получить лист логов");
-                logMessageList = getLogMessages(string, location, dateInterval.getDateFrom(), dateInterval.getDateTo());
+                logMessageList = getLogMessages(string, locationType, location, dateInterval.getDateFrom(), dateInterval.getDateTo());
                 Collections.sort(logMessageList);
                 logger.log(Level.INFO, "Отсортировал: " + logMessageList);
             } catch (Exception e) {
@@ -218,7 +229,7 @@ public class Request {
 
     @Override
     public String toString() {
-        return "Request:" + "\n\tString: " + string + "\n\tLocation: " + location + "\n\tDateIntervals: " + dateIntervals + "\n\tFileFormat: " + fileFormat;
+        return "Request:" + "\n\tString: " + string + "\n\tLocationType: " + locationType + "\n\tLocation: " + location + "\n\tDateIntervals: " + dateIntervals + "\n\tFileFormat: " + fileFormat;
     }
 
     @Override

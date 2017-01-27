@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import ru.siblion.nesterov.logreader.type.LocationType;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.LogFile;
 
@@ -145,27 +146,32 @@ public class FileSearcher {
         return filesMatching;
     }
 
-    public List<LogFile> getLogFiles(String location) throws Exception {
-
+    public List<LogFile> getLogFiles(LocationType locationType, String location) throws Exception {
+        System.out.println("LocationType: " + locationType);
         /* Проверяем, является ли местоположение location доменом */
-        if (location.equals(domainName)) {
+        if (locationType == LocationType.domain) {
             return getDomainLogFiles();
         }
 
-         /* Проверяем, является ли местоположение location каким-либо сервером */
-        String serverName = location;
-        File serverLogDirectory = new File(domainDirectory + "\\servers\\" + serverName + "\\logs\\");
-        if (serverLogDirectory.exists()) {
-            List<LogFile> logFiles = new ArrayList<>();
-            for (String logFilePath : getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
-                logFiles.add(new LogFile(logFilePath));
-            }
-            return logFiles;
-        }
 
         /* Проверяем, является ли местоположение location каким-либо кластером */
-        List<LogFile> logFiles = getClusterLogFiles(location);
-        return logFiles;
+        if (locationType == LocationType.cluster) {
+            return getClusterLogFiles(location);
+        }
+
+        if (locationType == LocationType.server) {
+         /* Проверяем, является ли местоположение location каким-либо сервером */
+            String serverName = location;
+            File serverLogDirectory = new File(domainDirectory + "\\servers\\" + serverName + "\\logs\\");
+            if (serverLogDirectory.exists()) {
+                List<LogFile> logFiles = new ArrayList<>();
+                for (String logFilePath : getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
+                    logFiles.add(new LogFile(logFilePath));
+                }
+                return logFiles;
+            }
+        }
+        return null; //
     }
 
 }
