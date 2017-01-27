@@ -29,14 +29,6 @@ public class ExportFromArchive {
     private static final Logger logger = MyLogger.getLogger();
 
     static public void exportResource(String resourceName, String copyFilePath) throws Exception {
-        /*Pattern fileNamePattern = Pattern.compile("\\w+\\ ");
-        Matcher fileNamePatternMatcher;
-
-        fileNamePatternMatcher = fileNamePattern.matcher(resourceName);
-        fileNamePatternMatcher.find();
-        String fileName = fileNamePatternMatcher.group();
-        System.out.println(fileName);
-        DIRECTORY.mkdir(); // переписать с помощью nio*/
         String resource = resourceName.replace('\\', '/'); // метод getResourceAsStream использует '/' для разделения в пути файла
         InputStream file = ExportFromArchive.class.getResourceAsStream(resource);
         Files.copy(file, Paths.get(copyFilePath));

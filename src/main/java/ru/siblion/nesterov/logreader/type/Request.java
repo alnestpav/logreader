@@ -11,10 +11,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -88,6 +85,11 @@ public class Request {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
         String formattedDate = simpleDateFormat.format(date);
         outputFile =  new File(DIRECTORY + "\\log-d" + formattedDate + "h" + this.hashCode() + "." + fileFormat);
+
+        if (dateIntervals == null) {
+            List<DateInterval> emptyDateIntervals = new ArrayList<>();
+            emptyDateIntervals.add(new DateInterval(null, null));
+        }
     }
 
     public static Request getNewRequest(String string, LocationType locationType, String location,
@@ -157,6 +159,8 @@ public class Request {
                 logger.log(Level.SEVERE, "Проблема при получении лог-сообщения", e) ;
             }
         }
+
+
         logger.log(Level.INFO, "Запрос " + this + " успешно завершен");
         return logMessageList;
     }

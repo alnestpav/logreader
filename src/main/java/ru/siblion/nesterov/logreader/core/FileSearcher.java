@@ -121,6 +121,20 @@ public class FileSearcher {
 
     }
 
+
+    private List<LogFile> getServerLogFiles(String location) {
+        String serverName = location;
+        File serverLogDirectory = new File(domainDirectory + "\\servers\\" + serverName + "\\logs\\");
+        if (serverLogDirectory.exists()) {
+            List<LogFile> logFiles = new ArrayList<>();
+            for (String logFilePath : getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
+                logFiles.add(new LogFile(logFilePath));
+            }
+            return logFiles;
+        }
+        return null;
+    }
+
     /* Возможно стоит перенести метод в класс Utils, так как он также используется в классе Request */
     public List<String> getFilesMatching(File root, String regExp) {
         try {
@@ -148,30 +162,13 @@ public class FileSearcher {
 
     public List<LogFile> getLogFiles(LocationType locationType, String location) throws Exception {
         System.out.println("LocationType: " + locationType);
-        /* Проверяем, является ли местоположение location доменом */
-        if (locationType == LocationType.domain) {
-            return getDomainLogFiles();
+        switch(locationType) {
+            case domain: return getDomainLogFiles();
+            case cluster: return getClusterLogFiles(location);
+            case server: return getServerLogFiles(location);
+            default: return null;
         }
-
-
-        /* Проверяем, является ли местоположение location каким-либо кластером */
-        if (locationType == LocationType.cluster) {
-            return getClusterLogFiles(location);
-        }
-
-        if (locationType == LocationType.server) {
-         /* Проверяем, является ли местоположение location каким-либо сервером */
-            String serverName = location;
-            File serverLogDirectory = new File(domainDirectory + "\\servers\\" + serverName + "\\logs\\");
-            if (serverLogDirectory.exists()) {
-                List<LogFile> logFiles = new ArrayList<>();
-                for (String logFilePath : getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
-                    logFiles.add(new LogFile(logFilePath));
-                }
-                return logFiles;
-            }
-        }
-        return null; //
     }
+
 
 }
