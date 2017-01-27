@@ -1,6 +1,7 @@
 package ru.siblion.nesterov.logreader.core;
 
 import ru.siblion.nesterov.logreader.type.LocationType;
+import ru.siblion.nesterov.logreader.type.Response;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.LogFile;
 import ru.siblion.nesterov.logreader.type.LogMessage;
@@ -20,9 +21,19 @@ import java.util.regex.Pattern;
 /* Класс для получения лог-сообщений */
 public class LogReader {
 
+    private String message;
+
     private static final Logger logger = MyLogger.getLogger();
 
-    private static void getPositionsOfLinesWithString(String string, List<LogFile> logFiles) {
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    private void getPositionsOfLinesWithString(String string, List<LogFile> logFiles) {
         logger.log(Level.INFO, "log files: " + logFiles + "string=" + string);
         StringBuilder filesString = new StringBuilder();
         for (LogFile logFile: logFiles) {
@@ -108,7 +119,7 @@ public class LogReader {
         }
     }
 
-    private static Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
+    private Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
                                                           List<Integer> prefixPositions) {
         logger.log(Level.INFO, "getBlockPostitions");
         Map<Integer, Integer> blockPositions = new TreeMap<>();
@@ -135,7 +146,7 @@ public class LogReader {
         return blockPositions;
     }
 
-    private static String getBlock(LogFile logFile, int fromLineNumber, int toLineNumber)  {
+    private String getBlock(LogFile logFile, int fromLineNumber, int toLineNumber)  {
         logger.log(Level.INFO, "getBlock(" + logFile.getFilePath() + ", " + fromLineNumber + ", " + toLineNumber + ")");
         StringBuilder block = new StringBuilder();
 
@@ -156,7 +167,7 @@ public class LogReader {
         return block.toString();
     }
 
-    public static List<LogMessage> getLogMessages(String string,
+    public List<LogMessage> getLogMessages(String string,
                                                   LocationType locationType,
                                                   String location,
                                                   XMLGregorianCalendar dateFrom,
@@ -168,6 +179,7 @@ public class LogReader {
         List<LogFile> logFiles = fileSearcher.getLogFiles(locationType, location);
 
         if (logFiles.size() == 0) {
+            message = "Неверный параметр location";
             logger.log(Level.INFO, "Неверный параметр location");
             return logMessageList;
         }

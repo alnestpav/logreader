@@ -1,6 +1,7 @@
 package ru.siblion.nesterov.logreader.type;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+import ru.siblion.nesterov.logreader.core.LogReader;
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.util.Utils;
@@ -16,8 +17,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static ru.siblion.nesterov.logreader.core.LogReader.getLogMessages;
 
 /**
  * Created by alexander on 15.12.2016.
@@ -152,8 +151,10 @@ public class Request {
             logger.log(Level.INFO, "date Interval " + dateInterval);
             try {
                 logger.log(Level.INFO, "Пробую получить лист логов");
-                logMessageList = getLogMessages(string, locationType, location, dateInterval.getDateFrom(), dateInterval.getDateTo());
+                LogReader logReader = new LogReader();
+                logMessageList = logReader.getLogMessages(string, locationType, location, dateInterval.getDateFrom(), dateInterval.getDateTo());
                 Collections.sort(logMessageList);
+                response.setMessage(logReader.getMessage());
                 logger.log(Level.INFO, "Отсортировал: " + logMessageList);
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "Проблема при получении лог-сообщения", e) ;
