@@ -144,8 +144,13 @@ public class Request {
 
 
     public List<LogMessage> getListOfLogMessages() {
-        LogReader logReader = new LogReader();
-        List<LogMessage>  logMessageList = logReader.getAllLogMessages(this);
+        LogReader logReader = new LogReader(this);
+        List<LogMessage>  logMessageList = null;
+        try {
+            logMessageList = logReader.getLogMessages();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         response.setMessage(logReader.getMessage());
         logger.log(Level.INFO, "Запрос " + this + " успешно завершен");
         return logMessageList;

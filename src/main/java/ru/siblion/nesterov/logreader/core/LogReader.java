@@ -19,11 +19,29 @@ import java.util.regex.Pattern;
 /* Класс для получения лог-сообщений */
 public class LogReader {
 
+    private String string;
+    private List<DateInterval> dateIntervals;
+    private List<LogFile> logFiles;
     private String message;
 
-    private List<LogFile> logFiles;
-
     private static final Logger logger = MyLogger.getLogger();
+
+    public LogReader(Request request) {
+        LocationType locationType = request.getLocationType();
+        String location = request.getLocation();
+
+        FileSearcher fileSearcher = new FileSearcher();
+        logFiles = fileSearcher.getLogFiles(locationType, location);
+
+        if (logFiles.size() == 0) {
+            message = "Неверный параметр location";
+            logger.log(Level.INFO, "Неверный параметр location");
+        }
+
+        dateIntervals = request.getDateIntervals();
+        string = request.getString();
+
+    }
 
     public String getMessage() {
         return message;
@@ -168,43 +186,8 @@ public class LogReader {
         return block.toString();
     }
 
-    public List<LogMessage> getAllLogMessages(Request request) {
-        logger.log(Level.INFO, "Получить лог сообщения");
-        List<LogMessage> logMessageList = new ArrayList<>();
 
-        LocationType locationType = request.getLocationType();
-        String location = request.getLocation();
-        System.out.println("locationType " + locationType);
-        System.out.println("location " + location);
-
-        FileSearcher fileSearcher = new FileSearcher();
-        logFiles = fileSearcher.getLogFiles(locationType, location);
-
-        System.out.println("logFiles " + logFiles);
-
-        if (logFiles.size() == 0) {
-            message = "Неверный параметр location";
-            logger.log(Level.INFO, "Неверный параметр location");
-            return logMessageList;
-        }
-
-        List<DateInterval> dateIntervals = request.getDateIntervals();
-        String string = request.getString();
-
-        logger.log(Level.INFO, "Начинается получение листа логов");
-        logger.log(Level.INFO, "DateIntervals " + dateIntervals);
-        try {
-            logger.log(Level.INFO, "Пробую получить лист логов");
-            logMessageList = getLogMessages(string, dateIntervals);
-            Collections.sort(logMessageList);
-            logger.log(Level.INFO, "Отсортировал: " + logMessageList);
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Проблема при получении лог-сообщения", e) ;
-        }
-        return logMessageList;
-    }
-
-    public List<LogMessage> getLogMessages(String string, List<DateInterval> dateIntervals) throws Exception {
+    public List<LogMessage> getLogMessages() throws Exception {
 
         getPositionsOfLinesWithString(string);
         getPositionsOfLinesWithString("####");
@@ -238,6 +221,7 @@ public class LogReader {
 
             }
         }
+        Collections.sort(logMessageList);
         return logMessageList;
     }
 
