@@ -2,6 +2,7 @@ package ru.siblion.nesterov.logreader.core;
 
 import ru.siblion.nesterov.logreader.type.*;
 import ru.siblion.nesterov.logreader.util.MyLogger;
+import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
@@ -171,7 +172,6 @@ public class LogReader {
         logger.log(Level.INFO, "Получить лог сообщения");
         List<LogMessage> logMessageList = new ArrayList<>();
 
-
         LocationType locationType = request.getLocationType();
         String location = request.getLocation();
         System.out.println("locationType " + locationType);
@@ -191,27 +191,20 @@ public class LogReader {
         List<DateInterval> dateIntervals = request.getDateIntervals();
         String string = request.getString();
 
-
         logger.log(Level.INFO, "Начинается получение листа логов");
         logger.log(Level.INFO, "DateIntervals " + dateIntervals);
-        for (DateInterval dateInterval : dateIntervals) {
-            logger.log(Level.INFO, "date Interval " + dateInterval);
-            try {
-                logger.log(Level.INFO, "Пробую получить лист логов");
-                logMessageList = getLogMessages(string, dateInterval.getDateFrom(), dateInterval.getDateTo());
-                Collections.sort(logMessageList);
-                logger.log(Level.INFO, "Отсортировал: " + logMessageList);
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, "Проблема при получении лог-сообщения", e) ;
-            }
+        try {
+            logger.log(Level.INFO, "Пробую получить лист логов");
+            logMessageList = getLogMessages(string, dateIntervals);
+            Collections.sort(logMessageList);
+            logger.log(Level.INFO, "Отсортировал: " + logMessageList);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Проблема при получении лог-сообщения", e) ;
         }
         return logMessageList;
     }
 
-    public List<LogMessage> getLogMessages(String string,
-                                           XMLGregorianCalendar dateFrom,
-                                           XMLGregorianCalendar dateTo) throws Exception {
-
+    public List<LogMessage> getLogMessages(String string, List<DateInterval> dateIntervals) throws Exception {
 
         getPositionsOfLinesWithString(string);
         getPositionsOfLinesWithString("####");
@@ -235,34 +228,17 @@ public class LogReader {
                 LogMessage logMessage = new LogMessage(currentBlock);
                 XMLGregorianCalendar logMessageDate = logMessage.getDate();
                 logger.log(Level.INFO, "CURRENT logMessageDate: " + logMessageDate);
-                if (dateFrom == null && dateTo == null) {
-                    logMessageList.add(logMessage);
-                    logger.log(Level.INFO, "Добавлено сообщение");
-                    continue;
-                }
-                if (dateFrom == null) {
-                    if (logMessageDate.compare(dateTo) <= 0) {
+
+                for (DateInterval dateInterval : dateIntervals) {
+                    if (Utils.isInDateInterval(logMessageDate, dateInterval)) {
                         logMessageList.add(logMessage);
-                        logger.log(Level.INFO, "Добавлено сообщение");
-                        continue;
+                        break; // если дата лог-сообщения входит хотя бы в один интервал дат, то добавляет его и рассматриваем следующее
                     }
                 }
-                if (dateTo == null) {
-                    if (logMessageDate.compare(dateFrom) >= 0) {
-                        logMessageList.add(logMessage);
-                        logger.log(Level.INFO, "Добавлено сообщение");
-                        continue;
-                    }
-                }
-                if (logMessageDate.compare(dateFrom) >= 0 && logMessageDate.compare(dateTo) <= 0 ) {
-                    logMessageList.add(logMessage);
-                    logger.log(Level.INFO, "Добавлено сообщение");
-                }
-                else {
-                    logger.log(Level.INFO, "ELSE УСЛОВИЕ");
-                }
+
             }
         }
         return logMessageList;
     }
+
 }

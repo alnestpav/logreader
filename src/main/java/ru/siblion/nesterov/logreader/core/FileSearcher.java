@@ -12,7 +12,6 @@ import ru.siblion.nesterov.logreader.util.Utils;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
