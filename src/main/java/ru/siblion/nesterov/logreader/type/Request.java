@@ -144,7 +144,7 @@ public class Request {
 
 
     public List<LogMessage> getListOfLogMessages() {
-        LogReader logReader = new LogReader(this);
+        LogReader logReader = new LogReader(string, dateIntervals, locationType, location);
         List<LogMessage>  logMessageList = null;
         try {
             logMessageList = logReader.getLogMessages();

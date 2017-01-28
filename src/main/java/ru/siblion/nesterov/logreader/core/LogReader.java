@@ -26,10 +26,7 @@ public class LogReader {
 
     private static final Logger logger = MyLogger.getLogger();
 
-    public LogReader(Request request) {
-        LocationType locationType = request.getLocationType();
-        String location = request.getLocation();
-
+    public LogReader(String string, List<DateInterval> dateIntervals, LocationType locationType, String location) {
         FileSearcher fileSearcher = new FileSearcher();
         logFiles = fileSearcher.getLogFiles(locationType, location);
 
@@ -37,10 +34,9 @@ public class LogReader {
             message = "Неверный параметр location";
             logger.log(Level.INFO, "Неверный параметр location");
         }
-
-        dateIntervals = request.getDateIntervals();
-        string = request.getString();
-
+        // если лог-файлы отсутствуют, то можно дальнейшие операторы не выполнять!!
+        this.dateIntervals = dateIntervals;
+        this.string = string;
     }
 
     public String getMessage() {
