@@ -230,7 +230,7 @@ public class LogReader {
                 logger.log(Level.INFO, "CURRENT logMessageDate: " + logMessageDate);
 
                 for (DateInterval dateInterval : dateIntervals) {
-                    if (Utils.isInDateInterval(logMessageDate, dateInterval)) {
+                    if (dateInterval.containsDate(logMessageDate)) {
                         logMessageList.add(logMessage);
                         break; // если дата лог-сообщения входит хотя бы в один интервал дат, то добавляет его и рассматриваем следующее
                     }

@@ -78,33 +78,4 @@ public class Utils {
         return filesMatching;
     }
 
-
-    /* Метод раньше был в LogReader, но он достаточно общий, поэтому перенес сюда */
-    public static boolean isInDateInterval(XMLGregorianCalendar date, DateInterval dateInterval) {
-
-        if (date == null) return false;
-        if (dateInterval == null) return false; // потом проверить! возможно нужно возвращать true, чтобы текущая реализация работала
-
-        XMLGregorianCalendar dateFrom = dateInterval.getDateFrom();
-        XMLGregorianCalendar dateTo = dateInterval.getDateTo();
-
-        if (dateFrom == null && dateTo == null) {
-            return true;
-        }
-        if (dateFrom == null) {
-            if (date.compare(dateTo) <= 0) {
-                return true;
-            }
-        }
-        if (dateTo == null) {
-            if (date.compare(dateFrom) >= 0) {
-                return true;
-            }
-        }
-        if (date.compare(dateFrom) >= 0 && date.compare(dateTo) <= 0 ) {
-            return true;
-        }
-        return false;
-    }
-
 }
