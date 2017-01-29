@@ -52,7 +52,12 @@ public class LogReader {
         for (LogFile logFile : logFiles) {
             filesString.append(logFile.getFilePath() + " ");
         }
-        String findstrCommand = "findstr /n /r /c:" + "\"" + string + "\"" + " " + filesString;
+        String findstrCommand;
+        if (logFiles.size() == 1) {
+            findstrCommand = "cmd /Q /C for /f \" delims=:\" %a in ('findstr /n /r /c \"" + string + "\" \"" + filesString + "\"') do echo %a\n";
+        } else {
+            findstrCommand = "cmd /Q /C for /f \" delims=:\" %a in ('findstr /n /r /c \"" + string + "\" \"" + filesString + "\"') do echo %a\n";
+        }
         logger.log(Level.INFO, "command:\n" + findstrCommand);
 
         try {
@@ -64,12 +69,8 @@ public class LogReader {
             List<Integer> linesWithStringNumbers = new ArrayList<>();
             if (logFiles.size() == 1) {
                 while (line != null) {
-                    Pattern lineNumberPattern = Pattern.compile("\\d+");
-                    Matcher lineNumberMatcher;
-                    lineNumberMatcher = lineNumberPattern.matcher(line);
-                    lineNumberMatcher.find();
-                    String lineNumberString = lineNumberMatcher.group();
-                    linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
+                    System.out.println("line!!! " + line);
+                    linesWithStringNumbers.add(Integer.parseInt(line));
                     line = reader.readLine();
                 }
                 if (!string.equals("####")) {
@@ -79,6 +80,7 @@ public class LogReader {
                 }
                 return;
             }
+
             Pattern lineNumberPattern = Pattern.compile(":\\d+");
             Matcher lineNumberMatcher;
 
