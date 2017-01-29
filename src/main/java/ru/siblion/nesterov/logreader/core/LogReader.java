@@ -48,18 +48,15 @@ public class LogReader {
     }
 
     private void getPositionsOfLinesWithString(String string) {
-        logger.log(Level.INFO, "log files: " + logFiles + "string=" + string);
         StringBuilder filesString = new StringBuilder();
-        System.out.println("LOGFILES " + logFiles);
-        for (LogFile logFile: logFiles) {
+        for (LogFile logFile : logFiles) {
             filesString.append(logFile.getFilePath() + " ");
         }
-        System.out.println("filesString " + filesString);
-        String command = "findstr /n /r /c:" + "\"" + string + "\"" + " " + filesString;
-        logger.log(Level.INFO, "command:\n" + command);
+        String findstrCommand = "findstr /n /r /c:" + "\"" + string + "\"" + " " + filesString;
+        logger.log(Level.INFO, "command:\n" + findstrCommand);
 
         try {
-            Process findstrProcess = Runtime.getRuntime().exec(command);
+            Process findstrProcess = Runtime.getRuntime().exec(findstrCommand);
             InputStream findstrProcessInputStream = findstrProcess.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(findstrProcessInputStream));
             String line = reader.readLine();
@@ -76,13 +73,9 @@ public class LogReader {
                     line = reader.readLine();
                 }
                 if (!string.equals("####")) {
-                    LogFile logFile = new LogFile(logFiles.get(0));
-                    logFile.setPositionsOfString(linesWithStringNumbers);
-                    logFiles.set(0, logFile);
+                    logFiles.get(0).setPositionsOfString(linesWithStringNumbers);
                 } else {
-                    LogFile logFile = new LogFile(logFiles.get(0));
-                    logFile.setPrefixPositions(linesWithStringNumbers);
-                    logFiles.set(0, logFile);;
+                    logFiles.get(0).setPrefixPositions(linesWithStringNumbers);
                 }
                 return;
             }
@@ -182,31 +175,28 @@ public class LogReader {
         return block.toString();
     }
 
-
     public List<LogMessage> getLogMessages() throws Exception {
 
         getPositionsOfLinesWithString(string);
         getPositionsOfLinesWithString("####");
 
-        System.out.println("LOG FILES " + logFiles);
-        logger.log(Level.INFO, "количество лог файлов: " + logFiles.size());
-
         List<LogMessage> logMessageList = new ArrayList<>();
         for (LogFile logFile : logFiles) {
             logger.log(Level.INFO, "Log файл обрабатываю: " + logFile + " ))))");
+
             if (logFile.getPositionsOfString() == null || logFile.getPrefixPositions() == null ) {
                 continue; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
             }
+
             Map<Integer, Integer> blockPositions;
             blockPositions = getBlockPositions(logFile.getPositionsOfString(), logFile.getPrefixPositions());
             logger.log(Level.INFO, "blockPositions " + blockPositions);
+
             String currentBlock;
             for (Map.Entry<Integer, Integer> entry : blockPositions.entrySet()) {
                 currentBlock = (getBlock(logFile, entry.getKey(), entry.getValue())).substring(4); // удаляем префикс ####
-                logger.log(Level.INFO, "CURRENT BLOCK: " + currentBlock);
                 LogMessage logMessage = new LogMessage(currentBlock);
                 XMLGregorianCalendar logMessageDate = logMessage.getDate();
-                logger.log(Level.INFO, "CURRENT logMessageDate: " + logMessageDate);
 
                 for (DateInterval dateInterval : dateIntervals) {
                     if (dateInterval.containsDate(logMessageDate)) {
@@ -217,7 +207,7 @@ public class LogReader {
 
             }
         }
-        Collections.sort(logMessageList);
+        Collections.sort(logMessageList); // попробовать другую структуру данных, где не нужно сортировать в конце!
         return logMessageList;
     }
 
