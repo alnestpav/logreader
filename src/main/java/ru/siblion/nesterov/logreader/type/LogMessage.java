@@ -42,7 +42,7 @@ public class LogMessage implements Comparable<LogMessage> {
 
     }
 
-    private static XMLGregorianCalendar parseDate(String block) {
+    public static XMLGregorianCalendar parseDate(String block) {
         String dateRegExp = "<[^<>]*>";
         Pattern p = Pattern.compile(dateRegExp);
         Matcher m = p.matcher(block);
