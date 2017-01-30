@@ -48,6 +48,7 @@ public class LogReader {
         this.message = message;
     }
 
+    /* Метод*/
     private void getPositionsOfLinesWithString(String string) {
         if (logFiles.size() == 0) {
             return; // если лог-файлов для поиска сообщений нет, то нет смысла искать
@@ -73,12 +74,11 @@ public class LogReader {
         try (InputStream findstrProcessInputStream = findstrProcess.getInputStream();
             InputStreamReader findstrProcessInputStreamReader = new InputStreamReader(findstrProcessInputStream);
             BufferedReader reader = new BufferedReader(findstrProcessInputStreamReader)) {
-            /* Строка представляет собой номер строки, в которой найдено выражение, если файл один
-             * или файл:номер - если несколько файлов */
+
             String line = reader.readLine();
 
             List<Integer> linesWithStringNumbers = new ArrayList<>();
-            if (logFiles.size() == 1) {
+            if (logFiles.size() == 1) { /* Строка представляет собой номер строки, в которой найдено выражение, если файл один */
                 while (line != null) {
                     Pattern lineNumberPattern = Pattern.compile("\\d+");
                     Matcher lineNumberMatcher;
@@ -96,6 +96,7 @@ public class LogReader {
                 return;
             }
 
+            /* Строка представляет собой - файл:номер - если несколько файлов */
             Pattern lineNumberPattern = Pattern.compile(":\\d+");
             Matcher lineNumberMatcher;
 
@@ -220,5 +221,4 @@ public class LogReader {
         Collections.sort(logMessageList); // попробовать другую структуру данных, где не нужно сортировать в конце!
         return logMessageList;
     }
-
 }
