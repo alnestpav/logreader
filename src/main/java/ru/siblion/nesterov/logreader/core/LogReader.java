@@ -50,13 +50,14 @@ public class LogReader {
     private void getPositionsOfLinesWithString(String string) {
         StringBuilder filesString = new StringBuilder();
         for (LogFile logFile : logFiles) {
-            filesString.append(logFile.getFilePath() + " ");
+            filesString.append("\"" + logFile.getFilePath() + "\" "); // возможно стоит переписать, используя StringJoiner, чтобы не было пробела в конце
         }
+
         String findstrCommand;
         if (logFiles.size() == 1) {
-            findstrCommand = "cmd /Q /C for /f \" delims=:\" %a in ('findstr /n /r /c \"" + string + "\" \"" + filesString + "\"') do echo %a\n";
+            findstrCommand = "cmd /Q /C for /f \" delims=:\" %a in ('findstr /n /r /c \"" + string + "\" " + filesString + "') do echo %a";
         } else {
-            findstrCommand = "cmd /Q /C for /f \" delims=:\" %a in ('findstr /n /r /c \"" + string + "\" \"" + filesString + "\"') do echo %a\n";
+            findstrCommand = "cmd /Q /C for /f \" tokens=1-3 delims=:\" %a in ('findstr /n /r /c \"" + string + "\" " + filesString + "') do echo %a:%b:%c";
         }
         logger.log(Level.INFO, "command:\n" + findstrCommand);
 
@@ -64,19 +65,21 @@ public class LogReader {
             Process findstrProcess = Runtime.getRuntime().exec(findstrCommand);
             InputStream findstrProcessInputStream = findstrProcess.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(findstrProcessInputStream));
+
+            /* Строка представляет собой номер строки, в которой найдено выражение, если файл один
+             * или файл:номер - если несколько файлов */
             String line = reader.readLine();
 
             List<Integer> linesWithStringNumbers = new ArrayList<>();
             if (logFiles.size() == 1) {
                 while (line != null) {
-                    System.out.println("line!!! " + line);
                     linesWithStringNumbers.add(Integer.parseInt(line));
                     line = reader.readLine();
                 }
-                if (!string.equals("####")) {
-                    logFiles.get(0).setPositionsOfString(linesWithStringNumbers);
-                } else {
+                if (string.equals("####")) {
                     logFiles.get(0).setPrefixPositions(linesWithStringNumbers);
+                } else {
+                    logFiles.get(0).setPositionsOfString(linesWithStringNumbers);
                 }
                 return;
             }
@@ -84,24 +87,24 @@ public class LogReader {
             Pattern lineNumberPattern = Pattern.compile(":\\d+");
             Matcher lineNumberMatcher;
 
-            Pattern fileNamePattern = Pattern.compile("[^.]+\\.log\\d*");
+            Pattern fileNamePattern = Pattern.compile("^[^.]+\\.log\\d*");
             Matcher fileNameMatcher;
             fileNameMatcher = fileNamePattern.matcher(line);
             fileNameMatcher.find();
             String currentFileName = fileNameMatcher.group();
 
+            String fileName;
             while (line != null) {
                 fileNameMatcher = fileNamePattern.matcher(line);
                 fileNameMatcher.find();
-                String fileName = fileNameMatcher.group();
-                logger.log(Level.INFO, "fileName from findstr: " + fileName);
+                fileName = fileNameMatcher.group();
                 if (!fileName.equals(currentFileName)) { // проверить последний случай!
                     for (LogFile logFile : logFiles) {
                         if (logFile.getFilePath().equals(currentFileName)) {
-                            if (!string.equals("####")) {
-                                logFile.setPositionsOfString(linesWithStringNumbers);
-                            } else {
+                            if (string.equals("####")) {
                                 logFile.setPrefixPositions(linesWithStringNumbers);
+                            } else {
+                                logFile.setPositionsOfString(linesWithStringNumbers);
                             }
                         }
                     }
