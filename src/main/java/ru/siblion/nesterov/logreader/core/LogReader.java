@@ -55,15 +55,11 @@ public class LogReader {
         String firstLogFilePath = null;
         for (LogFile logFile : logFiles.values()) {
             firstLogFilePath = logFile.getFilePath();
-            filesString.append("\"" + logFile.getFilePath() + "\" "); // возможно стоит переписать, используя StringJoiner, чтобы не было пробела в конце
+            filesString.append(logFile.getFilePath() + " "); // возможно стоит переписать, используя StringJoiner, чтобы не было пробела в конце
         }
 
         String findstrCommand;
-        if (logFiles.size() == 1) {
-            findstrCommand = "cmd /Q /C for /f \" delims=:\" %a in ('findstr /n /r /c \"" + string + "\" " + filesString + "') do echo %a";
-        } else {
-            findstrCommand = "cmd /Q /C for /f \" tokens=1-3 delims=:\" %a in ('findstr /n /r /c \"" + string + "\" " + filesString + "') do echo %a:%b:%c";
-        }
+        findstrCommand = "findstr /n /r /c \"" + string + "\" " + filesString;
         logger.log(Level.INFO, "command:\n" + findstrCommand);
 
         try {
@@ -78,7 +74,12 @@ public class LogReader {
             List<Integer> linesWithStringNumbers = new ArrayList<>();
             if (logFiles.size() == 1) {
                 while (line != null) {
-                    linesWithStringNumbers.add(Integer.parseInt(line));
+                    Pattern lineNumberPattern = Pattern.compile("\\d+");
+                    Matcher lineNumberMatcher;
+                    lineNumberMatcher = lineNumberPattern.matcher(line);
+                    lineNumberMatcher.find();
+                    String lineNumberString = lineNumberMatcher.group();
+                    linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
                     line = reader.readLine();
                 }
                 if (string.equals("####")) {
