@@ -63,6 +63,7 @@ public class LogReader {
 
         String findstrCommand;
         findstrCommand = "findstr /n /r \"" + string + "\" " + filesString;
+        System.out.println("findstr /n /r \"" + string + "\" " + filesString);
 
         try {
             Process findstrProcess = Runtime.getRuntime().exec(findstrCommand);
@@ -109,15 +110,15 @@ public class LogReader {
                 String lineNumberString = lineNumberMatcher.group().substring(1);
                 linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
 
-
-
                 line = reader.readLine();
+                System.out.println("LINE      :::: " + line);
                 if (line != null) {
                     fileMatcher = filePattern.matcher(line);
                     fileMatcher.find();
                     nextFile = fileMatcher.group();
 
                     if (!nextFile.equals(currentFile)) { // проверить последний случай!
+                        System.out.println("currentFile " + currentFile);
                         if (string.equals("####")) {
                             prefixPositions.put(currentFile, linesWithStringNumbers);
                         } else {
@@ -126,12 +127,13 @@ public class LogReader {
                         System.out.println("prefixPositions " + prefixPositions);
                         System.out.println("stringPositions " + stringPositions);
                         currentFile = nextFile;
-                        linesWithStringNumbers.clear();
+                        linesWithStringNumbers = new ArrayList<>();
                     }
+                } else {
+                    System.out.println("LINE IS NULL");
                 }
-
-
             }
+            System.out.println("currentFile " + currentFile);
             if (string.equals("####")) {
                 prefixPositions.put(currentFile, linesWithStringNumbers);
             } else {
