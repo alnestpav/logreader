@@ -132,7 +132,6 @@ public class LogReader {
 
     private Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
                                                     List<Integer> prefixPositions) {
-        logger.log(Level.INFO, "getBlockPostitions");
         Map<Integer, Integer> blockPositions = new TreeMap<>();
         int start;
         int end;

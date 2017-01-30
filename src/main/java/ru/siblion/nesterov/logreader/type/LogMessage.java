@@ -50,9 +50,7 @@ public class LogMessage implements Comparable<LogMessage> {
         for (int i = 0; i <= (positionOfTimestamp - 1); i++) {
             m.find();
         }
-        logger.log(Level.INFO, "count: " + m.groupCount());
         String stringTimestamp =  m.group().substring(1, 14);
-        logger.log(Level.INFO, "stringTimestamp: " + stringTimestamp + "count: " + m.groupCount());
         Timestamp stamp = new Timestamp(Long.parseLong(stringTimestamp));
         Date date = new Date(stamp.getTime());
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
