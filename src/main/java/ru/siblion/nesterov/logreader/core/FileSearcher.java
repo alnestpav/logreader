@@ -6,16 +6,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import ru.siblion.nesterov.logreader.type.LocationType;
 import ru.siblion.nesterov.logreader.util.MyLogger;
-import ru.siblion.nesterov.logreader.type.LogFile;
 import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -48,7 +44,7 @@ public class FileSearcher {
         this.domainDirectory = domainDirectory;
     }
 
-    private  Map<String, LogFile> getDomainLogFiles() {
+    private Set<String> getDomainLogFiles() {
         List<String> servers = new ArrayList<>();
         try {
             File domainConfigFile = new File(domainDirectory + "\\config\\config.xml");
@@ -72,19 +68,19 @@ public class FileSearcher {
         }
 
         File serverLogDirectory;
-        Map<String, LogFile> logFiles = new HashMap<>();
+        Set<String> logFiles = new HashSet<>();
         for (String server : servers) {
             serverLogDirectory = new File(domainDirectory + "\\servers\\" + server + "\\logs\\");
             String LogFileRegExp = (server + ".log[0-9]*|" + domainName + ".log[0-9]*");
             List<String> listOfLogFiles = Utils.getFilesMatching(serverLogDirectory, LogFileRegExp);
             for (String logFilePath : listOfLogFiles) {
-                logFiles.put(logFilePath, new LogFile(logFilePath));
+                logFiles.add(logFilePath);
             }
         }
         return logFiles;
     }
 
-    private Map<String, LogFile> getClusterLogFiles(String clusterName) {
+    private Set<String> getClusterLogFiles(String clusterName) {
         List<String> servers = new ArrayList<>();
         try {
             File domainConfigFile = new File(domainDirectory + "\\config\\config.xml");
@@ -110,32 +106,32 @@ public class FileSearcher {
             logger.log(Level.SEVERE, "Ошибка при парсинге config.xml", e) ;
         }
         File serverLogDirectory;
-        Map<String, LogFile> logFiles = new HashMap<>();
+        Set<String> logFiles = new HashSet<>();
         for (String server : servers) {
             serverLogDirectory = new File(domainDirectory + "\\servers\\" + server + "\\logs\\");
             String LogFileRegExp = (server + ".log[0-9]*");
             List<String> listOfLogFiles = Utils.getFilesMatching(serverLogDirectory, LogFileRegExp);
             for (String logFilePath : listOfLogFiles) {
-                logFiles.put(logFilePath, new LogFile(logFilePath));
+                logFiles.add(logFilePath);
             }
         }
         return logFiles;
 
     }
 
-    private  Map<String, LogFile> getServerLogFiles(String location) {
-        Map<String, LogFile> logFiles = new HashMap<>();
+    private  Set<String> getServerLogFiles(String location) {
+        Set<String> logFiles = new HashSet<>();
         String serverName = location;
         File serverLogDirectory = new File(domainDirectory + "\\servers\\" + serverName + "\\logs\\");
         if (serverLogDirectory.exists()) {
             for (String logFilePath : Utils.getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
-                logFiles.put(logFilePath, new LogFile(logFilePath));
+                logFiles.add(logFilePath);
             }
         }
         return logFiles;
     }
 
-    public  Map<String, LogFile> getLogFiles(LocationType locationType, String location) {
+    public  Set<String> getLogFiles(LocationType locationType, String location) {
         System.out.println("LocationType: " + locationType);
         switch(locationType) {
             case domain: return getDomainLogFiles();

@@ -21,7 +21,9 @@ public class LogReader {
 
     private String string;
     private List<DateInterval> dateIntervals;
-    private Map<String, LogFile> logFiles;
+    private Map<String, List<Integer>> prefixPositions;
+    private Map<String, List<Integer>> stringPositions;
+    private Set<String> logFiles;
     private String message;
 
     private static final Logger logger = MyLogger.getLogger();
@@ -53,9 +55,9 @@ public class LogReader {
         }
         StringBuilder filesString = new StringBuilder();
         String firstLogFilePath = null;
-        for (LogFile logFile : logFiles.values()) {
-            firstLogFilePath = logFile.getFilePath();
-            filesString.append(logFile.getFilePath() + " "); // возможно стоит переписать, используя StringJoiner, чтобы не было пробела в конце
+        for (String logFile : logFiles) {
+            firstLogFilePath = logFile;
+            filesString.append(logFile + " "); // возможно стоит переписать, используя StringJoiner, чтобы не было пробела в конце
         }
 
         String findstrCommand;
@@ -83,9 +85,9 @@ public class LogReader {
                     line = reader.readLine();
                 }
                 if (string.equals("####")) {
-                    logFiles.get(firstLogFilePath).setPrefixPositions(linesWithStringNumbers);
+                    prefixPositions.get(firstLogFilePath) = linesWithStringNumbers;
                 } else {
-                    logFiles.get(firstLogFilePath).setPositionsOfString(linesWithStringNumbers);
+                    stringPositions.get(firstLogFilePath) = linesWithStringNumbers;
                 }
                 return;
             }
