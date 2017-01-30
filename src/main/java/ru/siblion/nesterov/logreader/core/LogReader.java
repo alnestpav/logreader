@@ -2,7 +2,6 @@ package ru.siblion.nesterov.logreader.core;
 
 import ru.siblion.nesterov.logreader.type.*;
 import ru.siblion.nesterov.logreader.util.MyLogger;
-import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
@@ -62,14 +61,18 @@ public class LogReader {
         }
 
         String findstrCommand;
-        findstrCommand = "findstr /n /r \"" + string + "\" " + filesString;
-        System.out.println("findstr /n /r \"" + string + "\" " + filesString);
+        findstrCommand = "findstr /n /r \"" + string + "\" " + filesString; // параметр /c: нужен ли?
 
+        Process findstrProcess = null;
         try {
-            Process findstrProcess = Runtime.getRuntime().exec(findstrCommand);
-            InputStream findstrProcessInputStream = findstrProcess.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(findstrProcessInputStream));
+            findstrProcess = Runtime.getRuntime().exec(findstrCommand);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        try (InputStream findstrProcessInputStream = findstrProcess.getInputStream();
+            InputStreamReader findstrProcessInputStreamReader = new InputStreamReader(findstrProcessInputStream);
+            BufferedReader reader = new BufferedReader(findstrProcessInputStreamReader)) {
             /* Строка представляет собой номер строки, в которой найдено выражение, если файл один
              * или файл:номер - если несколько файлов */
             String line = reader.readLine();
@@ -111,37 +114,27 @@ public class LogReader {
                 linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
 
                 line = reader.readLine();
-                System.out.println("LINE      :::: " + line);
                 if (line != null) {
                     fileMatcher = filePattern.matcher(line);
                     fileMatcher.find();
                     nextFile = fileMatcher.group();
 
                     if (!nextFile.equals(currentFile)) { // проверить последний случай!
-                        System.out.println("currentFile " + currentFile);
                         if (string.equals("####")) {
                             prefixPositions.put(currentFile, linesWithStringNumbers);
                         } else {
                             stringPositions.put(currentFile, linesWithStringNumbers);
                         }
-                        System.out.println("prefixPositions " + prefixPositions);
-                        System.out.println("stringPositions " + stringPositions);
                         currentFile = nextFile;
                         linesWithStringNumbers = new ArrayList<>();
                     }
-                } else {
-                    System.out.println("LINE IS NULL");
                 }
             }
-            System.out.println("currentFile " + currentFile);
             if (string.equals("####")) {
                 prefixPositions.put(currentFile, linesWithStringNumbers);
             } else {
                 stringPositions.put(currentFile, linesWithStringNumbers);
             }
-            System.out.println("LAST prefixPositions " + prefixPositions);
-            System.out.println("LAST stringPositions " + stringPositions);
-
         } catch(IOException e) {
             logger.log(Level.SEVERE, "Ошибка при получении номеров строк в файле", e) ;
         }
