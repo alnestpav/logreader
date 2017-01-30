@@ -130,9 +130,10 @@ public class LogReader {
         return positions;
     }
 
-    private Collection<int[]> getBlockPositions(List<Integer> positionsOfLinesWithString,
+    private Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
                                                     List<Integer> prefixPositions) {
-        Collection<int[]>  blockPositions = new LinkedHashSet<>();
+        Map<Integer, Integer> blockPositions = new LinkedHashMap<>();
+        /* Либо Collection<int[]> либо Collection<List<Integer>> либо Map<Integer, Integer> */
         int start;
         int end;
         for (int i = 0; i < positionsOfLinesWithString.size(); i++) {
@@ -142,13 +143,13 @@ public class LogReader {
                         && positionsOfLinesWithString.get(i) < prefixPositions.get(j + 1)) {
                     start =  prefixPositions.get(j);
                     end =  prefixPositions.get(j + 1) - 1;
-                    blockPositions.add(new int[] {start, end});
+                    blockPositions.put(start, end);
                     break;
                 }
                 if (j + 1 == prefixPositions.size()) { // Если дошли до конца, значит искомая строка внутри последней строки-блока
                     start =  prefixPositions.get(j);
                     end =  prefixPositions.get(j);
-                    blockPositions.add(new int[] {start, end});
+                    blockPositions.put(start, end);
                 }
             }
         }
@@ -194,11 +195,12 @@ public class LogReader {
         return blocks;
     }
 
-    private List<LogMessage> getLogMessagesForLogFile(String logFile, List<DateInterval> dateIntervals, Collection<int[]> blockPositions)  {
+    private List<LogMessage> getLogMessagesForLogFile(String logFile, List<DateInterval> dateIntervals, Map<Integer, Integer> blockPositions)  {
         System.out.println(logFile);
         System.out.println("blockPositions");
-        for (int[] blockPosition : blockPositions) {
-            System.out.println(Arrays.toString(blockPosition));
+        for (Map.Entry<Integer, Integer> blockPosition : blockPositions.entrySet()) {
+            System.out.println(blockPosition.getKey());
+            System.out.println(blockPosition.getValue());
         }
         List<LogMessage> logMessages = new ArrayList<>();
         StringBuilder block = new StringBuilder();
@@ -209,9 +211,9 @@ public class LogReader {
             int fromLineNumber;
             int toLineNumber;
             int previousToLineNumber = 0;
-            for (int[] blockPosition: blockPositions) {
-                fromLineNumber = blockPosition[0];
-                toLineNumber = blockPosition[1];
+            for (Map.Entry<Integer, Integer> blockPosition : blockPositions.entrySet()) {
+                fromLineNumber = blockPosition.getKey();
+                toLineNumber = blockPosition.getValue();
                 System.out.println("fromLineNumber " + fromLineNumber);
                 System.out.println("toLineNumber " + toLineNumber);
 
@@ -253,7 +255,7 @@ public class LogReader {
             if (prefixPositions.get(logFile) == null || stringPositions.get(logFile)== null ) {
                 continue; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
             }
-            Collection<int[]> blockPositions;
+            Map<Integer, Integer> blockPositions;
             blockPositions = getBlockPositions(stringPositions.get(logFile), prefixPositions.get(logFile));
             logger.log(Level.INFO, "blockPositions " + blockPositions);
             logMessageList.addAll(getLogMessagesForLogFile(logFile, dateIntervals, blockPositions));
