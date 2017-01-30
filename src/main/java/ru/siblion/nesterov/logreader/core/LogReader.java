@@ -21,7 +21,7 @@ public class LogReader {
 
     private String string;
     private List<DateInterval> dateIntervals;
-    private List<LogFile> logFiles;
+    private Map<String, LogFile> logFiles;
     private String message;
 
     private static final Logger logger = MyLogger.getLogger();
@@ -48,8 +48,13 @@ public class LogReader {
     }
 
     private void getPositionsOfLinesWithString(String string) {
+        if (logFiles.size() == 0) {
+            return; // если лог-файлов для поиска сообщений нет, то нет смысла искать
+        }
         StringBuilder filesString = new StringBuilder();
-        for (LogFile logFile : logFiles) {
+        String firstLogFilePath = null;
+        for (LogFile logFile : logFiles.values()) {
+            firstLogFilePath = logFile.getFilePath();
             filesString.append("\"" + logFile.getFilePath() + "\" "); // возможно стоит переписать, используя StringJoiner, чтобы не было пробела в конце
         }
 
@@ -77,9 +82,9 @@ public class LogReader {
                     line = reader.readLine();
                 }
                 if (string.equals("####")) {
-                    logFiles.get(0).setPrefixPositions(linesWithStringNumbers);
+                    logFiles.get(firstLogFilePath).setPrefixPositions(linesWithStringNumbers);
                 } else {
-                    logFiles.get(0).setPositionsOfString(linesWithStringNumbers);
+                    logFiles.get(firstLogFilePath).setPositionsOfString(linesWithStringNumbers);
                 }
                 return;
             }
@@ -99,18 +104,15 @@ public class LogReader {
                 fileNameMatcher.find();
                 fileName = fileNameMatcher.group();
                 if (!fileName.equals(currentFileName)) { // проверить последний случай!
-                    for (LogFile logFile : logFiles) {
-                        if (logFile.getFilePath().equals(currentFileName)) {
-                            if (string.equals("####")) {
-                                logFile.setPrefixPositions(linesWithStringNumbers);
-                            } else {
-                                logFile.setPositionsOfString(linesWithStringNumbers);
-                            }
-                        }
+                    LogFile logFile = logFiles.get(currentFileName);
+                    if (string.equals("####")) {
+                        logFile.setPrefixPositions(linesWithStringNumbers);
+                    } else {
+                        logFile.setPositionsOfString(linesWithStringNumbers);
                     }
-                    currentFileName = fileName;
-                    linesWithStringNumbers.clear();
                 }
+                currentFileName = fileName;
+                linesWithStringNumbers.clear();
                 lineNumberMatcher = lineNumberPattern.matcher(line);
                 lineNumberMatcher.find();
                 String lineNumberString = lineNumberMatcher.group().substring(1);
@@ -118,15 +120,13 @@ public class LogReader {
 
                 line = reader.readLine();
             }
-            for (LogFile logFile : logFiles) {
-                if (logFile.getFilePath().equals(currentFileName)) {
-                    if (!string.equals("####")) {
-                        logFile.setPositionsOfString(linesWithStringNumbers);
-                    } else {
-                        logFile.setPrefixPositions(linesWithStringNumbers);
-                    }
-                }
+            LogFile logFile = logFiles.get(currentFileName);
+            if (string.equals("####")) {
+                logFile.setPrefixPositions(linesWithStringNumbers);
+            } else {
+                logFile.setPositionsOfString(linesWithStringNumbers);
             }
+
         } catch(IOException e) {
             logger.log(Level.SEVERE, "Ошибка при получении номеров строк в файле", e) ;
         }
@@ -186,7 +186,7 @@ public class LogReader {
         getPositionsOfLinesWithString("####");
 
         List<LogMessage> logMessageList = new ArrayList<>();
-        for (LogFile logFile : logFiles) {
+        for (LogFile logFile : logFiles.values()) {
             logger.log(Level.INFO, "Log файл обрабатываю: " + logFile + " ))))");
 
             if (logFile.getPositionsOfString() == null || logFile.getPrefixPositions() == null ) {

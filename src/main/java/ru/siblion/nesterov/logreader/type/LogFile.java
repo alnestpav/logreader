@@ -22,6 +22,7 @@ public class LogFile {
     public LogFile(String filePath) {
         this.filePath = filePath;
     }
+
     public LogFile(LogFile logFile) {
         this.filePath = logFile.getFilePath();
         this.positionsOfString = logFile.getPositionsOfString();
