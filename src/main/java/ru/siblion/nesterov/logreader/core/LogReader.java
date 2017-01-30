@@ -21,8 +21,8 @@ public class LogReader {
 
     private String string;
     private List<DateInterval> dateIntervals;
-    private Map<String, List<Integer>> prefixPositions;
-    private Map<String, List<Integer>> stringPositions;
+    private Map<String, List<Integer>> prefixPositions = new HashMap<>();
+    private Map<String, List<Integer>> stringPositions = new HashMap<>();
     private Set<String> logFiles;
     private String message;
 
@@ -54,7 +54,7 @@ public class LogReader {
             return; // если лог-файлов для поиска сообщений нет, то нет смысла искать
         }
         StringBuilder filesString = new StringBuilder();
-        String firstLogFilePath = null;
+        String firstLogFilePath = null; // нужен в случае единственного лог-файла
         for (String logFile : logFiles) {
             firstLogFilePath = logFile;
             filesString.append(logFile + " "); // возможно стоит переписать, используя StringJoiner, чтобы не было пробела в конце
@@ -62,7 +62,6 @@ public class LogReader {
 
         String findstrCommand;
         findstrCommand = "findstr /n /r /c \"" + string + "\" " + filesString;
-        logger.log(Level.INFO, "command:\n" + findstrCommand);
 
         try {
             Process findstrProcess = Runtime.getRuntime().exec(findstrCommand);
@@ -74,7 +73,7 @@ public class LogReader {
             String line = reader.readLine();
 
             List<Integer> linesWithStringNumbers = new ArrayList<>();
-            if (logFiles.size() == 1) {
+            /*if (logFiles.size() == 1) {
                 while (line != null) {
                     Pattern lineNumberPattern = Pattern.compile("\\d+");
                     Matcher lineNumberMatcher;
@@ -85,12 +84,12 @@ public class LogReader {
                     line = reader.readLine();
                 }
                 if (string.equals("####")) {
-                    prefixPositions.get(firstLogFilePath) = linesWithStringNumbers;
+                    prefixPositions.put(firstLogFilePath, linesWithStringNumbers);
                 } else {
-                    stringPositions.get(firstLogFilePath) = linesWithStringNumbers;
+                    stringPositions.put(firstLogFilePath, linesWithStringNumbers);
                 }
                 return;
-            }
+            }*/
 
             Pattern lineNumberPattern = Pattern.compile(":\\d+");
             Matcher lineNumberMatcher;
@@ -106,29 +105,41 @@ public class LogReader {
                 fileNameMatcher = fileNamePattern.matcher(line);
                 fileNameMatcher.find();
                 fileName = fileNameMatcher.group();
+                System.out.println("fileName " + fileName);
                 if (!fileName.equals(currentFileName)) { // проверить последний случай!
-                    LogFile logFile = logFiles.get(currentFileName);
                     if (string.equals("####")) {
-                        logFile.setPrefixPositions(linesWithStringNumbers);
+                        prefixPositions.put(currentFileName, linesWithStringNumbers);
                     } else {
-                        logFile.setPositionsOfString(linesWithStringNumbers);
+                        stringPositions.put(currentFileName, linesWithStringNumbers);
                     }
+                    System.out.println("prefixPositions " + prefixPositions);
+                    System.out.println("stringPositions " + stringPositions);
+                    System.out.println("currentFileName " + currentFileName);
+                    System.out.println("HASH " + currentFileName.hashCode());
+                    System.out.println("linesWithStringNumbers " + linesWithStringNumbers);
+                    currentFileName = fileName;
+
+                    linesWithStringNumbers.clear();
                 }
-                currentFileName = fileName;
-                linesWithStringNumbers.clear();
+
                 lineNumberMatcher = lineNumberPattern.matcher(line);
                 lineNumberMatcher.find();
                 String lineNumberString = lineNumberMatcher.group().substring(1);
                 linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
 
                 line = reader.readLine();
+                System.out.println("LINE        =" + line);
             }
-            LogFile logFile = logFiles.get(currentFileName);
+
+            System.out.println("currentFileName                               =" + currentFileName);
+            System.out.println("HASH " + currentFileName.hashCode());
             if (string.equals("####")) {
-                logFile.setPrefixPositions(linesWithStringNumbers);
+                prefixPositions.put(currentFileName, linesWithStringNumbers);
             } else {
-                logFile.setPositionsOfString(linesWithStringNumbers);
+                stringPositions.put(currentFileName, linesWithStringNumbers);
             }
+            System.out.println(" END prefixPositions " + prefixPositions);
+            System.out.println(" END stringPositions " + stringPositions);
 
         } catch(IOException e) {
             logger.log(Level.SEVERE, "Ошибка при получении номеров строк в файле", e) ;
@@ -162,11 +173,10 @@ public class LogReader {
         return blockPositions;
     }
 
-    private String getBlock(LogFile logFile, int fromLineNumber, int toLineNumber)  {
-        logger.log(Level.INFO, "getBlock(" + logFile.getFilePath() + ", " + fromLineNumber + ", " + toLineNumber + ")");
+    private String getBlock(String logFile, int fromLineNumber, int toLineNumber)  {
         StringBuilder block = new StringBuilder();
 
-        try(FileReader fileReader = new FileReader(logFile.getFilePath());
+        try(FileReader fileReader = new FileReader(logFile);
             LineNumberReader lineNumberReader = new LineNumberReader(fileReader)){
 
             for (int i = 1; i < fromLineNumber; i++) {
@@ -189,15 +199,14 @@ public class LogReader {
         getPositionsOfLinesWithString("####");
 
         List<LogMessage> logMessageList = new ArrayList<>();
-        for (LogFile logFile : logFiles.values()) {
-            logger.log(Level.INFO, "Log файл обрабатываю: " + logFile + " ))))");
+        for (String logFile : logFiles) {
 
-            if (logFile.getPositionsOfString() == null || logFile.getPrefixPositions() == null ) {
+            if (prefixPositions.get(logFile) == null || stringPositions.get(logFile)== null ) {
                 continue; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
             }
 
             Map<Integer, Integer> blockPositions;
-            blockPositions = getBlockPositions(logFile.getPositionsOfString(), logFile.getPrefixPositions());
+            blockPositions = getBlockPositions(stringPositions.get(logFile), prefixPositions.get(logFile));
             logger.log(Level.INFO, "blockPositions " + blockPositions);
 
             String currentBlock;
@@ -218,5 +227,4 @@ public class LogReader {
         Collections.sort(logMessageList); // попробовать другую структуру данных, где не нужно сортировать в конце!
         return logMessageList;
     }
-
 }
