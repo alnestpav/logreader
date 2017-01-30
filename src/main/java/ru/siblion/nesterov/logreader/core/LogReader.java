@@ -132,7 +132,7 @@ public class LogReader {
 
     private Collection<int[]> getBlockPositions(List<Integer> positionsOfLinesWithString,
                                                     List<Integer> prefixPositions) {
-        Collection<int[]>  blockPositions = new ArrayList<>();
+        Collection<int[]>  blockPositions = new LinkedHashSet<>();
         int start;
         int end;
         for (int i = 0; i < positionsOfLinesWithString.size(); i++) {
@@ -140,7 +140,6 @@ public class LogReader {
                 if (positionsOfLinesWithString.get(i) >= prefixPositions.get(j)
                         && j + 1 < prefixPositions.size()
                         && positionsOfLinesWithString.get(i) < prefixPositions.get(j + 1)) {
-
                     start =  prefixPositions.get(j);
                     end =  prefixPositions.get(j + 1) - 1;
                     blockPositions.add(new int[] {start, end});
@@ -195,6 +194,55 @@ public class LogReader {
         return blocks;
     }
 
+    private List<LogMessage> getLogMessagesForLogFile(String logFile, List<DateInterval> dateIntervals, Collection<int[]> blockPositions)  {
+        System.out.println(logFile);
+        System.out.println("blockPositions");
+        for (int[] blockPosition : blockPositions) {
+            System.out.println(Arrays.toString(blockPosition));
+        }
+        List<LogMessage> logMessages = new ArrayList<>();
+        StringBuilder block = new StringBuilder();
+
+        try(FileReader fileReader = new FileReader(logFile);
+            LineNumberReader lineNumberReader = new LineNumberReader(fileReader)){
+
+            int fromLineNumber;
+            int toLineNumber;
+            int previousToLineNumber = 0;
+            for (int[] blockPosition: blockPositions) {
+                fromLineNumber = blockPosition[0];
+                toLineNumber = blockPosition[1];
+                System.out.println("fromLineNumber " + fromLineNumber);
+                System.out.println("toLineNumber " + toLineNumber);
+
+                for (int i = previousToLineNumber + 1; i < fromLineNumber; i++) {
+                    lineNumberReader.readLine();
+                }
+                String firstBlockLine = lineNumberReader.readLine();
+                System.out.println("firstBlockLine " + "_" + firstBlockLine + "_");
+                XMLGregorianCalendar logMessageDate = LogMessage.parseDate(firstBlockLine);
+                for (DateInterval dateInterval : dateIntervals) {
+                    if (dateInterval.containsDate(logMessageDate)) {
+                        block = new StringBuilder();
+                        block.append(firstBlockLine + "\n");
+                        for (int i = fromLineNumber + 1; i <= toLineNumber; i++) {
+                            block.append(lineNumberReader.readLine() + "\n");
+                        }
+                        //System.out.println("block " + "{{{{" + block + "}}}}");
+                        logMessages.add(new LogMessage(logMessageDate, block.toString())); // в какой момент лучше преобразовывать в String?
+                        break; // если дата лог-сообщения входит хотя бы в один интервал дат, то добавляет его и рассматриваем следующее
+                    }
+                }
+                previousToLineNumber = toLineNumber;
+            }
+        } catch(IOException e){
+            logger.log(Level.SEVERE, "Ошибка при парсинге блока", e) ;
+        }
+        System.out.println(block.toString());
+        return logMessages;
+    }
+
+
     public List<LogMessage> getLogMessages() throws Exception {
 
         Map<String, List<Integer>> prefixPositions = getPositionsOfLinesWithString("####");
@@ -205,12 +253,10 @@ public class LogReader {
             if (prefixPositions.get(logFile) == null || stringPositions.get(logFile)== null ) {
                 continue; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
             }
-
             Collection<int[]> blockPositions;
             blockPositions = getBlockPositions(stringPositions.get(logFile), prefixPositions.get(logFile));
             logger.log(Level.INFO, "blockPositions " + blockPositions);
-            Collection<String> blocks = getBlocks(logFile, dateIntervals, blockPositions);
-            logMessageList.add(blocks);
+            logMessageList.addAll(getLogMessagesForLogFile(logFile, dateIntervals, blockPositions));
         }
         Collections.sort(logMessageList); // попробовать другую структуру данных, где не нужно сортировать в конце!
         return logMessageList;
