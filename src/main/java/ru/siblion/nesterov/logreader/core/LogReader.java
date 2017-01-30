@@ -20,8 +20,6 @@ public class LogReader {
 
     private String string;
     private List<DateInterval> dateIntervals;
-    private Map<String, List<Integer>> prefixPositions = new HashMap<>();
-    private Map<String, List<Integer>> stringPositions = new HashMap<>();
     private Set<String> logFiles;
     private String message;
 
@@ -49,9 +47,11 @@ public class LogReader {
     }
 
     /* Метод*/
-    private void getPositionsOfLinesWithString(String string) {
+    private Map<String, List<Integer>> getPositionsOfLinesWithString(String string) {
+        Map<String, List<Integer>> positions = new HashMap<>();
+
         if (logFiles.size() == 0) {
-            return; // если лог-файлов для поиска сообщений нет, то нет смысла искать
+            return null; // если лог-файлов для поиска сообщений нет, то нет смысла искать
         }
 
         StringBuilder filesString = new StringBuilder();
@@ -88,12 +88,8 @@ public class LogReader {
                     linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
                     line = reader.readLine();
                 }
-                if (string.equals("####")) {
-                    prefixPositions.put(firstLogFilePath, linesWithStringNumbers);
-                } else {
-                    stringPositions.put(firstLogFilePath, linesWithStringNumbers);
-                }
-                return;
+                positions.put(firstLogFilePath, linesWithStringNumbers);
+                return positions;
             }
 
             /* Строка представляет собой - файл:номер - если несколько файлов */
@@ -121,24 +117,17 @@ public class LogReader {
                     nextFile = fileMatcher.group();
 
                     if (!nextFile.equals(currentFile)) { // проверить последний случай!
-                        if (string.equals("####")) {
-                            prefixPositions.put(currentFile, linesWithStringNumbers);
-                        } else {
-                            stringPositions.put(currentFile, linesWithStringNumbers);
-                        }
+                        positions.put(currentFile, linesWithStringNumbers);
                         currentFile = nextFile;
                         linesWithStringNumbers = new ArrayList<>();
                     }
                 }
             }
-            if (string.equals("####")) {
-                prefixPositions.put(currentFile, linesWithStringNumbers);
-            } else {
-                stringPositions.put(currentFile, linesWithStringNumbers);
-            }
+            positions.put(currentFile, linesWithStringNumbers);
         } catch(IOException e) {
             logger.log(Level.SEVERE, "Ошибка при получении номеров строк в файле", e) ;
         }
+        return positions;
     }
 
     private Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
@@ -190,11 +179,12 @@ public class LogReader {
 
     public List<LogMessage> getLogMessages() throws Exception {
 
-        getPositionsOfLinesWithString(string);
-        getPositionsOfLinesWithString("####");
+        Map<String, List<Integer>> prefixPositions = getPositionsOfLinesWithString("####");
+        Map<String, List<Integer>> stringPositions = getPositionsOfLinesWithString(string);
 
         List<LogMessage> logMessageList = new ArrayList<>();
         for (String logFile : logFiles) {
+
 
             if (prefixPositions.get(logFile) == null || stringPositions.get(logFile)== null ) {
                 continue; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
