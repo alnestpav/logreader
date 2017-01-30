@@ -53,15 +53,16 @@ public class LogReader {
         if (logFiles.size() == 0) {
             return; // если лог-файлов для поиска сообщений нет, то нет смысла искать
         }
+
         StringBuilder filesString = new StringBuilder();
-        String firstLogFilePath = null; // нужен в случае единственного лог-файла
+        String firstLogFilePath = null;
         for (String logFile : logFiles) {
             firstLogFilePath = logFile;
             filesString.append(logFile + " "); // возможно стоит переписать, используя StringJoiner, чтобы не было пробела в конце
         }
 
         String findstrCommand;
-        findstrCommand = "findstr /n /r /c \"" + string + "\" " + filesString;
+        findstrCommand = "findstr /n /r \"" + string + "\" " + filesString;
 
         try {
             Process findstrProcess = Runtime.getRuntime().exec(findstrCommand);
@@ -73,7 +74,7 @@ public class LogReader {
             String line = reader.readLine();
 
             List<Integer> linesWithStringNumbers = new ArrayList<>();
-            /*if (logFiles.size() == 1) {
+            if (logFiles.size() == 1) {
                 while (line != null) {
                     Pattern lineNumberPattern = Pattern.compile("\\d+");
                     Matcher lineNumberMatcher;
@@ -89,57 +90,55 @@ public class LogReader {
                     stringPositions.put(firstLogFilePath, linesWithStringNumbers);
                 }
                 return;
-            }*/
+            }
 
             Pattern lineNumberPattern = Pattern.compile(":\\d+");
             Matcher lineNumberMatcher;
 
-            Pattern fileNamePattern = Pattern.compile("^[^.]+\\.log\\d*");
-            Matcher fileNameMatcher;
-            fileNameMatcher = fileNamePattern.matcher(line);
-            fileNameMatcher.find();
-            String currentFileName = fileNameMatcher.group();
+            Pattern filePattern = Pattern.compile("[^.]+\\.log\\d*"); // вернуть ^ в начало выражения
+            Matcher fileMatcher;
+            fileMatcher = filePattern.matcher(line);
+            fileMatcher.find();
+            String currentFile = fileMatcher.group();
 
-            String fileName;
+            String nextFile;
+
             while (line != null) {
-                fileNameMatcher = fileNamePattern.matcher(line);
-                fileNameMatcher.find();
-                fileName = fileNameMatcher.group();
-                System.out.println("fileName " + fileName);
-                if (!fileName.equals(currentFileName)) { // проверить последний случай!
-                    if (string.equals("####")) {
-                        prefixPositions.put(currentFileName, linesWithStringNumbers);
-                    } else {
-                        stringPositions.put(currentFileName, linesWithStringNumbers);
-                    }
-                    System.out.println("prefixPositions " + prefixPositions);
-                    System.out.println("stringPositions " + stringPositions);
-                    System.out.println("currentFileName " + currentFileName);
-                    System.out.println("HASH " + currentFileName.hashCode());
-                    System.out.println("linesWithStringNumbers " + linesWithStringNumbers);
-                    currentFileName = fileName;
-
-                    linesWithStringNumbers.clear();
-                }
-
                 lineNumberMatcher = lineNumberPattern.matcher(line);
                 lineNumberMatcher.find();
                 String lineNumberString = lineNumberMatcher.group().substring(1);
                 linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
 
-                line = reader.readLine();
-                System.out.println("LINE        =" + line);
-            }
 
-            System.out.println("currentFileName                               =" + currentFileName);
-            System.out.println("HASH " + currentFileName.hashCode());
-            if (string.equals("####")) {
-                prefixPositions.put(currentFileName, linesWithStringNumbers);
-            } else {
-                stringPositions.put(currentFileName, linesWithStringNumbers);
+
+                line = reader.readLine();
+                if (line != null) {
+                    fileMatcher = filePattern.matcher(line);
+                    fileMatcher.find();
+                    nextFile = fileMatcher.group();
+
+                    if (!nextFile.equals(currentFile)) { // проверить последний случай!
+                        if (string.equals("####")) {
+                            prefixPositions.put(currentFile, linesWithStringNumbers);
+                        } else {
+                            stringPositions.put(currentFile, linesWithStringNumbers);
+                        }
+                        System.out.println("prefixPositions " + prefixPositions);
+                        System.out.println("stringPositions " + stringPositions);
+                        currentFile = nextFile;
+                        linesWithStringNumbers.clear();
+                    }
+                }
+
+
             }
-            System.out.println(" END prefixPositions " + prefixPositions);
-            System.out.println(" END stringPositions " + stringPositions);
+            if (string.equals("####")) {
+                prefixPositions.put(currentFile, linesWithStringNumbers);
+            } else {
+                stringPositions.put(currentFile, linesWithStringNumbers);
+            }
+            System.out.println("LAST prefixPositions " + prefixPositions);
+            System.out.println("LAST stringPositions " + stringPositions);
 
         } catch(IOException e) {
             logger.log(Level.SEVERE, "Ошибка при получении номеров строк в файле", e) ;
@@ -221,10 +220,10 @@ public class LogReader {
                         break; // если дата лог-сообщения входит хотя бы в один интервал дат, то добавляет его и рассматриваем следующее
                     }
                 }
-
             }
         }
         Collections.sort(logMessageList); // попробовать другую структуру данных, где не нужно сортировать в конце!
         return logMessageList;
     }
+
 }
