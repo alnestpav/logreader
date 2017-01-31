@@ -168,11 +168,13 @@ public class LogReader {
 
         try(FileReader fileReader = new FileReader(logFile);
             LineNumberReader lineNumberReader = new LineNumberReader(fileReader)){
-
             int fromLineNumber;
             int toLineNumber;
             int previousToLineNumber = 0;
-            for (Map.Entry<Integer, Integer> blockPosition : blockPositions.entrySet()) {
+            Iterator<Map.Entry<Integer, Integer>> blockPositionIterator = blockPositions.entrySet().iterator();
+            while (blockPositionIterator.hasNext()) {
+                Map.Entry<Integer, Integer> blockPosition = blockPositionIterator.next();
+
                 fromLineNumber = blockPosition.getKey();
                 toLineNumber = blockPosition.getValue();
                 System.out.println("fromLineNumber " + fromLineNumber);
@@ -190,6 +192,14 @@ public class LogReader {
                         block.append(firstBlockLine + "\n");
                         for (int i = fromLineNumber + 1; i <= toLineNumber; i++) {
                             block.append(lineNumberReader.readLine() + "\n");
+                        }
+                        if (!blockPositionIterator.hasNext()) { // в случае последнего лог-сообщения
+                            String line;
+                            while((line = lineNumberReader.readLine()) != null) {
+                                System.out.println("внтури");
+                                System.out.println("LINE " + line);
+                                block.append(line + "\n");
+                            }
                         }
                         //System.out.println("block " + "{{{{" + block + "}}}}");
                         logMessages.add(new LogMessage(logMessageDate, block.toString())); // в какой момент лучше преобразовывать в String?
