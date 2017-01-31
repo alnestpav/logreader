@@ -22,6 +22,7 @@ public class LogReader {
     private List<DateInterval> dateIntervals;
     private Set<String> logFiles;
     private String message;
+    private int countMessage = 0;
 
     private static final Logger logger = MyLogger.getLogger();
 
@@ -156,51 +157,11 @@ public class LogReader {
         return blockPositions;
     }
 
-    private Collection<String> getBlocks(String logFile, List<DateInterval> dateIntervals, Collection<int[]> blockPositions)  {
-        Collection<String> blocks = new ArrayList<>();
-        StringBuilder block = new StringBuilder();
-
-        try(FileReader fileReader = new FileReader(logFile);
-            LineNumberReader lineNumberReader = new LineNumberReader(fileReader)){
-
-            int fromLineNumber;
-            int toLineNumber;
-            int previousToLineNumber = 1;
-            for (int[] blockPosition: blockPositions) {
-                fromLineNumber = blockPosition[0];
-                toLineNumber = blockPosition[1];
-
-                for (int i = previousToLineNumber + 1; i < fromLineNumber; i++) {
-                    lineNumberReader.readLine();
-                }
-                String firstBlockLine = lineNumberReader.readLine();
-                XMLGregorianCalendar logMessageDate = LogMessage.parseDate(firstBlockLine);
-                for (DateInterval dateInterval : dateIntervals) {
-                    if (dateInterval.containsDate(logMessageDate)) {
-                        block = new StringBuilder();
-                        block.append(firstBlockLine + "\n");
-                        for (int i = fromLineNumber + 1; i <= toLineNumber; i++) {
-                            block.append(lineNumberReader.readLine() + "\n");
-                        }
-                        blocks.add(block.toString()); // в какой момент лучше преобразовывать в String?
-                        break; // если дата лог-сообщения входит хотя бы в один интервал дат, то добавляет его и рассматриваем следующее
-                    }
-                }
-                previousToLineNumber = toLineNumber;
-            }
-        } catch(IOException e){
-            logger.log(Level.SEVERE, "Ошибка при парсинге блока", e) ;
-        }
-        System.out.println(block.toString());
-        return blocks;
-    }
-
     private List<LogMessage> getLogMessagesForLogFile(String logFile, List<DateInterval> dateIntervals, Map<Integer, Integer> blockPositions)  {
         System.out.println(logFile);
         System.out.println("blockPositions");
         for (Map.Entry<Integer, Integer> blockPosition : blockPositions.entrySet()) {
-            System.out.println(blockPosition.getKey());
-            System.out.println(blockPosition.getValue());
+            System.out.println(blockPosition.getKey() + " " + blockPosition.getValue());
         }
         List<LogMessage> logMessages = new ArrayList<>();
         StringBuilder block = new StringBuilder();
@@ -232,6 +193,7 @@ public class LogReader {
                         }
                         //System.out.println("block " + "{{{{" + block + "}}}}");
                         logMessages.add(new LogMessage(logMessageDate, block.toString())); // в какой момент лучше преобразовывать в String?
+                        countMessage++;
                         break; // если дата лог-сообщения входит хотя бы в один интервал дат, то добавляет его и рассматриваем следующее
                     }
                 }
@@ -260,6 +222,7 @@ public class LogReader {
             logger.log(Level.INFO, "blockPositions " + blockPositions);
             logMessageList.addAll(getLogMessagesForLogFile(logFile, dateIntervals, blockPositions));
         }
+        message = countMessage + " log messages found";
         Collections.sort(logMessageList); // попробовать другую структуру данных, где не нужно сортировать в конце!
         return logMessageList;
     }
