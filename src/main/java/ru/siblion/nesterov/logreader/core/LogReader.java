@@ -56,15 +56,13 @@ public class LogReader {
         }
 
         StringBuilder filesString = new StringBuilder();
-        String firstLogFilePath = null;
         for (String logFile : logFiles) {
-            firstLogFilePath = logFile;
             filesString.append(logFile + " "); // возможно стоит переписать, используя StringJoiner, чтобы не было пробела в конце
         }
 
         String findstrCommand;
-        findstrCommand = "findstr /n /r \"" + string + "\" " + filesString; // параметр /c: нужен ли?
-
+        findstrCommand = "findstr /n /r /s /c:\"" + string + "\" " + filesString; // TODO: 31.01.2017  параметр /b добавить если ищутся ####!
+        System.out.println(findstrCommand);
         Process findstrProcess = null;
         try {
             findstrProcess = Runtime.getRuntime().exec(findstrCommand);
@@ -78,62 +76,52 @@ public class LogReader {
 
             String line = reader.readLine();
 
-            List<Integer> linesWithStringNumbers = new ArrayList<>();
+            // List<Integer> linesWithStringNumbers = new ArrayList<>();
             if (logFiles.size() == 1) { /* Строка представляет собой номер строки, в которой найдено выражение, если файл один */
-                while (line != null) {
-                    Pattern lineNumberPattern = Pattern.compile("\\d+");
-                    Matcher lineNumberMatcher;
-                    lineNumberMatcher = lineNumberPattern.matcher(line);
-                    lineNumberMatcher.find();
-                    String lineNumberString = lineNumberMatcher.group();
-                    linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
-                    line = reader.readLine();
-                }
-                positions.put(firstLogFilePath, linesWithStringNumbers);
-                return positions;
+
             }
 
             /* Строка представляет собой - файл:номер - если несколько файлов */
-            Pattern lineNumberPattern = Pattern.compile(":\\d+");
+            Pattern lineNumberPattern = Pattern.compile("^.*?:(?<lineNumber>[0-9]+?):"); // TODO: 31.01.2017 Почитать про регулярные выражения
             Matcher lineNumberMatcher;
 
             Pattern filePattern = Pattern.compile("[^.]+\\.log\\d*"); // вернуть ^ в начало выражения
             Matcher fileMatcher;
-            fileMatcher = filePattern.matcher(line);
-            fileMatcher.find();
-            String currentFile = fileMatcher.group();
-
-            String nextFile;
 
             while (line != null) {
                 lineNumberMatcher = lineNumberPattern.matcher(line);
                 lineNumberMatcher.find();
-                String lineNumberString = lineNumberMatcher.group().substring(1);
-                linesWithStringNumbers.add(Integer.parseInt(lineNumberString));
+                String lineNumberString = lineNumberMatcher.group("lineNumber");
+                Integer lineNumber = Integer.parseInt(lineNumberString);
+
+                fileMatcher = filePattern.matcher(line);
+                fileMatcher.find();
+                String currentFile = fileMatcher.group();
+                put(positions, currentFile, lineNumber);
 
                 line = reader.readLine();
-                if (line != null) {
-                    fileMatcher = filePattern.matcher(line);
-                    fileMatcher.find();
-                    nextFile = fileMatcher.group();
-
-                    if (!nextFile.equals(currentFile)) { // проверить последний случай!
-                        positions.put(currentFile, linesWithStringNumbers);
-                        currentFile = nextFile;
-                        linesWithStringNumbers = new ArrayList<>();
-                    }
-                }
             }
-            positions.put(currentFile, linesWithStringNumbers);
         } catch(IOException e) {
             logger.log(Level.SEVERE, "Ошибка при получении номеров строк в файле", e) ;
         }
         return positions;
     }
 
+    private void put(Map<String, List<Integer>> positions, String file, int lineNumber) {
+        if (positions.containsKey(file)) {
+            positions.get(file).add(lineNumber);
+        } else {
+            List<Integer> lineNumberList = new ArrayList<>();
+            lineNumberList.add(lineNumber);
+            positions.put(file, lineNumberList);
+        }
+    }
+
     private Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
                                                     List<Integer> prefixPositions) {
         Map<Integer, Integer> blockPositions = new LinkedHashMap<>();
+        System.out.println("positionsOfLinesWithString " + positionsOfLinesWithString);
+        System.out.println("prefixPositions " + prefixPositions);
         /* Либо Collection<int[]> либо Collection<List<Integer>> либо Map<Integer, Integer> */
         int start;
         int end;
@@ -145,12 +133,14 @@ public class LogReader {
                     start =  prefixPositions.get(j);
                     end =  prefixPositions.get(j + 1) - 1;
                     blockPositions.put(start, end);
+                    System.out.println("put " + start + " " + end);
                     break;
                 }
                 if (j + 1 == prefixPositions.size()) { // Если дошли до конца, значит искомая строка внутри последней строки-блока
                     start =  prefixPositions.get(j);
                     end =  prefixPositions.get(j);
                     blockPositions.put(start, end);
+                    System.out.println("put " + start + " " + end);
                 }
             }
         }
@@ -221,6 +211,8 @@ public class LogReader {
 
         Map<String, List<Integer>> prefixPositions = getPositionsOfLinesWithString("####");
         Map<String, List<Integer>> stringPositions = getPositionsOfLinesWithString(string);
+        System.out.println("prefixPositions " + prefixPositions);
+        System.out.println("stringPositions " + stringPositions);
 
         List<LogMessage> logMessageList = new ArrayList<>();
         for (String logFile : logFiles) {
