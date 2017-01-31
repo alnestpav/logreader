@@ -61,7 +61,12 @@ public class LogReader {
         }
 
         String findstrCommand;
-        findstrCommand = "findstr /n /r /s /c:\"" + string + "\" " + filesString; // TODO: 31.01.2017  параметр /b добавить если ищутся ####!
+        if (logFiles.size() == 1) {
+            findstrCommand = "findstr /n /r /s /c:\"" + string + "\" " + filesString;
+        } else {
+            findstrCommand = "findstr /n /r /c:\"" + string + "\" " + filesString; // TODO: 31.01.2017  параметр /b добавить если ищутся ####!
+        }
+
         System.out.println(findstrCommand);
         Process findstrProcess = null;
         try {
