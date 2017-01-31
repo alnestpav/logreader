@@ -3,6 +3,8 @@ package ru.siblion.nesterov.logreader.core;
 import ru.siblion.nesterov.logreader.type.*;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
 import java.util.*;
@@ -47,7 +49,6 @@ public class LogReader {
         this.message = message;
     }
 
-    /* Метод*/
     private Map<String, List<Integer>> getPositionsOfLinesWithString(String string) {
         Map<String, List<Integer>> positions = new HashMap<>();
 
@@ -123,7 +124,6 @@ public class LogReader {
     private Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
                                                     List<Integer> prefixPositions) {
         Map<Integer, Integer> blockPositions = new LinkedHashMap<>();
-        /* Либо Collection<int[]> либо Collection<List<Integer>> либо Map<Integer, Integer> */
         int start;
         int end;
         for (int i = 0; i < positionsOfLinesWithString.size(); i++) {
@@ -152,6 +152,9 @@ public class LogReader {
 
         try(FileReader fileReader = new FileReader(logFile);
             LineNumberReader lineNumberReader = new LineNumberReader(fileReader)){
+
+            DatatypeFactory xmlGregorianDate = DatatypeFactory.newInstance();
+
             int fromLineNumber;
             int toLineNumber;
             int previousToLineNumber = 0;
@@ -166,7 +169,8 @@ public class LogReader {
                     lineNumberReader.readLine();
                 }
                 String firstBlockLine = lineNumberReader.readLine();
-                XMLGregorianCalendar logMessageDate = LogMessage.parseDate(firstBlockLine);
+
+                XMLGregorianCalendar logMessageDate = LogMessage.parseDate(xmlGregorianDate, firstBlockLine); // // TODO: 31.01.2017 оптимизировать, так как много занимает время
                 for (DateInterval dateInterval : dateIntervals) {
                     if (dateInterval.containsDate(logMessageDate)) {
                         block = new StringBuilder();
@@ -189,6 +193,8 @@ public class LogReader {
             }
         } catch(IOException e){
             logger.log(Level.SEVERE, "Ошибка при парсинге блока", e) ;
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
         }
         return logMessages;
     }
@@ -205,7 +211,6 @@ public class LogReader {
             }
             Map<Integer, Integer> blockPositions;
             blockPositions = getBlockPositions(stringPositions.get(logFile), prefixPositions.get(logFile));
-            logger.log(Level.INFO, "blockPositions " + blockPositions);
             logMessageList.addAll(getLogMessagesForLogFile(logFile, dateIntervals, blockPositions));
         }
         message = countMessage + " log messages found";

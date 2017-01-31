@@ -28,11 +28,6 @@ public class LogMessage implements Comparable<LogMessage> {
 
     private static final Logger logger = MyLogger.getLogger();
 
-    public LogMessage(String block) {
-        this.date = parseDate(block);
-        this.message = block;
-    }
-
     public LogMessage(XMLGregorianCalendar date, String message) {
         this.date = date;
         this.message = message;
@@ -42,7 +37,7 @@ public class LogMessage implements Comparable<LogMessage> {
 
     }
 
-    public static XMLGregorianCalendar parseDate(String block) {
+    public static XMLGregorianCalendar parseDate(DatatypeFactory datatypeFactoryInstance, String block) {
         String dateRegExp = "<[^<>]*>";
         Pattern p = Pattern.compile(dateRegExp);
         Matcher m = p.matcher(block);
@@ -50,17 +45,13 @@ public class LogMessage implements Comparable<LogMessage> {
         for (int i = 0; i <= (positionOfTimestamp - 1); i++) {
             m.find();
         }
-        String stringTimestamp =  m.group().substring(1, 14);
+        String stringTimestamp =  m.group().substring(1, 14); // TODO: 31.01.2017 переписать рег. выраж с группой, чтобы убрать substring
         Timestamp stamp = new Timestamp(Long.parseLong(stringTimestamp));
         Date date = new Date(stamp.getTime());
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
         gregorianCalendar.setTime(date);
         XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
-        try {
-            xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
-        } catch (DatatypeConfigurationException e) {
-            logger.log(Level.SEVERE, "Ошибка при получения экземпляра XMLGregorianCalendar", e);
-        }
+        xmlGregorianDate = datatypeFactoryInstance.newXMLGregorianCalendar(gregorianCalendar);
         return xmlGregorianDate;
     }
 
