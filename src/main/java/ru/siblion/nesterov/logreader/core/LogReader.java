@@ -60,14 +60,12 @@ public class LogReader {
             filesString.append(logFile + " "); // возможно стоит переписать, используя StringJoiner, чтобы не было пробела в конце
         }
 
-        String findstrCommand;
-        if (logFiles.size() == 1) {
-            findstrCommand = "findstr /n /r /s /c:\"" + string + "\" " + filesString;
-        } else {
-            findstrCommand = "findstr /n /r /c:\"" + string + "\" " + filesString; // TODO: 31.01.2017  параметр /b добавить если ищутся ####!
-        }
+        String sFindstrParam = " ";
+        String bFindstrParam = " ";
+        if (logFiles.size() == 1)  sFindstrParam = " /s ";
+        if (string.equals("####")) bFindstrParam = " /b ";
 
-        System.out.println(findstrCommand);
+        String findstrCommand = "findstr" + sFindstrParam + bFindstrParam + "/n /r /c:\"" + string + "\" " + filesString; // TODO: 31.01.2017  параметр /b добавить если ищутся ####!
         Process findstrProcess = null;
         try {
             findstrProcess = Runtime.getRuntime().exec(findstrCommand);
@@ -125,8 +123,6 @@ public class LogReader {
     private Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
                                                     List<Integer> prefixPositions) {
         Map<Integer, Integer> blockPositions = new LinkedHashMap<>();
-        System.out.println("positionsOfLinesWithString " + positionsOfLinesWithString);
-        System.out.println("prefixPositions " + prefixPositions);
         /* Либо Collection<int[]> либо Collection<List<Integer>> либо Map<Integer, Integer> */
         int start;
         int end;
@@ -138,14 +134,12 @@ public class LogReader {
                     start =  prefixPositions.get(j);
                     end =  prefixPositions.get(j + 1) - 1;
                     blockPositions.put(start, end);
-                    System.out.println("put " + start + " " + end);
                     break;
                 }
                 if (j + 1 == prefixPositions.size()) { // Если дошли до конца, значит искомая строка внутри последней строки-блока
                     start =  prefixPositions.get(j);
                     end =  prefixPositions.get(j);
                     blockPositions.put(start, end);
-                    System.out.println("put " + start + " " + end);
                 }
             }
         }
@@ -153,11 +147,6 @@ public class LogReader {
     }
 
     private List<LogMessage> getLogMessagesForLogFile(String logFile, List<DateInterval> dateIntervals, Map<Integer, Integer> blockPositions)  {
-        System.out.println(logFile);
-        System.out.println("blockPositions");
-        for (Map.Entry<Integer, Integer> blockPosition : blockPositions.entrySet()) {
-            System.out.println(blockPosition.getKey() + " " + blockPosition.getValue());
-        }
         List<LogMessage> logMessages = new ArrayList<>();
         StringBuilder block = new StringBuilder();
 
@@ -172,14 +161,11 @@ public class LogReader {
 
                 fromLineNumber = blockPosition.getKey();
                 toLineNumber = blockPosition.getValue();
-                System.out.println("fromLineNumber " + fromLineNumber);
-                System.out.println("toLineNumber " + toLineNumber);
 
                 for (int i = previousToLineNumber + 1; i < fromLineNumber; i++) {
                     lineNumberReader.readLine();
                 }
                 String firstBlockLine = lineNumberReader.readLine();
-                System.out.println("firstBlockLine " + "_" + firstBlockLine + "_");
                 XMLGregorianCalendar logMessageDate = LogMessage.parseDate(firstBlockLine);
                 for (DateInterval dateInterval : dateIntervals) {
                     if (dateInterval.containsDate(logMessageDate)) {
@@ -191,12 +177,9 @@ public class LogReader {
                         if (!blockPositionIterator.hasNext()) { // в случае последнего лог-сообщения
                             String line;
                             while((line = lineNumberReader.readLine()) != null) {
-                                System.out.println("внтури");
-                                System.out.println("LINE " + line);
                                 block.append(line + "\n");
                             }
                         }
-                        //System.out.println("block " + "{{{{" + block + "}}}}");
                         logMessages.add(new LogMessage(logMessageDate, block.toString())); // в какой момент лучше преобразовывать в String?
                         countMessage++;
                         break; // если дата лог-сообщения входит хотя бы в один интервал дат, то добавляет его и рассматриваем следующее
@@ -207,17 +190,13 @@ public class LogReader {
         } catch(IOException e){
             logger.log(Level.SEVERE, "Ошибка при парсинге блока", e) ;
         }
-        System.out.println(block.toString());
         return logMessages;
     }
-
 
     public List<LogMessage> getLogMessages() throws Exception {
 
         Map<String, List<Integer>> prefixPositions = getPositionsOfLinesWithString("####");
         Map<String, List<Integer>> stringPositions = getPositionsOfLinesWithString(string);
-        System.out.println("prefixPositions " + prefixPositions);
-        System.out.println("stringPositions " + stringPositions);
 
         List<LogMessage> logMessageList = new ArrayList<>();
         for (String logFile : logFiles) {
