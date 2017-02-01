@@ -149,6 +149,7 @@ public class LogReader {
     private List<LogMessage> getLogMessagesForLogFile(String logFile, List<DateInterval> dateIntervals, Map<Integer, Integer> blockPositions)  {
         List<LogMessage> logMessages = new ArrayList<>();
         StringBuilder block;
+        System.out.println("logFile " + logFile);
 
         try(FileReader fileReader = new FileReader(logFile);
             LineNumberReader lineNumberReader = new LineNumberReader(fileReader)){
@@ -165,12 +166,14 @@ public class LogReader {
                 fromLineNumber = blockPosition.getKey();
                 toLineNumber = blockPosition.getValue();
 
-                for (int i = previousToLineNumber + 1; i < fromLineNumber; i++) {
-                    lineNumberReader.readLine();
+                for (int i = previousToLineNumber; i < fromLineNumber - 1; i++) {
+                    System.out.println(lineNumberReader.readLine()); // убрать println
                 }
-                String firstBlockLine = lineNumberReader.readLine();
 
-                XMLGregorianCalendar logMessageDate = LogMessage.parseDate(datatypeFactory, firstBlockLine); // // TODO: 31.01.2017 оптимизировать, так как много занимает время
+                String firstBlockLine = lineNumberReader.readLine();
+                System.out.println("firstBlockLine " + firstBlockLine);
+
+                XMLGregorianCalendar logMessageDate = LogMessage.parseDate(datatypeFactory, firstBlockLine); // TODO: 31.01.2017 оптимизировать, так как много занимает время
                 for (DateInterval dateInterval : dateIntervals) {
                     if (dateInterval.containsDate(logMessageDate)) {
                         block = new StringBuilder();
@@ -187,6 +190,10 @@ public class LogReader {
                         logMessages.add(new LogMessage(logMessageDate, block.toString())); // в какой момент лучше преобразовывать в String?
                         countMessage++;
                         break; // если дата лог-сообщения входит хотя бы в один интервал дат, то добавляет его и рассматриваем следующее
+                    } else {
+                        for (int i = fromLineNumber + 1; i <= toLineNumber; i++) {
+                            lineNumberReader.readLine();
+                        }
                     }
                 }
                 previousToLineNumber = toLineNumber;
