@@ -45,12 +45,12 @@ public class LogMessage implements Comparable<LogMessage> {
         for (int i = 0; i <= (positionOfTimestamp - 1); i++) {
             m.find();
         }
-        String stringTimestamp =  m.group("timestamp"); // TODO: 31.01.2017 переписать рег. выраж с группой, чтобы убрать substring
+        String stringTimestamp =  m.group("timestamp");
         Timestamp stamp = new Timestamp(Long.parseLong(stringTimestamp));
         Date date = new Date(stamp.getTime());
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
         gregorianCalendar.setTime(date);
-        XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
+        XMLGregorianCalendar xmlGregorianDate;
         xmlGregorianDate = datatypeFactoryInstance.newXMLGregorianCalendar(gregorianCalendar);
         return xmlGregorianDate;
     }

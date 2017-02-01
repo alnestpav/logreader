@@ -148,12 +148,12 @@ public class LogReader {
 
     private List<LogMessage> getLogMessagesForLogFile(String logFile, List<DateInterval> dateIntervals, Map<Integer, Integer> blockPositions)  {
         List<LogMessage> logMessages = new ArrayList<>();
-        StringBuilder block = new StringBuilder();
+        StringBuilder block;
 
         try(FileReader fileReader = new FileReader(logFile);
             LineNumberReader lineNumberReader = new LineNumberReader(fileReader)){
 
-            DatatypeFactory xmlGregorianDate = DatatypeFactory.newInstance();
+            DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
 
             int fromLineNumber;
             int toLineNumber;
@@ -170,7 +170,7 @@ public class LogReader {
                 }
                 String firstBlockLine = lineNumberReader.readLine();
 
-                XMLGregorianCalendar logMessageDate = LogMessage.parseDate(xmlGregorianDate, firstBlockLine); // // TODO: 31.01.2017 оптимизировать, так как много занимает время
+                XMLGregorianCalendar logMessageDate = LogMessage.parseDate(datatypeFactory, firstBlockLine); // // TODO: 31.01.2017 оптимизировать, так как много занимает время
                 for (DateInterval dateInterval : dateIntervals) {
                     if (dateInterval.containsDate(logMessageDate)) {
                         block = new StringBuilder();
