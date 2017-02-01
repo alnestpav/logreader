@@ -152,7 +152,7 @@ public class LogReader {
         System.out.println("logFile " + logFile);
 
         try(FileReader fileReader = new FileReader(logFile);
-            LineNumberReader lineNumberReader = new LineNumberReader(fileReader)){
+            BufferedReader bufferedReader = new BufferedReader(fileReader)){
 
             DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
 
@@ -167,10 +167,10 @@ public class LogReader {
                 toLineNumber = blockPosition.getValue();
 
                 for (int i = previousToLineNumber; i < fromLineNumber - 1; i++) {
-                    System.out.println(lineNumberReader.readLine()); // убрать println
+                    System.out.println(bufferedReader.readLine()); // убрать println
                 }
 
-                String firstBlockLine = lineNumberReader.readLine();
+                String firstBlockLine = bufferedReader.readLine();
                 System.out.println("firstBlockLine " + firstBlockLine);
 
                 XMLGregorianCalendar logMessageDate = LogMessage.parseDate(datatypeFactory, firstBlockLine); // TODO: 31.01.2017 оптимизировать, так как много занимает время
@@ -179,11 +179,11 @@ public class LogReader {
                         block = new StringBuilder();
                         block.append(firstBlockLine + "\n");
                         for (int i = fromLineNumber + 1; i <= toLineNumber; i++) {
-                            block.append(lineNumberReader.readLine() + "\n");
+                            block.append(bufferedReader.readLine() + "\n");
                         }
                         if (!blockPositionIterator.hasNext()) { // в случае последнего лог-сообщения
                             String line;
-                            while((line = lineNumberReader.readLine()) != null) {
+                            while((line = bufferedReader.readLine()) != null) {
                                 block.append(line + "\n");
                             }
                         }
@@ -192,7 +192,7 @@ public class LogReader {
                         break; // если дата лог-сообщения входит хотя бы в один интервал дат, то добавляет его и рассматриваем следующее
                     } else {
                         for (int i = fromLineNumber + 1; i <= toLineNumber; i++) {
-                            lineNumberReader.readLine();
+                            bufferedReader.readLine();
                         }
                     }
                 }
