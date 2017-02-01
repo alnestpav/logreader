@@ -121,9 +121,9 @@ public class LogReader {
         }
     }
 
-    private Map<Integer, Integer> getBlockPositions(List<Integer> positionsOfLinesWithString,
+    private List<Pair<Integer, Integer>> getBlockPositions(String file, List<Integer> positionsOfLinesWithString,
                                                     List<Integer> prefixPositions) {
-        Map<Integer, Integer> blockPositions = new LinkedHashMap<>();
+        List<Pair<Integer, Integer>> blockPositions = new ArrayList<>();
         int start;
         int end;
         for (int i = 0; i < positionsOfLinesWithString.size(); i++) {
@@ -133,45 +133,52 @@ public class LogReader {
                         && positionsOfLinesWithString.get(i) < prefixPositions.get(j + 1)) {
                     start =  prefixPositions.get(j);
                     end =  prefixPositions.get(j + 1) - 1;
-                    blockPositions.put(start, end);
+                    blockPositions.add(new Pair<>(start, end));
                     break;
                 }
                 if (j + 1 == prefixPositions.size()) { // Если дошли до конца, значит искомая строка внутри последней строки-блока
                     start =  prefixPositions.get(j);
-                    end =  prefixPositions.get(j);
-                    blockPositions.put(start, end);
+                    int numberOfLinesInFile = 0;
+                    try(FileReader fileReader = new FileReader(file); // FileReader или FileInputStream стоит использовать?
+                        BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+
+                        while (bufferedReader.readLine() != null) {
+                            numberOfLinesInFile++;
+                        }
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    end =  numberOfLinesInFile;
+                    blockPositions.add(new Pair<>(start, end));
                 }
             }
         }
         return blockPositions;
     }
 
-    private List<LogMessage> getLogMessagesForLogFile(String logFile, List<DateInterval> dateIntervals, Map<Integer, Integer> blockPositions)  {
+    private List<LogMessage> getLogMessagesForLogFile(String logFile, List<DateInterval> dateIntervals, List<Pair<Integer, Integer>> blockPositions)  {
         List<LogMessage> logMessages = new ArrayList<>();
         StringBuilder block;
-        System.out.println("logFile " + logFile);
 
         try(FileReader fileReader = new FileReader(logFile);
             BufferedReader bufferedReader = new BufferedReader(fileReader)){
-
             DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
 
             int fromLineNumber;
             int toLineNumber;
             int previousToLineNumber = 0;
-            Iterator<Map.Entry<Integer, Integer>> blockPositionIterator = blockPositions.entrySet().iterator();
-            while (blockPositionIterator.hasNext()) {
-                Map.Entry<Integer, Integer> blockPosition = blockPositionIterator.next();
-
-                fromLineNumber = blockPosition.getKey();
-                toLineNumber = blockPosition.getValue();
+            for (Pair<Integer, Integer> blockPosition : blockPositions) {
+                fromLineNumber = blockPosition.getFirst();
+                toLineNumber = blockPosition.getSecond();
 
                 for (int i = previousToLineNumber; i < fromLineNumber - 1; i++) {
-                    System.out.println(bufferedReader.readLine()); // убрать println
+                    bufferedReader.readLine();
                 }
 
                 String firstBlockLine = bufferedReader.readLine();
-                System.out.println("firstBlockLine " + firstBlockLine);
 
                 XMLGregorianCalendar logMessageDate = LogMessage.parseDate(datatypeFactory, firstBlockLine); // TODO: 31.01.2017 оптимизировать, так как много занимает время
                 for (DateInterval dateInterval : dateIntervals) {
@@ -181,12 +188,7 @@ public class LogReader {
                         for (int i = fromLineNumber + 1; i <= toLineNumber; i++) {
                             block.append(bufferedReader.readLine() + "\n");
                         }
-                        if (!blockPositionIterator.hasNext()) { // в случае последнего лог-сообщения
-                            String line;
-                            while((line = bufferedReader.readLine()) != null) {
-                                block.append(line + "\n");
-                            }
-                        }
+
                         logMessages.add(new LogMessage(logMessageDate, block.toString())); // в какой момент лучше преобразовывать в String?
                         countMessage++;
                         break; // если дата лог-сообщения входит хотя бы в один интервал дат, то добавляет его и рассматриваем следующее
@@ -213,11 +215,12 @@ public class LogReader {
 
         List<LogMessage> logMessageList = new ArrayList<>();
         for (String logFile : logFiles) {
+
             if (prefixPositions.get(logFile) == null || stringPositions.get(logFile)== null ) {
                 continue; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
             }
-            Map<Integer, Integer> blockPositions;
-            blockPositions = getBlockPositions(stringPositions.get(logFile), prefixPositions.get(logFile));
+            List<Pair<Integer, Integer>> blockPositions;
+            blockPositions = getBlockPositions(logFile, stringPositions.get(logFile), prefixPositions.get(logFile));
             logMessageList.addAll(getLogMessagesForLogFile(logFile, dateIntervals, blockPositions));
         }
         message = countMessage + " log messages found";

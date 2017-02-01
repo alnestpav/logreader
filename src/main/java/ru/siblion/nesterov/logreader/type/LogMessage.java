@@ -38,7 +38,6 @@ public class LogMessage implements Comparable<LogMessage> {
     }
 
     public static XMLGregorianCalendar parseDate(DatatypeFactory datatypeFactoryInstance, String block) {
-        System.out.println("Parse date Block " + block);
         String dateRegExp = "<[^<>]*>";
         Pattern p = Pattern.compile(dateRegExp);
         Matcher m = p.matcher(block);
