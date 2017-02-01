@@ -45,10 +45,6 @@ public class LogReader {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     private Map<String, List<Integer>> getPositionsOfLinesWithString(String string) {
         Map<String, List<Integer>> positions = new HashMap<>();
 
@@ -79,11 +75,6 @@ public class LogReader {
             BufferedReader reader = new BufferedReader(findstrProcessInputStreamReader)) {
 
             String line = reader.readLine();
-
-            // List<Integer> linesWithStringNumbers = new ArrayList<>();
-            if (logFiles.size() == 1) { /* Строка представляет собой номер строки, в которой найдено выражение, если файл один */
-
-            }
 
             /* Строка представляет собой - файл:номер - если несколько файлов */
             Pattern lineNumberPattern = Pattern.compile("^.*?:(?<lineNumber>[0-9]+?):"); // TODO: 31.01.2017 Почитать про регулярные выражения
@@ -139,6 +130,7 @@ public class LogReader {
                 if (j + 1 == prefixPositions.size()) { // Если дошли до конца, значит искомая строка внутри последней строки-блока
                     start =  prefixPositions.get(j);
                     int numberOfLinesInFile = 0;
+
                     try(FileReader fileReader = new FileReader(file); // FileReader или FileInputStream стоит использовать?
                         BufferedReader bufferedReader = new BufferedReader(fileReader)) {
 
@@ -151,6 +143,7 @@ public class LogReader {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                     end =  numberOfLinesInFile;
                     blockPositions.add(new Pair<>(start, end));
                 }

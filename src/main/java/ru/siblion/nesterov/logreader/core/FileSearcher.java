@@ -31,11 +31,10 @@ public class FileSearcher {
 
     public FileSearcher() {
         domainDirectory = (new File("").getAbsolutePath()); // если запускать на сервере
-        //domainDirectory = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
-        Pattern domainPattern = Pattern.compile("\\\\\\w+$");
+        Pattern domainPattern = Pattern.compile("\\w+$");
         Matcher domainMatcher = domainPattern.matcher(domainDirectory);
         domainMatcher.find();
-        domainName = domainMatcher.group().substring(1);
+        domainName = domainMatcher.group(); // переписать, используя  в регулярном выражении
         System.out.println(domainDirectory);
         System.out.println(domainName);
     }
