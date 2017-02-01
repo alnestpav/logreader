@@ -26,9 +26,7 @@ public class LogMessages {
         logMessages = logMessageList;
     }
 
-    public LogMessages() {
-
-    }
+    public LogMessages() {}
 
     public List<LogMessage> getLogMessages() {
         return logMessages;

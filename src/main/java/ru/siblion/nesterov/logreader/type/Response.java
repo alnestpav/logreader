@@ -25,9 +25,7 @@ public class Response {
     @XmlElement(name = "message")
     private String message;
 
-    public Response() {
-
-    }
+    public Response() {}
 
     public File getOutputFile() {
         return outputFile;
