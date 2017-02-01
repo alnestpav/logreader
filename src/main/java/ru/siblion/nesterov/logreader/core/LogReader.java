@@ -63,10 +63,10 @@ public class LogReader {
 
         String sFindstrParam = " ";
         String bFindstrParam = " ";
-        if (logFiles.size() == 1)  sFindstrParam = " /s ";
-        if (string.equals("####")) bFindstrParam = " /b ";
+        if (logFiles.size() == 1)  sFindstrParam = " /s "; // параметр /s нужен для того, тобы при поиске в одном файле выводился путь файла
+        if (string.equals("####")) bFindstrParam = " /b ";  // параметр /b добавляется, если ищутся ####, чтобы искать только в начале строки
 
-        String findstrCommand = "findstr" + sFindstrParam + bFindstrParam + "/n /r /c:\"" + string + "\" " + filesString; // TODO: 31.01.2017  параметр /b добавить если ищутся ####!
+        String findstrCommand = "findstr" + sFindstrParam + bFindstrParam + "/n /r /c:\"" + string + "\" " + filesString;
         Process findstrProcess = null;
         try {
             findstrProcess = Runtime.getRuntime().exec(findstrCommand);

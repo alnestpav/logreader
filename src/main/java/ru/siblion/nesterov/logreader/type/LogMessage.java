@@ -38,14 +38,14 @@ public class LogMessage implements Comparable<LogMessage> {
     }
 
     public static XMLGregorianCalendar parseDate(DatatypeFactory datatypeFactoryInstance, String block) {
-        String dateRegExp = "<[^<>]*>";
+        String dateRegExp = "<(?<timestamp>[^<>]*)>";
         Pattern p = Pattern.compile(dateRegExp);
         Matcher m = p.matcher(block);
         int positionOfTimestamp = 10; // позиция <timestamp>
         for (int i = 0; i <= (positionOfTimestamp - 1); i++) {
             m.find();
         }
-        String stringTimestamp =  m.group().substring(1, 14); // TODO: 31.01.2017 переписать рег. выраж с группой, чтобы убрать substring
+        String stringTimestamp =  m.group("timestamp"); // TODO: 31.01.2017 переписать рег. выраж с группой, чтобы убрать substring
         Timestamp stamp = new Timestamp(Long.parseLong(stringTimestamp));
         Date date = new Date(stamp.getTime());
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
