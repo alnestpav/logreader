@@ -39,10 +39,6 @@ public class FileSearcher {
         System.out.println(domainName);
     }
 
-    public FileSearcher(String domainDirectory) {
-        this.domainDirectory = domainDirectory;
-    }
-
     private Set<String> getDomainLogFiles() {
         List<String> servers = new ArrayList<>();
         try {

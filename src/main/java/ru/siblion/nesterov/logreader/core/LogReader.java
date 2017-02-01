@@ -31,14 +31,13 @@ public class LogReader {
     public LogReader(String string, List<DateInterval> dateIntervals, LocationType locationType, String location) {
         FileSearcher fileSearcher = new FileSearcher();
         logFiles = fileSearcher.getLogFiles(locationType, location);
-
-        if (logFiles.size() == 0) {
+        if (logFiles.size() > 0) {
+            this.dateIntervals = dateIntervals;
+            this.string = string;
+        } else {
             message = "Неверный параметр location";
             logger.log(Level.INFO, "Неверный параметр location");
         }
-        // если лог-файлы отсутствуют, то можно дальнейшие операторы не выполнять!!
-        this.dateIntervals = dateIntervals;
-        this.string = string;
     }
 
     public String getMessage() {
