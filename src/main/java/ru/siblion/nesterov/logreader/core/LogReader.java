@@ -56,10 +56,10 @@ public class LogReader {
             filesString.append(logFile + " "); // возможно стоит переписать, используя StringJoiner, чтобы не было пробела в конце
         }
 
-        String sFindstrParam = " ";
-        String bFindstrParam = " ";
-        if (logFiles.size() == 1)  sFindstrParam = " /s "; // параметр /s нужен для того, тобы при поиске в одном файле выводился путь файла
-        if (string.equals("####")) bFindstrParam = " /b ";  // параметр /b добавляется, если ищутся ####, чтобы искать только в начале строки
+        /* Параметр /s нужен для того, чтобы при поиске в одном файле выводился путь файла
+        *  Параметр /b добавляется, если ищутся ####, чтобы искать только в начале строки */
+        String sFindstrParam = logFiles.size() == 1 ? " /s " : " ";
+        String bFindstrParam = string.equals("####") ? " /b " : " ";
 
         String findstrCommand = "findstr" + sFindstrParam + bFindstrParam + "/n /r /c:\"" + string + "\" " + filesString;
         Process findstrProcess = null;
@@ -111,16 +111,55 @@ public class LogReader {
         }
     }
 
-    private List<Pair<Integer, Integer>> getBlockPositions(String file, List<Integer> positionsOfLinesWithString,
+    private List<Pair<Integer, Integer>> getBlockPositions(String file, List<Integer> stringPositions,
                                                     List<Integer> prefixPositions) {
-        List<Pair<Integer, Integer>> blockPositions = new ArrayList<>();
+        /* Если количество #### четное, то последний блок не обрабатывается и нужно узнать номер последней строки */
+        int numberOfLinesInFile = 0;
+        try(FileReader fileReader = new FileReader(file); // FileReader или FileInputStream стоит использовать?
+            BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+            while (bufferedReader.readLine() != null) {
+                numberOfLinesInFile++;
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        List<Pair<Integer, Integer>> allBlockPositions = new ArrayList<>(); // все блоки в виде пар (начало блока; конец блока)\
         int start;
         int end;
-        for (int i = 0; i < positionsOfLinesWithString.size(); i++) {
+        for (int i = 0; i < prefixPositions.size() - 1; i++) {
+            start = prefixPositions.get(i);
+            end = prefixPositions.get(i + 1) - 1;
+            allBlockPositions.add(new Pair(start, end));
+        }
+        start = prefixPositions.get(prefixPositions.size() - 1);
+        end = numberOfLinesInFile;
+        allBlockPositions.add(new Pair(start, end)); // последний блок
+
+
+
+        List<Pair<Integer, Integer>> blockPositions = new ArrayList<>();
+        for (Pair<Integer, Integer> blockPosition : allBlockPositions) {
+            for (Integer stringPosition : stringPositions) {
+                if (stringPosition >= blockPosition.getFirst() && stringPosition <= blockPosition.getSecond()) {
+                    blockPositions.add(blockPosition);
+                    break;
+                }
+            }
+        }
+
+
+        /*int start;
+        int end;
+        // TODO: 02.02.2017 Переписать этот блок, а то добавление происходит несколько раз, если строка входит в блок более одного раза
+        List<Pair<Integer, Integer>> blockPositions = new ArrayList<>();
+        for (int i = 0; i < stringPositions.size(); i++) {
             for (int j = 0; j < prefixPositions.size(); j++) {
-                if (positionsOfLinesWithString.get(i) >= prefixPositions.get(j)
+                if (stringPositions.get(i) >= prefixPositions.get(j)
                         && j + 1 < prefixPositions.size()
-                        && positionsOfLinesWithString.get(i) < prefixPositions.get(j + 1)) {
+                        && stringPositions.get(i) < prefixPositions.get(j + 1)) {
                     start =  prefixPositions.get(j);
                     end =  prefixPositions.get(j + 1) - 1;
                     blockPositions.add(new Pair<>(start, end));
@@ -129,25 +168,21 @@ public class LogReader {
                 if (j + 1 == prefixPositions.size()) { // Если дошли до конца, значит искомая строка внутри последней строки-блока
                     start =  prefixPositions.get(j);
                     int numberOfLinesInFile = 0;
-
                     try(FileReader fileReader = new FileReader(file); // FileReader или FileInputStream стоит использовать?
                         BufferedReader bufferedReader = new BufferedReader(fileReader)) {
-
                         while (bufferedReader.readLine() != null) {
                             numberOfLinesInFile++;
                         }
-
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                     end =  numberOfLinesInFile;
                     blockPositions.add(new Pair<>(start, end));
                 }
             }
-        }
+        }*/
         return blockPositions;
     }
 
@@ -170,6 +205,7 @@ public class LogReader {
                     bufferedReader.readLine();
                 }
 
+                System.out.println("Logfile " + logFile);
                 String firstBlockLine = bufferedReader.readLine();
 
                 XMLGregorianCalendar logMessageDate = LogMessage.parseDate(datatypeFactory, firstBlockLine); // TODO: 31.01.2017 оптимизировать, так как много занимает время

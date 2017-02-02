@@ -37,6 +37,8 @@ public class FileRemover {
         File directory = config.getDirectory();
         for(File file : directory.listFiles()) {
             String stringDateOfFile = null;
+
+            // TODO: 02.02.2017 Переписать данный блок, выдается при запуске исключение java.text.ParseException: Unparseable date: "log-d2017-01-19-11-11-13-237"
             try {
                 stringDateOfFile = file.getName().substring(0, 28); // здесь программа зависала, хотя должно быть исключение
             } catch (StringIndexOutOfBoundsException e) {
