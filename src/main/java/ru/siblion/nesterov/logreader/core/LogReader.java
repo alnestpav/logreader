@@ -168,11 +168,9 @@ public class LogReader {
                 fromLineNumber = blockPosition.getFirst();
                 toLineNumber = blockPosition.getSecond();
 
-                for (int i = previousToLineNumber; i < fromLineNumber - 1; i++) {
+                for (int i = previousToLineNumber; i < fromLineNumber - 1; i++) { // пропускает строки до следующего блока
                     bufferedReader.readLine();
                 }
-
-                System.out.println("Logfile " + logFile);
                 String firstBlockLine = bufferedReader.readLine();
 
                 XMLGregorianCalendar logMessageDate = LogMessage.parseDate(datatypeFactory, firstBlockLine); // TODO: 31.01.2017 оптимизировать, так как много занимает время

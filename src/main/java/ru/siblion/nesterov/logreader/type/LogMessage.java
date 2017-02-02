@@ -36,7 +36,6 @@ public class LogMessage implements Comparable<LogMessage> {
     public LogMessage() {} // Нужен для JAXB
 
     public static XMLGregorianCalendar parseDate(DatatypeFactory datatypeFactoryInstance, String block) {
-        System.out.println("block !!!" + block + "!!!");
         String dateRegExp = "<(?<timestamp>[^<>]*)>"; // вынести из метода в аргумент, так как лучше один раз скомпилировать
         Pattern p = Pattern.compile(dateRegExp);
         Matcher m = p.matcher(block);
