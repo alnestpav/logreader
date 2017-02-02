@@ -24,7 +24,6 @@ public class LogReader {
     private List<DateInterval> dateIntervals;
     private Set<String> logFiles;
     private String message;
-    private int countMessage = 0;
 
     private static final Logger logger = MyLogger.getLogger();
 
@@ -142,6 +141,7 @@ public class LogReader {
 
         /* Находим блоки, которые содержат искомую строку */
         List<Pair<Integer, Integer>> blockPositions = new ArrayList<>();
+        // TODO: 02.02.2017 Переписать, чтобы не надо было каждый раз проходить все строки
         for (Pair<Integer, Integer> blockPosition : allBlockPositions) {
             for (Integer stringPosition : stringPositions) {
                 if (stringPosition >= blockPosition.getFirst() && stringPosition <= blockPosition.getSecond()) {
@@ -183,7 +183,6 @@ public class LogReader {
                         }
 
                         logMessages.add(new LogMessage(logMessageDate, block.toString())); // в какой момент лучше преобразовывать в String?
-                        countMessage++;
                         break; // если дата лог-сообщения входит хотя бы в один интервал дат, то добавляет его и рассматриваем следующее
                     } else {
                         for (int i = fromLineNumber + 1; i <= toLineNumber; i++) {
@@ -216,7 +215,7 @@ public class LogReader {
             blockPositions = getBlockPositions(logFile, stringPositions.get(logFile), prefixPositions.get(logFile));
             logMessageList.addAll(getLogMessagesForLogFile(logFile, dateIntervals, blockPositions));
         }
-        message = countMessage + " log messages found";
+        message = logMessageList.size() + " log messages found";
         Collections.sort(logMessageList); // попробовать другую структуру данных, где не нужно сортировать в конце!
         return logMessageList;
     }
