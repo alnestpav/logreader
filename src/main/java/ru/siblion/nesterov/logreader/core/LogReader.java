@@ -113,7 +113,6 @@ public class LogReader {
     private List<Pair<Integer, Integer>> getBlockPositions(String file, List<Integer> stringPositions,
                                                     List<Integer> prefixPositions) {
 
-        /* Если количество #### четное, то последний блок не обрабатывается и нужно узнать номер последней строки */
         int numberOfLinesInFile = 0;
         try(FileReader fileReader = new FileReader(file); // FileReader или FileInputStream стоит использовать?
             BufferedReader bufferedReader = new BufferedReader(fileReader)) {
@@ -142,12 +141,14 @@ public class LogReader {
         /* Находим блоки, которые содержат искомую строку */
         List<Pair<Integer, Integer>> blockPositions = new ArrayList<>();
         // TODO: 02.02.2017 Переписать, чтобы не надо было каждый раз проходить все строки
+        int i = 0;
         for (Pair<Integer, Integer> blockPosition : allBlockPositions) {
-            for (Integer stringPosition : stringPositions) {
-                if (stringPosition >= blockPosition.getFirst() && stringPosition <= blockPosition.getSecond()) {
+            while (i < stringPositions.size()) {
+                if (stringPositions.get(i) >= blockPosition.getFirst() && stringPositions.get(i) <= blockPosition.getSecond()) {
                     blockPositions.add(blockPosition);
                     break;
                 }
+                i++;
             }
         }
         return blockPositions;
