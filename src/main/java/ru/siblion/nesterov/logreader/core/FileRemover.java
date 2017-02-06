@@ -32,22 +32,17 @@ public class FileRemover {
     public void removeOldFiles() {
         logger.log(Level.INFO, "Удаление старых лог-файлов");
         config = Config.getConfig(configFile);
-        System.out.println(config.getDirectory());
-        System.out.println(config.getLifeTime());
 
         long configLifeTime = config.getLifeTime();
         File directory = config.getDirectory();
+
         for(File file : directory.listFiles()) {
-            String fileDateString = null;
+            Pattern fileDatePattern = Pattern.compile("d(?<date>.+)h");
+            Matcher fileDateMatcher = fileDatePattern.matcher(file.getName());
+            fileDateMatcher.find();
+            String fileDateString = fileDateMatcher.group("date");
 
-            try {
-                Pattern fileDatePattern = Pattern.compile("d(?<date>.+)h");
-                Matcher fileDateMatcher = fileDatePattern.matcher(file.getName());
-                fileDateMatcher.find();
-                fileDateString = fileDateMatcher.group("date");
-
-            } catch (StringIndexOutOfBoundsException e) {
-                logger.log(Level.WARNING, "В папке находятся не только экспортированные лог-файлы", e) ;
+            if (fileDateString == null) {
                 continue;
             }
 
