@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /* Класс для удаления пользовательских лог-файлов */
 @Startup
@@ -36,20 +38,24 @@ public class FileRemover {
         long configLifeTime = config.getLifeTime();
         File directory = config.getDirectory();
         for(File file : directory.listFiles()) {
-            String stringDateOfFile = null;
+            String fileDateString = null;
 
-            // TODO: 02.02.2017 Переписать данный блок, выдается при запуске исключение java.text.ParseException: Unparseable date: "log-d2017-01-19-11-11-13-237"
             try {
-                stringDateOfFile = file.getName().substring(0, 28); // здесь программа зависала, хотя должно быть исключение
+                Pattern fileDatePattern = Pattern.compile("d(?<date>.+)h");
+                Matcher fileDateMatcher = fileDatePattern.matcher(file.getName());
+                fileDateMatcher.find();
+                fileDateString = fileDateMatcher.group("date");
+
             } catch (StringIndexOutOfBoundsException e) {
                 logger.log(Level.WARNING, "В папке находятся не только экспортированные лог-файлы", e) ;
                 continue;
             }
+
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
             Date currentDate = new Date();
             Date dateOfFile = null;
             try {
-                dateOfFile = simpleDateFormat.parse(stringDateOfFile);
+                dateOfFile = simpleDateFormat.parse(fileDateString);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
