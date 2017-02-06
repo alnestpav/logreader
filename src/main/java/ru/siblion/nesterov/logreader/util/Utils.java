@@ -26,33 +26,6 @@ public class Utils {
 
     private static final Logger logger = MyLogger.getLogger();
 
-    private final static String XML_GREGORIAN_CALENDAR_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"; // проверить H или k
-    private final static String STRING_DATE_FORMAT = "dd.MM.yyyy, hh:mm:ss,SSS aa zzz"; // проверить h 11/12
-
-
-    /* Метод используется при тестировании проекта в классе Test, когда в запрос добавляется интервал дат */
-    public static XMLGregorianCalendar stringToXMLGregorianCalendar(String stringDate) {
-        XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
-        SimpleDateFormat format = new SimpleDateFormat(STRING_DATE_FORMAT);
-
-        Date date = null;
-        try {
-            date = format.parse(stringDate);
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Ошибка при парсинге даты из строки", e) ;
-        }
-        GregorianCalendar gregorianCalendar = new GregorianCalendar();
-        System.out.println(date);
-        System.out.println(stringDate);
-        gregorianCalendar.setTime(date);
-        try {
-            xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
-        } catch (DatatypeConfigurationException e) {
-            logger.log(Level.SEVERE, "Ошибка при получения экземпляра XMLGregorianCalendar", e) ;
-        }
-        return xmlGregorianDate;
-    }
-
     /* Метод раньше был в классе FileSearcher, но перенес в класс Utils, так как он также используется еще и в классе Request */
     public static List<String> getFilesMatching(File root, String regExp) {
         try {
@@ -64,12 +37,7 @@ public class Utils {
         }
         final Pattern p = Pattern.compile(regExp);
 
-        File[] files = root.listFiles(new FileFilter(){
-            @Override
-            public boolean accept(File file) {
-                return p.matcher(file.getName()).matches();
-            }
-        });
+        File[] files = root.listFiles(file -> p.matcher(file.getName()).matches());
 
         List<String> filesMatching = new ArrayList<>();
         for (File file : files) {

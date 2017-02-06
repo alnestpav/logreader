@@ -22,7 +22,6 @@ import java.io.*;
 /*  Класс для записи объекта в файл */
 public class ObjectToFileWriter {
     private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
-    //private final static String DOMAIN_DIRECTORY = "C:\\Oracle\\Middleware\\Oracle_Home\\user_projects\\domains\\webl_domain"; // если запускать в Test
     private final static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
     private static Config config;
     private Object object;
@@ -84,28 +83,17 @@ public class ObjectToFileWriter {
         FopConverter fopConverter = new FopConverter(config);
         try {
             fopConverter.convert(object, FileFormat.pdf, file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (FOPException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        } catch (JAXBException e) {
+        } catch (IOException | FOPException | JAXBException | TransformerException e) {
             e.printStackTrace();
         }
+        // TODO: 06.02.2017 Объединить catch ветки в одну
     }
 
     private void writeRtf(Object object, File file) {
         FopConverter fopConverter = new FopConverter(config);
         try {
             fopConverter.convert(object, FileFormat.rtf, file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (FOPException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        } catch (JAXBException e) {
+        } catch (IOException | FOPException | JAXBException | TransformerException e) {
             e.printStackTrace();
         }
     }
