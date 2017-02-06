@@ -49,28 +49,19 @@ public class DateInterval {
     }
 
 
-
     /* Метод раньше был в LogReader, но он достаточно общий, поэтому перенес в Utils,
      * а оттуда сюда, так как он логично вписывается в метод созданого класса DateInterval */
     public boolean containsDate(XMLGregorianCalendar date) {
 
         if (date == null) return false;
 
-        if (dateFrom == null && dateTo == null) {
-            return true;
-        }
+        if (dateFrom == null && dateTo == null) return true;
 
-        if (dateFrom == null && date.compare(dateTo) <= 0) {
-            return true;
-        }
+        if (dateFrom == null && date.compare(dateTo) <= 0) return true;
 
-        if (dateTo == null && date.compare(dateFrom) >= 0) {
-            return true;
-        }
+        if (dateTo == null && date.compare(dateFrom) >= 0) return true;
 
-        if (date.compare(dateFrom) >= 0 && date.compare(dateTo) <= 0 ) {
-            return true;
-        }
+        if (date.compare(dateFrom) >= 0 && date.compare(dateTo) <= 0 ) return true;
 
         return false;
     }
