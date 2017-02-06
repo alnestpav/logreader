@@ -6,5 +6,5 @@ package ru.siblion.nesterov.logreader.type;
 
 /* Перечисление, определяющее возможные типы места, где ищутся лог-сообщения */
 public enum LocationType {
-    domain, cluster, server
+    DOMAIN, CLUSTER, SERVER
 }

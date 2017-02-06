@@ -129,9 +129,9 @@ public class FileSearcher {
     public  Set<String> getLogFiles(LocationType locationType, String location) {
         System.out.println("LocationType: " + locationType);
         switch(locationType) {
-            case domain: return getDomainLogFiles();
-            case cluster: return getClusterLogFiles(location);
-            case server: return getServerLogFiles(location);
+            case DOMAIN: return getDomainLogFiles();
+            case CLUSTER: return getClusterLogFiles(location);
+            case SERVER: return getServerLogFiles(location);
             default: return null;
         }
     }
