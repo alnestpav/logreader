@@ -17,7 +17,6 @@ public class JaxbParser {
         JAXBContext jaxbContext = JAXBContext.newInstance(o.getClass());
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        System.out.println(o);
         jaxbMarshaller.marshal(o, streamResult);
     }
 

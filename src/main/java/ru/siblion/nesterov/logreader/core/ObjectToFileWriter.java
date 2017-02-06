@@ -86,7 +86,6 @@ public class ObjectToFileWriter {
         } catch (IOException | FOPException | JAXBException | TransformerException e) {
             e.printStackTrace();
         }
-        // TODO: 06.02.2017 Объединить catch ветки в одну
     }
 
     private void writeRtf(Object object, File file) {

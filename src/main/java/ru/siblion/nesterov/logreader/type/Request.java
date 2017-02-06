@@ -155,8 +155,6 @@ public class Request {
     public void saveResultToFile() {
         logger.log(Level.INFO, "starting save result to file");
         List<LogMessage> logMessageList = getListOfLogMessages();
-        logger.log(Level.INFO, "save log message list to file: \n" + logMessageList);
-        System.out.println("LOG " + logMessageList);
         LogMessages logMessages = new LogMessages(this, logMessageList);
         ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter(logMessages);
         objectToFileWriter.write(fileFormat, outputFile);
@@ -193,22 +191,18 @@ public class Request {
     public Response getResponse() {
         initSomeFields();
         if (fileFormat == null) {
-             System.out.println("fileFormat==null");
             response.setLogMessages(getListOfLogMessages());
         } else {
-            System.out.println("fileFormat!=null");
             response.setOutputFile(outputFile);
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
                     System.out.println("NEW THREAD");
-
-                if (checkCacheFile() == true && searchCacheFile() != null) {
-                    outputFile = searchCacheFile();
-                } else {
-                    saveResultToFile();
-                }
-
+                    if (checkCacheFile() == true && searchCacheFile() != null) {
+                        outputFile = searchCacheFile();
+                    } else {
+                        saveResultToFile();
+                    }
                 }
             }, "searching and writing logs");
             //executorService.shutdown(); // для лок теста нужен, для веб - нет
