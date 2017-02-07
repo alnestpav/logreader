@@ -36,19 +36,16 @@ public class LogMessage implements Comparable<LogMessage> {
     public LogMessage() {} // Нужен для JAXB
 
     public static XMLGregorianCalendar parseDate(DatatypeFactory datatypeFactoryInstance, String block) {
-        String dateRegExp = "<(?<timestamp>[^<>]*)>"; // вынести из метода в аргумент, так как лучше один раз скомпилировать
+        String dateRegExp = "^####(<.*?> ){9}<(?<timestamp>\\d+)>"; // вынести из метода в аргумент, так как лучше один раз скомпилировать
         Pattern p = Pattern.compile(dateRegExp);
         Matcher m = p.matcher(block);
-        int positionOfTimestamp = 10; // позиция <timestamp>
-        for (int i = 0; i <= (positionOfTimestamp - 1); i++) {
-            m.find();
-        }
+        m.find();
         String stringTimestamp =  m.group("timestamp");
         Timestamp stamp = new Timestamp(Long.parseLong(stringTimestamp));
         Date date = new Date(stamp.getTime());
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
         gregorianCalendar.setTime(date);
-        XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
+        XMLGregorianCalendar xmlGregorianDate;
         xmlGregorianDate = datatypeFactoryInstance.newXMLGregorianCalendar(gregorianCalendar);
         return xmlGregorianDate;
     }

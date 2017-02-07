@@ -8,6 +8,10 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -203,21 +207,45 @@ public class LogReader {
 
     public List<LogMessage> getLogMessages() throws Exception {
 
+        int NUMBER_OF_THREADS = 4;
+        ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+
         Map<String, List<Integer>> prefixPositions = getPositionsOfLinesWithString("####");
         Map<String, List<Integer>> stringPositions = getPositionsOfLinesWithString(string);
 
         List<LogMessage> logMessageList = new ArrayList<>();
         for (String logFile : logFiles) {
-
-            if (prefixPositions.get(logFile) == null || stringPositions.get(logFile)== null ) {
-                continue; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
-            }
-            List<Pair<Integer, Integer>> blockPositions;
-            blockPositions = getBlockPositions(logFile, stringPositions.get(logFile), prefixPositions.get(logFile));
-            logMessageList.addAll(getLogMessagesForLogFile(logFile, dateIntervals, blockPositions));
+            Future<List<LogMessage>> logMessageListFromFile = executorService.submit(new LogCallable(logFile, prefixPositions, stringPositions));
+            logMessageList.addAll(logMessageListFromFile.get());
         }
         message = logMessageList.size() + " log messages found";
         Collections.sort(logMessageList); // попробовать другую структуру данных, где не нужно сортировать в конце!
         return logMessageList;
+    }
+
+    private class LogCallable implements Callable<List<LogMessage>> {
+
+        String logFile;
+        Map<String, List<Integer>> prefixPositions;
+        Map<String, List<Integer>> stringPositions;
+
+        private LogCallable(String logFile, Map<String, List<Integer>> prefixPositions, Map<String, List<Integer>> stringPositions) {
+            this.logFile = logFile;
+            this.prefixPositions = prefixPositions;
+            this.stringPositions = stringPositions;
+        }
+
+        public List<LogMessage> call() {
+            List<LogMessage> logMessageList = new ArrayList<>();
+
+            if (prefixPositions.get(logFile) == null || stringPositions.get(logFile)== null ) {
+                return logMessageList; // Если лог-файл не содержит искомую строки или префиксы, то не обрабатываем его
+            }
+            List<Pair<Integer, Integer>> blockPositions;
+            blockPositions = getBlockPositions(logFile, stringPositions.get(logFile), prefixPositions.get(logFile));
+            logMessageList.addAll(getLogMessagesForLogFile(logFile, dateIntervals, blockPositions));
+
+            return logMessageList;
+        }
     }
 }
