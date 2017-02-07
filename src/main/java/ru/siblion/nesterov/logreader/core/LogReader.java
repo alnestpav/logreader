@@ -7,6 +7,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -161,10 +162,12 @@ public class LogReader {
     private List<LogMessage> getLogMessagesForLogFile(String logFile, List<DateInterval> dateIntervals, List<Pair<Integer, Integer>> blockPositions)  {
         List<LogMessage> logMessages = new ArrayList<>();
         StringBuilder block;
+        String dateRegExp = "^####(<.*?> ){9}<(?<timestamp>\\d+)>";
+        Pattern p = Pattern.compile(dateRegExp);
 
         try(FileReader fileReader = new FileReader(logFile);
             BufferedReader bufferedReader = new BufferedReader(fileReader)){
-            DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
+
 
             int fromLineNumber;
             int toLineNumber;
@@ -176,15 +179,24 @@ public class LogReader {
                 for (int i = previousToLineNumber; i < fromLineNumber - 1; i++) { // пропускает строки до следующего блока
                     bufferedReader.readLine();
                 }
-                String firstBlockLine = bufferedReader.readLine();
 
-                XMLGregorianCalendar logMessageDate = LogMessage.parseDate(datatypeFactory, firstBlockLine); // TODO: 31.01.2017 оптимизировать, так как много занимает время
+                String firstBlockLine = bufferedReader.readLine();
+                Matcher m = p.matcher(firstBlockLine);
+                m.find();
+                String stringTimestamp =  m.group("timestamp");
+                Timestamp stamp = new Timestamp(Long.parseLong(stringTimestamp));
+                Date date = new Date(stamp.getTime());
+                GregorianCalendar gregorianCalendar = new GregorianCalendar();
+                gregorianCalendar.setTime(date);
+                XMLGregorianCalendar logMessageDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
+
+
                 for (DateInterval dateInterval : dateIntervals) {
                     if (dateInterval.containsDate(logMessageDate)) {
                         block = new StringBuilder();
-                        block.append(firstBlockLine + "\n");
+                        block.append(firstBlockLine).append("\n");
                         for (int i = fromLineNumber + 1; i <= toLineNumber; i++) {
-                            block.append(bufferedReader.readLine() + "\n");
+                            block.append(bufferedReader.readLine()).append("\n");
                         }
 
                         logMessages.add(new LogMessage(logMessageDate, block.toString())); // в какой момент лучше преобразовывать в String?
@@ -207,8 +219,7 @@ public class LogReader {
 
     public List<LogMessage> getLogMessages() throws Exception {
 
-        int NUMBER_OF_THREADS = 4;
-        ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+        ExecutorService executorService = Executors.newFixedThreadPool(4); // 4, так как количество лог. ядер - 4
 
         Map<String, List<Integer>> prefixPositions = getPositionsOfLinesWithString("####");
         Map<String, List<Integer>> stringPositions = getPositionsOfLinesWithString(string);
@@ -218,6 +229,7 @@ public class LogReader {
             Future<List<LogMessage>> logMessageListFromFile = executorService.submit(new LogCallable(logFile, prefixPositions, stringPositions));
             logMessageList.addAll(logMessageListFromFile.get());
         }
+        executorService.shutdown();
         message = logMessageList.size() + " log messages found";
         Collections.sort(logMessageList); // попробовать другую структуру данных, где не нужно сортировать в конце!
         return logMessageList;

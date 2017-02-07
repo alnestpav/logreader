@@ -38,12 +38,8 @@ public class Converter {
         }
         try {
             transformer = factory.newTransformer(new StreamSource(xslFile));
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        }
-        Source xmlSource = new StreamSource(new StringReader(writer.toString()));
-        StreamResult output = new StreamResult(file);
-        try {
+            Source xmlSource = new StreamSource(new StringReader(writer.toString()));
+            StreamResult output = new StreamResult(file);
             transformer.transform(xmlSource, output);
         } catch (TransformerException e) {
             e.printStackTrace();
