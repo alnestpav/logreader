@@ -119,9 +119,7 @@ public class FileSearcher {
         String serverName = location;
         File serverLogDirectory = new File(domainDirectory + "\\servers\\" + serverName + "\\logs\\");
         if (serverLogDirectory.exists()) {
-            for (String logFilePath : Utils.getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*"))) {
-                logFiles.add(logFilePath);
-            }
+            logFiles.addAll(Utils.getFilesMatching(serverLogDirectory, (serverName + ".log[0-9]*")));
         }
         return logFiles;
     }

@@ -13,8 +13,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
-
-
 /**
  * Created by alexander on 19.12.2016.
  */

@@ -194,18 +194,15 @@ public class Request {
             response.setLogMessages(getListOfLogMessages());
         } else {
             response.setOutputFile(outputFile);
-            executorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("NEW THREAD");
-                    if (checkCacheFile() == true && searchCacheFile() != null) {
-                        outputFile = searchCacheFile();
-                    } else {
-                        saveResultToFile();
-                    }
+            executorService.submit(() -> {
+                System.out.println("NEW THREAD");
+                if (checkCacheFile() == true && searchCacheFile() != null) {
+                    outputFile = searchCacheFile();
+                } else {
+                    saveResultToFile();
                 }
             }, "searching and writing logs");
-            //executorService.shutdown(); // для лок теста нужен, для веб - нет
+            executorService.shutdown();
         }
         logger.log(Level.INFO, "Main Process");
         return response;
