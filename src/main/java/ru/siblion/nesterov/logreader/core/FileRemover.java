@@ -4,7 +4,7 @@ package ru.siblion.nesterov.logreader.core;
  * Created by alexander on 22.12.2016.
  */
 import ru.siblion.nesterov.logreader.util.MyLogger;
-import ru.siblion.nesterov.logreader.type.Config;
+import ru.siblion.nesterov.logreader.type.AppConfig;
 
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
@@ -22,19 +22,16 @@ import java.util.regex.Pattern;
 @Startup
 @Singleton
 public class FileRemover {
-    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath());
-    private static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
-    private static Config config = Config.getConfig(configFile);
+    private static final AppConfig APP_CONFIG = AppConfig.getAppConfig();
 
     private static final Logger logger = MyLogger.getLogger();
 
     @Schedule(minute="0", hour="0") // запуск метода каждый день в полночь
     public void removeOldFiles() {
         logger.log(Level.INFO, "Удаление старых лог-файлов");
-        config = Config.getConfig(configFile);
 
-        long configLifeTime = config.getLifeTime();
-        File directory = config.getDirectory();
+        long configLifeTime = APP_CONFIG.getLifeTime();
+        File directory = APP_CONFIG.getDirectory();
 
         for(File file : directory.listFiles()) {
             Pattern fileDatePattern = Pattern.compile("d(?<date>.+)h");

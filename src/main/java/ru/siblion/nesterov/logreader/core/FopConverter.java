@@ -13,17 +13,15 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import ru.siblion.nesterov.logreader.type.Config;
+import ru.siblion.nesterov.logreader.type.AppConfig;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 
 /* Класс для конвертации объекта в документ с помощью библиотеки Apache FOP, используется для pdf и rtf */
 public class FopConverter {
-    private Config config;
+    private static final AppConfig APP_CONFIG = AppConfig.getAppConfig();
 
-    public FopConverter(Config config) {
-        this.config = config;
-    }
+    public FopConverter() {}
 
     public void convert(Object jaxbObject, FileFormat fileFormat, File file) throws IOException, FOPException,
             TransformerException, JAXBException {
@@ -41,13 +39,13 @@ public class FopConverter {
             case pdf: {
                 out = new FileOutputStream(file);
                 fopOutputFormat = MimeConstants.MIME_PDF;
-                xslFile = config.getPdfTemplate();
+                xslFile = APP_CONFIG.getPdfTemplate();
                 break;
             }
             case rtf: {
                 out = new FileOutputStream(file);
                 fopOutputFormat = MimeConstants.MIME_RTF;
-                xslFile = config.getRtfTemplate();
+                xslFile = APP_CONFIG.getRtfTemplate();
                 break;
             }
         }

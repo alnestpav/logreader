@@ -2,7 +2,7 @@ package ru.siblion.nesterov.logreader.core;
 
 import org.apache.fop.apps.FOPException;
 import ru.siblion.nesterov.logreader.util.ExportFromArchive;
-import ru.siblion.nesterov.logreader.type.Config;
+import ru.siblion.nesterov.logreader.type.AppConfig;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.type.LogMessages;
@@ -19,18 +19,12 @@ import java.io.*;
 
 /*  Класс для записи объекта в файл */
 public class ObjectToFileWriter {
-    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath());
-    private final static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
-    private static Config config;
-    private Object object;
 
-    public ObjectToFileWriter(Object object) {
-        this.object = object;
+    public ObjectToFileWriter() {
         ExportFromArchive.exportXsls();
-        config = Config.getConfig(configFile);
     }
 
-    public void write(FileFormat fileFormat, File file) {
+    public void write(Object object, FileFormat fileFormat, File file) {
         switch(fileFormat) {
             case doc: writeDoc(object, file);
                 break;
@@ -48,7 +42,7 @@ public class ObjectToFileWriter {
     }
 
     private void writeDoc(Object object, File file) {
-        Converter converter = new Converter(config);
+        Converter converter = new Converter();
         try {
             converter.convert(object, FileFormat.doc, file);
         } catch (JAXBException e) {
@@ -57,7 +51,7 @@ public class ObjectToFileWriter {
     }
 
     private void writeHtml(Object object, File file) {
-        Converter converter = new Converter(config);
+        Converter converter = new Converter();
         try {
             converter.convert(object, FileFormat.html, file);
         } catch (JAXBException e) {
@@ -78,7 +72,7 @@ public class ObjectToFileWriter {
     }
 
     private void writePdf(Object object, File file) {
-        FopConverter fopConverter = new FopConverter(config);
+        FopConverter fopConverter = new FopConverter();
         try {
             fopConverter.convert(object, FileFormat.pdf, file);
         } catch (IOException | FOPException | JAXBException | TransformerException e) {
@@ -87,7 +81,7 @@ public class ObjectToFileWriter {
     }
 
     private void writeRtf(Object object, File file) {
-        FopConverter fopConverter = new FopConverter(config);
+        FopConverter fopConverter = new FopConverter();
         try {
             fopConverter.convert(object, FileFormat.rtf, file);
         } catch (IOException | FOPException | JAXBException | TransformerException e) {

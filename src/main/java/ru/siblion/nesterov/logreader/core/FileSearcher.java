@@ -42,7 +42,7 @@ public class FileSearcher {
     private Set<String> getDomainLogFiles() {
         List<String> servers = new ArrayList<>();
         try {
-            File domainConfigFile = new File(domainDirectory + "\\config\\config.xml");
+            File domainConfigFile = new File(domainDirectory + "\\config\\appConfig.xml");
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -59,7 +59,7 @@ public class FileSearcher {
                 }
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Ошибка при парсинге config.xml", e) ;
+            logger.log(Level.SEVERE, "Ошибка при парсинге appConfig.xml", e) ;
         }
 
         File serverLogDirectory;
@@ -76,7 +76,7 @@ public class FileSearcher {
     private Set<String> getClusterLogFiles(String clusterName) {
         List<String> servers = new ArrayList<>();
         try {
-            File domainConfigFile = new File(domainDirectory + "\\config\\config.xml");
+            File domainConfigFile = new File(domainDirectory + "\\config\\appConfig.xml");
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -96,7 +96,7 @@ public class FileSearcher {
             }
 
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Ошибка при парсинге config.xml", e) ;
+            logger.log(Level.SEVERE, "Ошибка при парсинге appConfig.xml", e) ;
         }
         File serverLogDirectory;
         Set<String> logFiles = new HashSet<>();

@@ -1,6 +1,6 @@
 package ru.siblion.nesterov.logreader.core;
 
-import ru.siblion.nesterov.logreader.type.Config;
+import ru.siblion.nesterov.logreader.type.AppConfig;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 
@@ -16,11 +16,9 @@ import java.io.*;
 
 /* Класс для конвертации объекта в документ, используется для doc и html */
 public class Converter {
-    private Config config;
+    private static final AppConfig APP_CONFIG = AppConfig.getAppConfig();
 
-    public Converter(Config config) {
-        this.config = config;
-    }
+    public Converter() {}
 
     public void convert(Object jaxbObject, FileFormat fileFormat, File file) throws JAXBException {
         StringWriter writer = new StringWriter();
@@ -30,9 +28,9 @@ public class Converter {
 
         File xslFile = null;
         switch (fileFormat) {
-            case doc: xslFile = config.getDocTemplate();
+            case doc: xslFile = APP_CONFIG.getDocTemplate();
                 break;
-            case html: xslFile = config.getHtmlTemplate();
+            case html: xslFile = APP_CONFIG.getHtmlTemplate();
                 break;
         }
         try {

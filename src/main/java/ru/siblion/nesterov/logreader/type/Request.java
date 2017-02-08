@@ -56,11 +56,9 @@ public class Request {
     @XmlTransient
     private Response response = new Response();
 
-    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
-    private static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
-    private static Config config = Config.getConfig(configFile);
+    private static AppConfig appConfig = AppConfig.getAppConfig();
 
-    private static final String DIRECTORY = config.getDirectory().toString(); // возможно изменить getDirectory возвр. знач. на String
+    private static final String DIRECTORY = appConfig.getDirectory().toString(); // возможно изменить getDirectory возвр. знач. на String
 
     private static final int NUMBER_OF_THREADS = 10;
 
@@ -153,11 +151,10 @@ public class Request {
     }
 
     public void saveResultToFile() {
-        logger.log(Level.INFO, "starting save result to file");
         List<LogMessage> logMessageList = getListOfLogMessages();
         LogMessages logMessages = new LogMessages(this, logMessageList);
-        ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter(logMessages);
-        objectToFileWriter.write(fileFormat, outputFile);
+        ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter();
+        objectToFileWriter.write(logMessages, fileFormat, outputFile);
     }
 
     private boolean checkCacheFile() {
@@ -180,7 +177,7 @@ public class Request {
     }
 
     private File searchCacheFile() {
-        List<String> files = Utils.getFilesMatching(config.getDirectory(), ".+" + hashCode() + "\\." + fileFormat);
+        List<String> files = Utils.getFilesMatching(appConfig.getDirectory(), ".+" + hashCode() + "\\." + fileFormat);
         if (files.isEmpty()) {
             return null;
         } else {

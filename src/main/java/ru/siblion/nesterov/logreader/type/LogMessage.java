@@ -30,7 +30,7 @@ public class LogMessage implements Comparable<LogMessage> {
         this.message = message;
     }
 
-    public LogMessage() {} // Нужен для JAXB
+    public LogMessage() {}
 
     public XMLGregorianCalendar getDate() {
         return date;

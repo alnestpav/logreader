@@ -1,6 +1,6 @@
 package ru.siblion.nesterov.logreader.ws;
 
-import ru.siblion.nesterov.logreader.type.Config;
+import ru.siblion.nesterov.logreader.type.AppConfig;
 import ru.siblion.nesterov.logreader.type.Response;
 import ru.siblion.nesterov.logreader.util.MyLogger;
 import ru.siblion.nesterov.logreader.type.Request;
@@ -17,10 +17,6 @@ import java.util.logging.Logger;
 @Path("/restWebService")
 public class RestWebService {
     private static final Logger logger = MyLogger.getLogger();
-
-    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath());
-    private static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
-    private static Config config = Config.getConfig(configFile);
 
     @POST
     @Path("/getResponse")
@@ -40,8 +36,8 @@ public class RestWebService {
     @Path("{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response getFile(@PathParam("fileName") String fileName) {
-        config = Config.getConfig(configFile);
-        String directory = config.getDirectory().toString();
+        AppConfig appConfig = AppConfig.getAppConfig();
+        String directory = appConfig.getDirectory().toString();
         File file = new File(directory + "\\" + fileName);
         javax.ws.rs.core.Response.ResponseBuilder response = null;
         if (file.exists()) {
