@@ -1,7 +1,7 @@
 package ru.siblion.nesterov.logreader.ws;
 
 import ru.siblion.nesterov.logreader.type.Response;
-import ru.siblion.nesterov.logreader.util.MyLogger;
+import ru.siblion.nesterov.logreader.util.AppLogger;
 import ru.siblion.nesterov.logreader.type.Request;
 
 import javax.ejb.Stateless;
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 @WebService(name = "SoapWebService")
 @Stateless
 public class SoapWebService {
-    private static final Logger logger = MyLogger.getLogger();
+    private static final Logger logger = AppLogger.getLogger();
 
     @WebMethod(operationName = "getResponse")
     public Response getResponse(@WebParam(name = "request") Request request) {

@@ -1,7 +1,5 @@
 package ru.siblion.nesterov.logreader.util;
 
-import ru.siblion.nesterov.logreader.type.AppConfig;
-
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import java.io.File;
@@ -19,11 +17,11 @@ import java.util.logging.Logger;
 @Startup
 @Singleton
 public class ExportFromArchive {
-    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath());
+    private final static String DOMAIN_DIRECTORY = AppConfig.DOMAIN_DIRECTORY;
     private final static File EXPORT_DIRECTORY = new File(DOMAIN_DIRECTORY + "\\logreader\\");
     private static final Properties appConfigProperties = AppConfig.getInstance().getProperties();
 
-    private static final Logger logger = MyLogger.getLogger();
+    private static final Logger logger = AppLogger.getLogger();
 
     static public void exportResource(String resourceName, String copyFilePath) {
         String resource = resourceName.replace('\\', '/'); // метод getResourceAsStream использует '/' для разделения в пути файла

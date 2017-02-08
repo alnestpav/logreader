@@ -1,17 +1,8 @@
 package ru.siblion.nesterov.logreader.util;
 
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
-import ru.siblion.nesterov.logreader.type.DateInterval;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
-import java.io.FileFilter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +15,7 @@ import java.util.regex.Pattern;
 /* Класс, предоставляющий вспомогательные методы для других классов */
 public class Utils {
 
-    private static final Logger logger = MyLogger.getLogger();
+    private static final Logger logger = AppLogger.getLogger();
 
     /* Метод раньше был в классе FileSearcher, но перенес в класс Utils, так как он также используется еще и в классе Request */
     public static List<String> getFilesMatching(File root, String regExp) {

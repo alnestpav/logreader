@@ -3,14 +3,8 @@ package ru.siblion.nesterov.logreader.type;
 import ru.siblion.nesterov.logreader.util.*;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by alexander on 07.12.2016.
@@ -23,7 +17,7 @@ public class LogMessage implements Comparable<LogMessage> {
     private XMLGregorianCalendar date;
     private String message;
 
-    private static final Logger logger = MyLogger.getLogger();
+    private static final Logger logger = AppLogger.getLogger();
 
     public LogMessage(XMLGregorianCalendar date, String message) {
         this.date = date;

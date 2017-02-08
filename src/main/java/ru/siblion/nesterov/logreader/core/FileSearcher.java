@@ -4,8 +4,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import ru.siblion.nesterov.logreader.util.AppConfig;
 import ru.siblion.nesterov.logreader.type.LocationType;
-import ru.siblion.nesterov.logreader.util.MyLogger;
+import ru.siblion.nesterov.logreader.util.AppLogger;
 import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -27,10 +28,10 @@ public class FileSearcher {
     private String domainDirectory;
     private String domainName;
 
-    private static final Logger logger = MyLogger.getLogger();
+    private static final Logger logger = AppLogger.getLogger();
 
     public FileSearcher() {
-        domainDirectory = (new File("").getAbsolutePath()); // если запускать на сервере
+        domainDirectory = AppConfig.DOMAIN_DIRECTORY;
         Pattern domainPattern = Pattern.compile("\\w+$");
         Matcher domainMatcher = domainPattern.matcher(domainDirectory);
         domainMatcher.find();

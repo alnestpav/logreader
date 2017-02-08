@@ -7,16 +7,16 @@ import java.util.logging.Logger;
  */
 
 /* Класс, предоставляющий логгер, отличающийся от стандартного */
-public class MyLogger {
+public class AppLogger {
     private static Logger logger;
 
-    private MyLogger() {
-        logger = Logger.getLogger("MyLogger");
+    private AppLogger() {
+        logger = Logger.getLogger("AppLogger");
     }
 
     public static Logger getLogger() {
         if (logger == null) {
-            new MyLogger();
+            new AppLogger();
         }
         return logger;
     }

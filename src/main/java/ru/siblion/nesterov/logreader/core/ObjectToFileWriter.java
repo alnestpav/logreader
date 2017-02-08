@@ -2,7 +2,6 @@ package ru.siblion.nesterov.logreader.core;
 
 import org.apache.fop.apps.FOPException;
 import ru.siblion.nesterov.logreader.util.ExportFromArchive;
-import ru.siblion.nesterov.logreader.type.AppConfig;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.type.LogMessage;
 import ru.siblion.nesterov.logreader.type.LogMessages;

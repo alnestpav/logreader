@@ -1,7 +1,7 @@
 package ru.siblion.nesterov.logreader.core;
 
 import ru.siblion.nesterov.logreader.type.*;
-import ru.siblion.nesterov.logreader.util.MyLogger;
+import ru.siblion.nesterov.logreader.util.AppLogger;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -30,7 +30,7 @@ public class LogReader {
     private Set<String> logFiles;
     private String message;
 
-    private static final Logger logger = MyLogger.getLogger();
+    private static final Logger logger = AppLogger.getLogger();
 
     public LogReader(String string, List<DateInterval> dateIntervals, LocationType locationType, String location) {
         FileSearcher fileSearcher = new FileSearcher();

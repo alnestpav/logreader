@@ -3,7 +3,8 @@ package ru.siblion.nesterov.logreader.type;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import ru.siblion.nesterov.logreader.core.LogReader;
 import ru.siblion.nesterov.logreader.core.ObjectToFileWriter;
-import ru.siblion.nesterov.logreader.util.MyLogger;
+import ru.siblion.nesterov.logreader.util.AppConfig;
+import ru.siblion.nesterov.logreader.util.AppLogger;
 import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.xml.bind.annotation.*;
@@ -42,7 +43,7 @@ public class Request {
     @XmlElement(name = "fileFormat")
     private FileFormat fileFormat;
 
-    private static final Logger logger = MyLogger.getLogger(); // проверить правильно работает в xml
+    private static final Logger logger = AppLogger.getLogger(); // проверить правильно работает в xml
 
     @XmlTransient
     private File outputFile;

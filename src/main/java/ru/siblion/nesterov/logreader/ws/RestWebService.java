@@ -1,8 +1,8 @@
 package ru.siblion.nesterov.logreader.ws;
 
-import ru.siblion.nesterov.logreader.type.AppConfig;
+import ru.siblion.nesterov.logreader.util.AppConfig;
 import ru.siblion.nesterov.logreader.type.Response;
-import ru.siblion.nesterov.logreader.util.MyLogger;
+import ru.siblion.nesterov.logreader.util.AppLogger;
 import ru.siblion.nesterov.logreader.type.Request;
 
 import javax.ws.rs.*;
@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 @Path("/restWebService")
 public class RestWebService {
-    private static final Logger logger = MyLogger.getLogger();
+    private static final Logger logger = AppLogger.getLogger();
 
     @POST
     @Path("/getResponse")

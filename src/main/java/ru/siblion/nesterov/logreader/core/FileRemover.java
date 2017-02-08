@@ -3,8 +3,8 @@ package ru.siblion.nesterov.logreader.core;
 /**
  * Created by alexander on 22.12.2016.
  */
-import ru.siblion.nesterov.logreader.util.MyLogger;
-import ru.siblion.nesterov.logreader.type.AppConfig;
+import ru.siblion.nesterov.logreader.util.AppLogger;
+import ru.siblion.nesterov.logreader.util.AppConfig;
 
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class FileRemover {
     private static final Properties appConfigProperties = AppConfig.getInstance().getProperties();
 
-    private static final Logger logger = MyLogger.getLogger();
+    private static final Logger logger = AppLogger.getLogger();
 
     @Schedule(minute="0", hour="0") // запуск метода каждый день в полночь
     public void removeOldFiles() {

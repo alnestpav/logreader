@@ -1,6 +1,6 @@
 package ru.siblion.nesterov.logreader.core;
 
-import ru.siblion.nesterov.logreader.type.AppConfig;
+import ru.siblion.nesterov.logreader.util.AppConfig;
 import ru.siblion.nesterov.logreader.type.FileFormat;
 import ru.siblion.nesterov.logreader.util.JaxbParser;
 
