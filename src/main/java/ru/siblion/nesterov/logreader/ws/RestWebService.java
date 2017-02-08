@@ -44,7 +44,6 @@ public class RestWebService {
         if (file.exists()) {
             response = javax.ws.rs.core.Response.ok(file);
         }
-        response.header("Content-Disposition", "attachment; filename=" + fileName);
         return response.build();
     }
 

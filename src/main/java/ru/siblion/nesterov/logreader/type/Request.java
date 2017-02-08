@@ -7,6 +7,8 @@ import ru.siblion.nesterov.logreader.util.AppConfig;
 import ru.siblion.nesterov.logreader.util.AppLogger;
 import ru.siblion.nesterov.logreader.util.Utils;
 
+import javax.annotation.PostConstruct;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -52,9 +54,6 @@ public class Request {
     private Date date;
 
     @XmlTransient
-    private boolean needsToCache = false; // нужно ли кешировать лог-файл, получаемый при запросе
-
-    @XmlTransient
     private Response response = new Response();
 
     private final static Properties appConfigProperties = AppConfig.getProperties();
@@ -63,19 +62,12 @@ public class Request {
 
     private static final int NUMBER_OF_THREADS = 10;
 
-    private static ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    private ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    private Request(String string, LocationType locationType, String location, List<DateInterval> dateIntervals, FileFormat fileFormat) {
-        logger.log(Level.INFO, "Конструктор " + "string " + string + "location " + location + "dateIntervals " + dateIntervals + "fileFormat " + fileFormat);
-        this.string = string;
-        this.locationType = locationType;
-        this.location = location;
-        this.dateIntervals = dateIntervals;
-        this.fileFormat = fileFormat;
-    }
+    public Request() {}
 
     /* Метод инициализирует поля date и outputFile, необходим для работы веб-сервисов */
-    public void initSomeFields() {
+    void afterUnmarshal(Unmarshaller u, Object parent) {
         logger.log(Level.INFO, "Конфигурация запроса: " + this);
         this.date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
@@ -87,17 +79,6 @@ public class Request {
             emptyDateIntervals.add(new DateInterval(null, null));
         }
     }
-
-    public static Request getNewRequest(String string, LocationType locationType, String location,
-                                        List<DateInterval> dateIntervals, FileFormat fileFormat) {
-        logger.log(Level.INFO, "Инициализация запроса... ");
-        Request request = new Request(string, locationType, location, dateIntervals, fileFormat);
-        logger.log(Level.INFO, "Создан новый запрос " + request);
-
-        return request;
-    }
-
-    public Request() {} // Нужен для JAXB или точнее для xml-object преобразования
 
     public String getString() {
         return string;
@@ -138,7 +119,7 @@ public class Request {
     }
 
 
-    public List<LogMessage> getListOfLogMessages() {
+    private List<LogMessage> getListOfLogMessages() {
         LogReader logReader = new LogReader(string, dateIntervals, locationType, location);
         List<LogMessage>  logMessageList = null;
         try {
@@ -151,7 +132,7 @@ public class Request {
         return logMessageList;
     }
 
-    public void saveResultToFile() {
+    private void saveResultToFile() {
         List<LogMessage> logMessageList = getListOfLogMessages();
         LogMessages logMessages = new LogMessages(this, logMessageList);
         ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter();
@@ -159,6 +140,7 @@ public class Request {
     }
 
     private boolean checkCacheFile() {
+        boolean needsToCache = true;
         for (DateInterval dateInterval: dateIntervals) {
             Date currentDate = new Date();
             XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
@@ -170,8 +152,8 @@ public class Request {
             } catch (DatatypeConfigurationException e) {
                 logger.log(Level.SEVERE, "Ошибка при получения экземпляра XMLGregorianCalendar", e) ;
             }
-            if (dateTo != null && dateTo.compare(xmlGregorianDate) < 0) {
-                needsToCache = true;
+            if (dateTo != null && dateTo.compare(xmlGregorianDate) > 0) {
+                return false;
             }
         }
         return needsToCache; // возможно стоит поменять тип возвращаемого значения
@@ -187,13 +169,12 @@ public class Request {
     }
 
     public Response getResponse() {
-        initSomeFields();
         if (fileFormat == null) {
             response.setLogMessages(getListOfLogMessages());
         } else {
             response.setOutputFile(outputFile);
             executorService.submit(() -> {
-                if (checkCacheFile() == true && searchCacheFile() != null) {
+                if (checkCacheFile() && searchCacheFile() != null) {
                     outputFile = searchCacheFile();
                 } else {
                     saveResultToFile();
