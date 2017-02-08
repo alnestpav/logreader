@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 @Startup
 @Singleton
 public class ExportFromArchive {
-    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
+    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath());
     private final static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
     private static Config config;
 

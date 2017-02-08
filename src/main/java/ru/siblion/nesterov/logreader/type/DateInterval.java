@@ -27,9 +27,8 @@ public class DateInterval {
         this.dateTo = dateTo;
     }
 
-    public DateInterval() { // Нужен для JAXB
+    public DateInterval() {}
 
-    }
     @XmlElement(name = "dateFrom")
     public XMLGregorianCalendar getDateFrom() {
         return dateFrom;

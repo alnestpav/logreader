@@ -123,7 +123,6 @@ public class FileSearcher {
     }
 
     public  Set<String> getLogFiles(LocationType locationType, String location) {
-        System.out.println("LocationType: " + locationType);
         switch(locationType) {
             case DOMAIN: return getDomainLogFiles();
             case CLUSTER: return getClusterLogFiles(location);

@@ -26,8 +26,7 @@ public class Converter {
         StringWriter writer = new StringWriter();
         StreamResult streamResult = new StreamResult(writer);
         JaxbParser.objectToXml(jaxbObject, streamResult);
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer = null;
+
 
         File xslFile = null;
         switch (fileFormat) {
@@ -37,7 +36,8 @@ public class Converter {
                 break;
         }
         try {
-            transformer = factory.newTransformer(new StreamSource(xslFile));
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer(new StreamSource(xslFile));
             Source xmlSource = new StreamSource(new StringReader(writer.toString()));
             StreamResult output = new StreamResult(file);
             transformer.transform(xmlSource, output);

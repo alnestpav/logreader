@@ -41,10 +41,7 @@ public class Config { // сделать синглтоном
 
     private static final Logger logger = MyLogger.getLogger(); // проверить правильно работает в xml
 
-
-    public Config() {
-
-    }
+    public Config() {}
 
     public File getDirectory() {
         return directory;
@@ -85,7 +82,7 @@ public class Config { // сделать синглтоном
             ExportFromArchive.exportConfig();
             config = (Config) JaxbParser.xmlToObject(configFile, new Config());
         } catch (JAXBException e) {
-            logger.log(Level.WARNING, "Config файл не найден", e) ;
+            logger.log(Level.WARNING, "Config file not exists", e) ;
         }
         return config;
     }

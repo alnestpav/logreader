@@ -195,22 +195,21 @@ public class Request {
         } else {
             response.setOutputFile(outputFile);
             executorService.submit(() -> {
-                System.out.println("NEW THREAD");
                 if (checkCacheFile() == true && searchCacheFile() != null) {
                     outputFile = searchCacheFile();
                 } else {
                     saveResultToFile();
                 }
-            }, "searching and writing logs");
+            });
             executorService.shutdown();
         }
-        logger.log(Level.INFO, "Main Process");
         return response;
     }
 
     @Override
     public String toString() {
-        return "Request:" + "\n\tString: " + string + "\n\tLocationType: " + locationType + "\n\tLocation: " + location + "\n\tDateIntervals: " + dateIntervals + "\n\tFileFormat: " + fileFormat;
+        return "Request:" + "\n\tString: " + string + "\n\tLocationType: " + locationType + "\n\tLocation: " + location +
+                "\n\tDateIntervals: " + dateIntervals +"\n\tFileFormat: " + fileFormat;
     }
 
     @Override

@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class RestWebService {
     private static final Logger logger = MyLogger.getLogger();
 
-    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath()); // если запускать на сервере
+    private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath());
     private static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\config\\config.xml");
     private static Config config = Config.getConfig(configFile);
 
@@ -26,13 +26,12 @@ public class RestWebService {
     @Path("/getResponse")
     @Consumes(value = {"application/xml,application/json"})
     @Produces(value = {"application/xml,application/json"})
-    public Response getListOfLogMessages(Request request) {
-        logger.log(Level.INFO, "rest web webservice");
+    public Response getResponse(Request request) {
+        logger.log(Level.INFO, "New request: " + request);
         try {
-            logger.log(Level.INFO, "getting request: " + request);
             return request.getResponse();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Какая-то ошибка", e);
+            logger.log(Level.SEVERE, "Get response error: ", e);
         }
         return null;
     }

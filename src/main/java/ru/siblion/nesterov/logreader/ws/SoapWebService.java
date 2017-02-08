@@ -15,19 +15,19 @@ import java.util.logging.Logger;
 /**
  * Created by alexander nesterov on 05.12.2016.
  */
+
 @WebService(name = "SoapWebService")
 @Stateless
 public class SoapWebService {
     private static final Logger logger = MyLogger.getLogger();
 
-    @WebMethod(operationName = "getListOfLogMessages")
-    public Response getListOfLogMessages(@WebParam(name = "request") Request request) {
-        logger.log(Level.INFO, "soap web webservice");
+    @WebMethod(operationName = "getResponse")
+    public Response getResponse(@WebParam(name = "request") Request request) {
+        logger.log(Level.INFO, "New request: " + request);
         try {
-            logger.log(Level.INFO, "getting request: " + request);
             return request.getResponse();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Какая-то ошибка", e);
+            logger.log(Level.SEVERE, "Get response error: ", e);
         }
         return null;
     }
