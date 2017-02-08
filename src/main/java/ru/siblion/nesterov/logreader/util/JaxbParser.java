@@ -19,11 +19,4 @@ public class JaxbParser {
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         jaxbMarshaller.marshal(o, streamResult);
     }
-
-    public static Object xmlToObject(File xmlFile, Object o) throws JAXBException { // второй параметр возможно нужно поменять в сигнатуре метода
-        JAXBContext jaxbContext = JAXBContext.newInstance(o.getClass());
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        o = jaxbUnmarshaller.unmarshal(xmlFile);
-        return o;
-    }
 }

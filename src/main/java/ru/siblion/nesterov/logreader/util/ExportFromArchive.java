@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 /**
  * Created by alexander on 11.01.2017.
  */
-// Вернуть, ошибка при развертывании была, поэтому закомментил
+
 @Startup
 @Singleton
 public class ExportFromArchive {
@@ -55,7 +55,4 @@ public class ExportFromArchive {
         exportResource("\\xsl\\siblion_logo.gif", appConfigProperties.get("directory") + "\\siblion_logo.gif");
     }
 
-    public void exportXsls() {
-
-    }
 }
