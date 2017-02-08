@@ -17,7 +17,7 @@ import java.util.Properties;
 
 /* Класс для конвертации объекта в документ, используется для doc и html */
 public class Converter {
-    private final static Properties appConfigProperties = AppConfig.getInstance().getProperties();
+    private final static Properties appConfigProperties = AppConfig.getProperties();
 
     public Converter() {}
 
@@ -25,7 +25,6 @@ public class Converter {
         StringWriter writer = new StringWriter();
         StreamResult streamResult = new StreamResult(writer);
         JaxbParser.objectToXml(jaxbObject, streamResult);
-
 
         File xslFile = null;
         switch (fileFormat) {

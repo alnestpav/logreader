@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 @Path("/restWebService")
 public class RestWebService {
-    public final static Properties appConfigProperties = AppConfig.getInstance().getProperties();
+    public final static Properties appConfigProperties = AppConfig.getProperties();
     private static final Logger logger = AppLogger.getLogger();
 
     @POST

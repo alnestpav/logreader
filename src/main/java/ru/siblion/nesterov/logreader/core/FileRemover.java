@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @Startup
 @Singleton
 public class FileRemover {
-    private final static Properties appConfigProperties = AppConfig.getInstance().getProperties();
+    private final static Properties appConfigProperties = AppConfig.getProperties();
 
     private static final Logger logger = AppLogger.getLogger();
 

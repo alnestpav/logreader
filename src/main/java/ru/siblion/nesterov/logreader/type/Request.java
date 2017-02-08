@@ -57,7 +57,7 @@ public class Request {
     @XmlTransient
     private Response response = new Response();
 
-    private final static Properties appConfigProperties = AppConfig.getInstance().getProperties();
+    private final static Properties appConfigProperties = AppConfig.getProperties();
 
     private final String DIRECTORY = appConfigProperties.getProperty("directory");
 

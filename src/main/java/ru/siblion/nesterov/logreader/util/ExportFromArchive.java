@@ -41,7 +41,7 @@ public class ExportFromArchive {
     public void exportConfigAndXsls() {
         new File(DOMAIN_DIRECTORY + "\\logreader").mkdirs();
         exportResource("\\appConfig.xml", EXPORT_DIRECTORY + "\\appConfig.xml");
-        appConfigProperties = AppConfig.getInstance().getProperties();
+        appConfigProperties = AppConfig.getProperties();
 
         new File(DOMAIN_DIRECTORY + "\\logreader\\xsl").mkdirs();
         new File(DOMAIN_DIRECTORY + "\\logreader\\logs").mkdirs();

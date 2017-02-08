@@ -15,14 +15,12 @@ import java.util.Properties;
  * кроме того может содержать дополнительные константы, которые используются в других классах */
 public class AppConfig {
 
+    private static Properties properties;
     public final static String DOMAIN_DIRECTORY = new File("").getAbsolutePath();
-    private static File configFile = new File(DOMAIN_DIRECTORY + "\\logreader\\appConfig.xml");
+    private final static File CONFIG_FILE = new File(DOMAIN_DIRECTORY + "\\logreader\\appConfig.xml");
 
-    private static AppConfig instance;
-    private Properties properties;
-
-    private AppConfig() {
-        try(FileInputStream fileInput = new FileInputStream(configFile)) {
+    static {
+        try(FileInputStream fileInput = new FileInputStream(CONFIG_FILE)) {
             properties = new Properties();
             properties.loadFromXML(fileInput);
         } catch (IOException e) {
@@ -30,15 +28,9 @@ public class AppConfig {
         }
     }
 
-    public Properties getProperties() {
+    public static Properties getProperties() {
         return properties;
     }
 
-    public static AppConfig getInstance() {
-        if (instance == null) {
-            instance = new AppConfig();
-        }
-        return instance;
-    }
 
 }
