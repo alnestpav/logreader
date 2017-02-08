@@ -20,7 +20,7 @@ import ru.siblion.nesterov.logreader.util.JaxbParser;
 
 /* Класс для конвертации объекта в документ с помощью библиотеки Apache FOP, используется для pdf и rtf */
 public class FopConverter {
-    private static Properties appConfigProperties = AppConfig.getInstance().getProperties();
+    private Properties appConfigProperties = AppConfig.getInstance().getProperties();
 
     public FopConverter() {}
 

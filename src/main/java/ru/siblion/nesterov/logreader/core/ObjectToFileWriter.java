@@ -19,10 +19,6 @@ import java.io.*;
 /*  Класс для записи объекта в файл */
 public class ObjectToFileWriter {
 
-    public ObjectToFileWriter() {
-        ExportFromArchive.exportXsls();
-    }
-
     public void write(Object object, FileFormat fileFormat, File file) {
         switch(fileFormat) {
             case doc: writeDoc(object, file);

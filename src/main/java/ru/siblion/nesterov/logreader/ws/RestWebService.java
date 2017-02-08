@@ -17,6 +17,7 @@ import java.util.logging.Logger;
  */
 @Path("/restWebService")
 public class RestWebService {
+    public final static Properties appConfigProperties = AppConfig.getInstance().getProperties();
     private static final Logger logger = AppLogger.getLogger();
 
     @POST
@@ -37,7 +38,6 @@ public class RestWebService {
     @Path("{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response getFile(@PathParam("fileName") String fileName) {
-        Properties appConfigProperties = AppConfig.getInstance().getProperties();
         String directory = appConfigProperties.getProperty("directory");
         File file = new File(directory + "\\" + fileName);
         javax.ws.rs.core.Response.ResponseBuilder response = null;

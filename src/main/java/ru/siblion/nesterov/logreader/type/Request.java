@@ -57,9 +57,9 @@ public class Request {
     @XmlTransient
     private Response response = new Response();
 
-    private static Properties appConfigProperties = AppConfig.getInstance().getProperties();
+    private final static Properties appConfigProperties = AppConfig.getInstance().getProperties();
 
-    private static final String DIRECTORY = appConfigProperties.getProperty("directory");
+    private final String DIRECTORY = appConfigProperties.getProperty("directory");
 
     private static final int NUMBER_OF_THREADS = 10;
 

@@ -17,7 +17,7 @@ import java.util.Properties;
 
 /* Класс для конвертации объекта в документ, используется для doc и html */
 public class Converter {
-    private static final Properties appConfigProperties = AppConfig.getInstance().getProperties();
+    private final static Properties appConfigProperties = AppConfig.getInstance().getProperties();
 
     public Converter() {}
 

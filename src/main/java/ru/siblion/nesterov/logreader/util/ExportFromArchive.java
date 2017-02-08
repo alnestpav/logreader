@@ -1,5 +1,6 @@
 package ru.siblion.nesterov.logreader.util;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import java.io.File;
@@ -17,9 +18,9 @@ import java.util.logging.Logger;
 @Startup
 @Singleton
 public class ExportFromArchive {
-    private final static String DOMAIN_DIRECTORY = AppConfig.DOMAIN_DIRECTORY;
+    private final static String DOMAIN_DIRECTORY = new File("").getAbsolutePath().toString();
     private final static File EXPORT_DIRECTORY = new File(DOMAIN_DIRECTORY + "\\logreader\\");
-    private static final Properties appConfigProperties = AppConfig.getInstance().getProperties();
+    private static Properties appConfigProperties;
 
     private static final Logger logger = AppLogger.getLogger();
 
@@ -27,7 +28,7 @@ public class ExportFromArchive {
         String resource = resourceName.replace('\\', '/'); // метод getResourceAsStream использует '/' для разделения в пути файла
         InputStream file = ExportFromArchive.class.getResourceAsStream(resource);
         try {
-            File checkingFile = new File(copyFilePath); // TODO: 06.02.2017 Нужен ли checkingFile 
+            File checkingFile = new File(copyFilePath); // TODO: 06.02.2017 Нужен ли checkingFile
             if (!checkingFile.exists()) {
                 Files.copy(file, Paths.get(copyFilePath));
             }
@@ -36,12 +37,12 @@ public class ExportFromArchive {
         }
     }
 
-    static public void exportConfig() {
+    @PostConstruct
+    public void exportConfigAndXsls() {
         new File(DOMAIN_DIRECTORY + "\\logreader").mkdirs();
         exportResource("\\appConfig.xml", EXPORT_DIRECTORY + "\\appConfig.xml");
-    }
+        appConfigProperties = AppConfig.getInstance().getProperties();
 
-    static public void exportXsls() {
         new File(DOMAIN_DIRECTORY + "\\logreader\\xsl").mkdirs();
         new File(DOMAIN_DIRECTORY + "\\logreader\\logs").mkdirs();
 
@@ -52,5 +53,9 @@ public class ExportFromArchive {
 
         //exportResource("\\xsl\\siblion_logo.gif", DIRECTORY + "\\xsl\\siblion_logo.gif");;
         exportResource("\\xsl\\siblion_logo.gif", appConfigProperties.get("directory") + "\\siblion_logo.gif");
+    }
+
+    public void exportXsls() {
+
     }
 }
