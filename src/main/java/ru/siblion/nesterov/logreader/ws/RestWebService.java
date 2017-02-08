@@ -8,6 +8,7 @@ import ru.siblion.nesterov.logreader.type.Request;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,8 +37,8 @@ public class RestWebService {
     @Path("{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response getFile(@PathParam("fileName") String fileName) {
-        AppConfig appConfig = AppConfig.getAppConfig();
-        String directory = appConfig.getDirectory().toString();
+        Properties appConfigProperties = AppConfig.getInstance().getProperties();
+        String directory = appConfigProperties.getProperty("directory");
         File file = new File(directory + "\\" + fileName);
         javax.ws.rs.core.Response.ResponseBuilder response = null;
         if (file.exists()) {

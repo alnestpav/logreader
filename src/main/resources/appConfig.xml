@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<log-files>
-    <directory>C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\logs\</directory>
-    <life-time>10</life-time>
-    <doc-template>C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\xsl\doc.xsl</doc-template>
-    <html-template>C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\xsl\html.xsl</html-template>
-    <pdf-template>C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\xsl\pdf.xsl</pdf-template>
-    <rtf-template>C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\xsl\rtf.xsl</rtf-template>
-</log-files>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="directory">C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\logs\</entry>
+    <entry key="life-time">10</entry>
+    <entry key="doc-template">C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\xsl\doc.xsl</entry>
+    <entry key="html-template">C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\xsl\html.xsl</entry>
+    <entry key="pdf-template">C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\xsl\pdf.xsl</entry>
+    <entry key="rtf-template">C:\Oracle\Middleware\Oracle_Home\user_projects\domains\webl_domain\logreader\xsl\rtf.xsl</entry>
+</properties>

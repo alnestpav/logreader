@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
 public class ExportFromArchive {
     private final static String DOMAIN_DIRECTORY = (new File("").getAbsolutePath());
     private final static File EXPORT_DIRECTORY = new File(DOMAIN_DIRECTORY + "\\logreader\\");
-    private final static AppConfig APP_CONFIG = AppConfig.getAppConfig();
+    private static final Properties appConfigProperties = AppConfig.getInstance().getProperties();
 
     private static final Logger logger = MyLogger.getLogger();
 
@@ -52,6 +53,6 @@ public class ExportFromArchive {
         exportResource("\\xsl\\rtf.xsl", EXPORT_DIRECTORY + "\\xsl\\rtf.xsl");
 
         //exportResource("\\xsl\\siblion_logo.gif", DIRECTORY + "\\xsl\\siblion_logo.gif");;
-        exportResource("\\xsl\\siblion_logo.gif", APP_CONFIG.getDirectory() + "\\siblion_logo.gif");
+        exportResource("\\xsl\\siblion_logo.gif", appConfigProperties.get("directory") + "\\siblion_logo.gif");
     }
 }

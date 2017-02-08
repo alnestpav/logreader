@@ -9,6 +9,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.util.Properties;
 
 /**
  * Created by alexander on 21.12.2016.
@@ -16,7 +17,7 @@ import java.io.*;
 
 /* Класс для конвертации объекта в документ, используется для doc и html */
 public class Converter {
-    private static final AppConfig APP_CONFIG = AppConfig.getAppConfig();
+    private static final Properties appConfigProperties = AppConfig.getInstance().getProperties();
 
     public Converter() {}
 
@@ -28,9 +29,9 @@ public class Converter {
 
         File xslFile = null;
         switch (fileFormat) {
-            case doc: xslFile = APP_CONFIG.getDocTemplate();
+            case doc: xslFile = new File(appConfigProperties.getProperty("doc-template"));
                 break;
-            case html: xslFile = APP_CONFIG.getHtmlTemplate();
+            case html: xslFile = new File(appConfigProperties.getProperty("html-template"));
                 break;
         }
         try {

@@ -56,9 +56,9 @@ public class Request {
     @XmlTransient
     private Response response = new Response();
 
-    private static AppConfig appConfig = AppConfig.getAppConfig();
+    private static Properties appConfigProperties = AppConfig.getInstance().getProperties();
 
-    private static final String DIRECTORY = appConfig.getDirectory().toString(); // возможно изменить getDirectory возвр. знач. на String
+    private static final String DIRECTORY = appConfigProperties.getProperty("directory");
 
     private static final int NUMBER_OF_THREADS = 10;
 
@@ -177,7 +177,7 @@ public class Request {
     }
 
     private File searchCacheFile() {
-        List<String> files = Utils.getFilesMatching(appConfig.getDirectory(), ".+" + hashCode() + "\\." + fileFormat);
+        List<String> files = Utils.getFilesMatching(new File(appConfigProperties.getProperty("directory")), ".+" + hashCode() + "\\." + fileFormat);
         if (files.isEmpty()) {
             return null;
         } else {

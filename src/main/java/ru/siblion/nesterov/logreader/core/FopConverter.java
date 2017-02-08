@@ -1,6 +1,7 @@
 package ru.siblion.nesterov.logreader.core;
 
 import java.io.*;
+import java.util.Properties;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.*;
@@ -19,7 +20,7 @@ import ru.siblion.nesterov.logreader.util.JaxbParser;
 
 /* Класс для конвертации объекта в документ с помощью библиотеки Apache FOP, используется для pdf и rtf */
 public class FopConverter {
-    private static final AppConfig APP_CONFIG = AppConfig.getAppConfig();
+    private static Properties appConfigProperties = AppConfig.getInstance().getProperties();
 
     public FopConverter() {}
 
@@ -39,13 +40,13 @@ public class FopConverter {
             case pdf: {
                 out = new FileOutputStream(file);
                 fopOutputFormat = MimeConstants.MIME_PDF;
-                xslFile = APP_CONFIG.getPdfTemplate();
+                xslFile = new File(appConfigProperties.getProperty("pdf-template"));
                 break;
             }
             case rtf: {
                 out = new FileOutputStream(file);
                 fopOutputFormat = MimeConstants.MIME_RTF;
-                xslFile = APP_CONFIG.getRtfTemplate();
+                xslFile = new File(appConfigProperties.getProperty("rtf-template"));
                 break;
             }
         }

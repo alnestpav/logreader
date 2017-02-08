@@ -13,6 +13,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
 @Startup
 @Singleton
 public class FileRemover {
-    private static final AppConfig APP_CONFIG = AppConfig.getAppConfig();
+    private static final Properties appConfigProperties = AppConfig.getInstance().getProperties();
 
     private static final Logger logger = MyLogger.getLogger();
 
@@ -30,8 +31,8 @@ public class FileRemover {
     public void removeOldFiles() {
         logger.log(Level.INFO, "Удаление старых лог-файлов");
 
-        long configLifeTime = APP_CONFIG.getLifeTime();
-        File directory = APP_CONFIG.getDirectory();
+        long configLifeTime = Integer.parseInt(appConfigProperties.getProperty("life-time"));
+        File directory = new File(appConfigProperties.getProperty("directory"));
 
         for(File file : directory.listFiles()) {
             Pattern fileDatePattern = Pattern.compile("d(?<date>.+)h");
