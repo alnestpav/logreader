@@ -22,7 +22,6 @@ import java.util.logging.Logger;
  */
 
 /* Класс, созданный для того, чтобы вынести из класса Request всю бизнес-логику */
-
 public class RequestController {
     private Request request;
     private Response response = new Response();
@@ -37,10 +36,7 @@ public class RequestController {
 
     public RequestController(Request request) {
         this.request = request;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
-        Date requestDate = new Date(); // дата, время получения запроса
-        String formattedDate = simpleDateFormat.format(requestDate);
-        this.request.setOutputFile(new File(DIRECTORY + "\\log-d" + formattedDate + "h" + request.hashCode() + "." + request.getFileFormat()));
+
         if (request.getDateIntervals() == null) {
             List<DateInterval> emptyDateIntervals = new ArrayList<>();
             emptyDateIntervals.add(new DateInterval(null, null));
@@ -65,11 +61,10 @@ public class RequestController {
         List<LogMessage> logMessageList = getListOfLogMessages();
         LogMessages logMessages = new LogMessages(request, logMessageList);
         ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter();
-        objectToFileWriter.write(logMessages, request.getFileFormat(), request.getOutputFile());
+        objectToFileWriter.write(logMessages, request.getFileFormat(), response.getOutputFile());
     }
 
     private boolean checkCacheFile() {
-        boolean needsToCache = true;
         for (DateInterval dateInterval: request.getDateIntervals()) {
             Date currentDate = new Date();
             XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
@@ -85,11 +80,12 @@ public class RequestController {
                 return false;
             }
         }
-        return needsToCache; // возможно стоит поменять тип возвращаемого значения
+        return true; // возможно стоит поменять тип возвращаемого значения
     }
 
     private File searchCacheFile() {
-        List<String> files = Utils.getFilesMatching(new File(APP_CONFIG_PROPERTIES.getProperty("directory")), ".+" + hashCode() + "\\." + request.getFileFormat());
+        List<String> files = Utils.getFilesMatching(
+                new File(APP_CONFIG_PROPERTIES.getProperty("directory")), ".+" + hashCode() + "\\." + request.getFileFormat());
         if (files.isEmpty()) {
             return null;
         } else {
@@ -101,10 +97,14 @@ public class RequestController {
         if (request.getFileFormat() == null) {
             response.setLogMessages(getListOfLogMessages());
         } else {
-            response.setOutputFile(request.getOutputFile());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
+            Date requestDate = new Date(); // дата, время получения запроса
+            String formattedDate = simpleDateFormat.format(requestDate);
+            response.setOutputFile(
+                    new File(DIRECTORY + "\\log-d" + formattedDate + "h" + request.hashCode() + "." + request.getFileFormat()));
             executorService.submit(() -> {
                 if (checkCacheFile() && searchCacheFile() != null) {
-                    request.setOutputFile(searchCacheFile());
+                    response.setOutputFile(searchCacheFile());
                 } else {
                     saveResultToFile();
                 }

@@ -2,7 +2,6 @@ package ru.siblion.nesterov.logreader.type;
 
 
 import javax.xml.bind.annotation.*;
-import java.io.File;
 import java.util.*;
 
 /**
@@ -29,9 +28,6 @@ public class Request {
     @XmlElement(name = "fileFormat")
     private FileFormat fileFormat;
 
-    @XmlTransient
-    private File outputFile;
-
     public Request() {}
 
     public String getString() {
@@ -57,7 +53,6 @@ public class Request {
         this.dateIntervals = dateIntervals;
     }
 
-
     public FileFormat getFileFormat() {
         return fileFormat;
     }
@@ -72,22 +67,13 @@ public class Request {
         this.locationType = locationType;
     }
 
-
-    public File getOutputFile() {
-        return outputFile;
-    }
-
-    public void setOutputFile(File outputFile) {
-        this.outputFile = outputFile;
-    }
-
     @Override
     public String toString() {
         return "Request:" + "\n\tString: " + string + "\n\tLocationType: " + locationType + "\n\tLocation: " + location +
                 "\n\tDateIntervals: " + dateIntervals +"\n\tFileFormat: " + fileFormat;
     }
 
-    /* Используется для формирования названия файла в outputFile */
+    /* Используется для формирования названия файла outputFile */
     @Override
     public int hashCode() {
         int result = string != null ? string.hashCode() : 0;

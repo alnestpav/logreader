@@ -34,10 +34,10 @@ public class FileSearcher {
         domainDirectory = AppConfig.DOMAIN_DIRECTORY;
         Pattern domainPattern = Pattern.compile("\\w+$");
         Matcher domainMatcher = domainPattern.matcher(domainDirectory);
-        domainMatcher.find();
-        domainName = domainMatcher.group(); // переписать, используя  в регулярном выражении
-        System.out.println(domainDirectory);
-        System.out.println(domainName);
+        if (domainMatcher.find()) {
+            domainName = domainMatcher.group(); // переписать, используя  в регулярном выражении
+        }
+
     }
 
     private Set<String> getDomainLogFiles() {
