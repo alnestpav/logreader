@@ -1,5 +1,6 @@
 package ru.siblion.nesterov.logreader.ws;
 
+import ru.siblion.nesterov.logreader.core.RequestController;
 import ru.siblion.nesterov.logreader.type.Response;
 import ru.siblion.nesterov.logreader.util.AppLogger;
 import ru.siblion.nesterov.logreader.type.Request;
@@ -25,7 +26,8 @@ public class SoapWebService {
     public Response getResponse(@WebParam(name = "request") Request request) {
         logger.log(Level.INFO, "New request: " + request);
         try {
-            return request.getResponse();
+            RequestController requestController = new RequestController(request);
+            return requestController.getResponse();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Get response error: ", e);
         }
