@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -23,6 +24,7 @@ public class ExportFromArchive {
     private static Properties appConfigProperties;
 
     private static final Logger logger = AppLogger.getLogger();
+
 
     static public void exportResource(String resourceName, String copyFilePath) {
         String resource = resourceName.replace('\\', '/'); // метод getResourceAsStream использует '/' для разделения в пути файла
@@ -39,6 +41,7 @@ public class ExportFromArchive {
 
     @PostConstruct
     public void exportConfigAndXsls() {
+        logger.log(Level.INFO, "Экспорт ресурсов");
         new File(DOMAIN_DIRECTORY + "\\logreader").mkdirs();
         exportResource("\\appConfig.xml", EXPORT_DIRECTORY + "\\appConfig.xml");
         appConfigProperties = AppConfig.getProperties();
@@ -51,7 +54,8 @@ public class ExportFromArchive {
         exportResource("\\xsl\\pdf.xsl", EXPORT_DIRECTORY + "\\xsl\\pdf.xsl");
         exportResource("\\xsl\\rtf.xsl", EXPORT_DIRECTORY + "\\xsl\\rtf.xsl");
 
-        //exportResource("\\xsl\\siblion_logo.gif", DIRECTORY + "\\xsl\\siblion_logo.gif");;
+        /* Изображение экспортируется в папку, где будут находится пользовательские логи,
+         * чтобы подгружатся в документах формата html, doc */
         exportResource("\\xsl\\siblion_logo.gif", appConfigProperties.get("directory") + "\\siblion_logo.gif");
     }
 

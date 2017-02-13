@@ -17,7 +17,7 @@ import java.util.Properties;
 
 /* Класс для конвертации объекта в документ, используется для doc и html */
 public class Converter {
-    private final static Properties appConfigProperties = AppConfig.getProperties();
+    private final static Properties APP_CONFIG_PROPERTIES = AppConfig.getProperties();
 
     public Converter() {}
 
@@ -28,9 +28,9 @@ public class Converter {
 
         File xslFile = null;
         switch (fileFormat) {
-            case doc: xslFile = new File(appConfigProperties.getProperty("doc-template"));
+            case doc: xslFile = new File(APP_CONFIG_PROPERTIES.getProperty("doc-template"));
                 break;
-            case html: xslFile = new File(appConfigProperties.getProperty("html-template"));
+            case html: xslFile = new File(APP_CONFIG_PROPERTIES.getProperty("html-template"));
                 break;
         }
         try {

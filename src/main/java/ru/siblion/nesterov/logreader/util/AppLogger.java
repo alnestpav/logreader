@@ -6,7 +6,7 @@ import java.util.logging.Logger;
  * Created by alexander on 28.12.2016.
  */
 
-/* Класс, предоставляющий логгер, отличающийся от стандартного */
+/* Класс, предоставляющий логгер для всего приложения */
 public class AppLogger {
     private static Logger logger;
 

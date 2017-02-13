@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @Startup
 @Singleton
 public class FileRemover {
-    private final static Properties appConfigProperties = AppConfig.getProperties();
+    private final static Properties APP_CONFIG_PROPERTIES = AppConfig.getProperties();
 
     private static final Logger logger = AppLogger.getLogger();
 
@@ -31,30 +31,29 @@ public class FileRemover {
     public void removeOldFiles() {
         logger.log(Level.INFO, "Удаление старых лог-файлов");
 
-        long configLifeTime = Integer.parseInt(appConfigProperties.getProperty("life-time"));
-        File directory = new File(appConfigProperties.getProperty("directory"));
+        long configLifeTime = Integer.parseInt(APP_CONFIG_PROPERTIES.getProperty("life-time"));
+        File directory = new File(APP_CONFIG_PROPERTIES.getProperty("directory"));
+        if (directory.exists()) {
+            for(File file : directory.listFiles()) {
+                Pattern fileDatePattern = Pattern.compile("d(?<date>.+)h");
+                Matcher fileDateMatcher = fileDatePattern.matcher(file.getName());
+                if (!fileDateMatcher.find()) {
+                    continue; // если файл в папке не соответствует шаблону, то пропускаем его
+                }
+                String fileDateString = fileDateMatcher.group("date");
 
-        for(File file : directory.listFiles()) {
-            Pattern fileDatePattern = Pattern.compile("d(?<date>.+)h");
-            Matcher fileDateMatcher = fileDatePattern.matcher(file.getName());
-            fileDateMatcher.find();
-            String fileDateString = fileDateMatcher.group("date");
-
-            if (fileDateString == null) {
-                continue;
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
+                Date currentDate = new Date();
+                Date fileDate = null;
+                try {
+                    fileDate = simpleDateFormat.parse(fileDateString);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                long lifeTime = (currentDate.getTime() - fileDate.getTime())/1000; // в секундах
+                if (!file.isDirectory() &&  lifeTime > configLifeTime)
+                    file.delete();
             }
-
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
-            Date currentDate = new Date();
-            Date dateOfFile = null;
-            try {
-                dateOfFile = simpleDateFormat.parse(fileDateString);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            long lifeTime = (currentDate.getTime() - dateOfFile.getTime())/1000; // в секундах
-            if (!file.isDirectory() &&  lifeTime > configLifeTime)
-                file.delete();
         }
     }
 }

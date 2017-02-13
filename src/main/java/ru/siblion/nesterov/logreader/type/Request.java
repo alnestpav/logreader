@@ -62,11 +62,13 @@ public class Request {
 
     private static final int NUMBER_OF_THREADS = 10;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    // TODO: 09.02.2017 Почитать про ExecutorService, раньше был не static, а нужно было кажется
+    private static ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public Request() {}
 
-    /* Метод инициализирует поля date и outputFile, необходим для работы веб-сервисов */
+    /* afterUnmarshal - аналог @PostConstruct для JAXB
+       Метод инициализирует поля date и outputFile, необходим для работы веб-сервисов */
     void afterUnmarshal(Unmarshaller u, Object parent) {
         logger.log(Level.INFO, "Конфигурация запроса: " + this);
         this.date = new Date();
@@ -180,7 +182,9 @@ public class Request {
                     saveResultToFile();
                 }
             });
-            executorService.shutdown();
+            /* Если не закомментировать следующую строку,
+               то нельзя более одного запроса отправить на поиск логов со скачиванием файла */
+            // executorService.shutdown(); // TODO: 09.02.2017 Почитать про ExecutorService
         }
         return response;
     }
