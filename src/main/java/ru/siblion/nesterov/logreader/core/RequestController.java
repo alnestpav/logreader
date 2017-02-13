@@ -10,10 +10,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Properties;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -30,6 +28,7 @@ public class RequestController {
     private Response response = new Response();
 
     private final static Properties APP_CONFIG_PROPERTIES = AppConfig.getProperties();
+    private final String DIRECTORY = APP_CONFIG_PROPERTIES.getProperty("directory");
 
     private static final int NUMBER_OF_THREADS = 10;
     private static ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
@@ -38,6 +37,14 @@ public class RequestController {
 
     public RequestController(Request request) {
         this.request = request;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
+        Date requestDate = new Date(); // дата, время получения запроса
+        String formattedDate = simpleDateFormat.format(requestDate);
+        this.request.setOutputFile(new File(DIRECTORY + "\\log-d" + formattedDate + "h" + request.hashCode() + "." + request.getFileFormat()));
+        if (request.getDateIntervals() == null) {
+            List<DateInterval> emptyDateIntervals = new ArrayList<>();
+            emptyDateIntervals.add(new DateInterval(null, null));
+        }
     }
 
 
@@ -50,7 +57,7 @@ public class RequestController {
             e.printStackTrace();
         }
         response.setMessage(logReader.getMessage());
-        logger.log(Level.INFO, "Запрос " + this + " успешно завершен");
+        logger.log(Level.INFO, "Запрос " + request + " успешно завершен");
         return logMessageList;
     }
 

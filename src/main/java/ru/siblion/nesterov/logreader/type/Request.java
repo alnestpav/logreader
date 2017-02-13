@@ -1,14 +1,9 @@
 package ru.siblion.nesterov.logreader.type;
 
-import ru.siblion.nesterov.logreader.util.AppConfig;
 
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.*;
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by alexander on 15.12.2016.
@@ -37,28 +32,7 @@ public class Request {
     @XmlTransient
     private File outputFile;
 
-    @XmlTransient
-    private Date date;
-
-    private final static Properties APP_CONFIG_PROPERTIES = AppConfig.getProperties();
-
-    private final String DIRECTORY = APP_CONFIG_PROPERTIES.getProperty("directory");
-
     public Request() {}
-
-    /* afterUnmarshal - аналог @PostConstruct для JAXB
-       Метод инициализирует поля date и outputFile, необходим для работы веб-сервисов */
-    void afterUnmarshal(Unmarshaller u, Object parent) {
-        this.date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
-        String formattedDate = simpleDateFormat.format(date);
-        outputFile =  new File(DIRECTORY + "\\log-d" + formattedDate + "h" + this.hashCode() + "." + fileFormat);
-
-        if (dateIntervals == null) {
-            List<DateInterval> emptyDateIntervals = new ArrayList<>();
-            emptyDateIntervals.add(new DateInterval(null, null));
-        }
-    }
 
     public String getString() {
         return string;
@@ -99,9 +73,13 @@ public class Request {
     }
 
 
-    public File getOutputFile() { return outputFile; }
+    public File getOutputFile() {
+        return outputFile;
+    }
 
-    public void setOutputFile(File outputFile) { this.outputFile = outputFile; }
+    public void setOutputFile(File outputFile) {
+        this.outputFile = outputFile;
+    }
 
     @Override
     public String toString() {
@@ -109,6 +87,7 @@ public class Request {
                 "\n\tDateIntervals: " + dateIntervals +"\n\tFileFormat: " + fileFormat;
     }
 
+    /* Используется для формирования названия файла в outputFile */
     @Override
     public int hashCode() {
         int result = string != null ? string.hashCode() : 0;
