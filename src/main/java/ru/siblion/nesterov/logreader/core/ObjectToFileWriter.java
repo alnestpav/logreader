@@ -18,7 +18,8 @@ import java.io.*;
 /*  Класс для записи объекта в файл */
 public class ObjectToFileWriter {
 
-    public void write(Object object, FileFormat fileFormat, File file) {
+    public void write(Object object, FileFormat fileFormat, String filePath) {
+        File file = new File(filePath);
         switch(fileFormat) {
             case doc: writeDoc(object, file);
                 break;

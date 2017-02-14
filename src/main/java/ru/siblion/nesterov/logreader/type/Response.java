@@ -16,8 +16,9 @@ import java.util.List;
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Response {
+    // TODO: 14.02.2017 Заменить File на String, так как File не имеет public конструктора по умолчанию
     @XmlElement(name = "outputFile")
-    private File outputFile; // File или String лучше?
+    private String outputFile; // File или String лучше?
 
     @XmlElement(name = "logMessages") // в клиенте создается метод getLogMessage, проверить почему
     private List<LogMessage> logMessages = null;
@@ -27,11 +28,11 @@ public class Response {
 
     public Response() {}
 
-    public File getOutputFile() {
+    public String getOutputFile() {
         return outputFile;
     }
 
-    public void setOutputFile(File outputFile) {
+    public void setOutputFile(String outputFile) {
         this.outputFile = outputFile;
     }
 

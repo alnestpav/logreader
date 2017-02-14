@@ -40,6 +40,7 @@ public class RequestController {
         if (request.getDateIntervals() == null) {
             List<DateInterval> emptyDateIntervals = new ArrayList<>();
             emptyDateIntervals.add(new DateInterval(null, null));
+            request.setDateIntervals(emptyDateIntervals);
         }
     }
 
@@ -83,13 +84,13 @@ public class RequestController {
         return true; // возможно стоит поменять тип возвращаемого значения
     }
 
-    private File searchCacheFile() {
+    private String searchCacheFile() {
         List<String> files = Utils.getFilesMatching(
                 new File(APP_CONFIG_PROPERTIES.getProperty("directory")), ".+" + hashCode() + "\\." + request.getFileFormat());
         if (files.isEmpty()) {
             return null;
         } else {
-            return new File(files.get(0));
+            return files.get(0);
         }
     }
 
@@ -100,8 +101,7 @@ public class RequestController {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
             Date requestDate = new Date(); // дата, время получения запроса
             String formattedDate = simpleDateFormat.format(requestDate);
-            response.setOutputFile(
-                    new File(DIRECTORY + "\\log-d" + formattedDate + "h" + request.hashCode() + "." + request.getFileFormat()));
+            response.setOutputFile(DIRECTORY + "\\log-d" + formattedDate + "h" + request.hashCode() + "." + request.getFileFormat());
             executorService.submit(() -> {
                 if (checkCacheFile() && searchCacheFile() != null) {
                     response.setOutputFile(searchCacheFile());
