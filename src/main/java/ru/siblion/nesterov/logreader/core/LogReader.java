@@ -168,7 +168,6 @@ public class LogReader {
         try(FileReader fileReader = new FileReader(logFile);
             BufferedReader bufferedReader = new BufferedReader(fileReader)){
 
-
             int fromLineNumber;
             int toLineNumber;
             int previousToLineNumber = 0;
@@ -235,6 +234,7 @@ public class LogReader {
         return logMessageList;
     }
 
+    /* Класс, используется для создания потока для каждого лог-файла, в котором просходит поиск лог-сообщений */
     private class LogCallable implements Callable<List<LogMessage>> {
 
         String logFile;

@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 
 @Startup
 @Singleton
-public class ExportFromArchive {
+public class ResourceExporter {
     private final static String DOMAIN_DIRECTORY = new File("").getAbsolutePath().toString();
     private final static File EXPORT_DIRECTORY = new File(DOMAIN_DIRECTORY + "\\logreader\\");
     private static Properties appConfigProperties;
@@ -28,7 +28,7 @@ public class ExportFromArchive {
 
     static public void exportResource(String resourceName, String copyFilePath) {
         String resource = resourceName.replace('\\', '/'); // метод getResourceAsStream использует '/' для разделения в пути файла
-        InputStream file = ExportFromArchive.class.getResourceAsStream(resource);
+        InputStream file = ResourceExporter.class.getResourceAsStream(resource);
         try {
             File checkingFile = new File(copyFilePath); // TODO: 06.02.2017 Нужен ли checkingFile
             if (!checkingFile.exists()) {
