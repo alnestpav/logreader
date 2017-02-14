@@ -54,7 +54,6 @@ public class RequestController {
             e.printStackTrace();
         }
         response.setMessage(logReader.getMessage());
-        logger.log(Level.INFO, "Запрос " + request + " успешно завершен");
         return logMessageList;
     }
 
@@ -95,6 +94,18 @@ public class RequestController {
     }
 
     public Response getResponse() {
+        if (request.getString() == null) {
+            response.setMessage("Неверный параметр string");
+            return response;
+        }
+        if (request.getLocationType() == null) {
+            response.setMessage("Неверный параметр locationType");
+            return response;
+        }
+        if (request.getLocation() == null) {
+            response.setMessage("Отсутствует параметр location");
+            return response;
+        }
         if (request.getFileFormat() == null) {
             response.setLogMessages(getListOfLogMessages());
         } else {

@@ -2,6 +2,8 @@ package ru.siblion.nesterov.logreader.type;
 
 import ru.siblion.nesterov.logreader.util.AppLogger;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -17,12 +19,11 @@ import java.util.logging.Logger;
 public class DateInterval {
 
     private XMLGregorianCalendar dateFrom;
+
+
     private XMLGregorianCalendar dateTo;
 
-    private static final Logger logger = AppLogger.getLogger();
-
     public DateInterval(XMLGregorianCalendar dateFrom, XMLGregorianCalendar dateTo) {
-        logger.log(Level.INFO, "dateFrom=" + dateFrom + "\n" + "dateTo=" + dateTo);
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
     }
@@ -37,6 +38,7 @@ public class DateInterval {
     public void setDateFrom(XMLGregorianCalendar dateFrom) {
         this.dateFrom = dateFrom;
     }
+
 
     @XmlElement(name = "dateTo")
     public XMLGregorianCalendar getDateTo() {

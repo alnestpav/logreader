@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.File;
 import java.util.List;
 
 /**
@@ -16,6 +15,8 @@ import java.util.List;
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Response {
+    @XmlElement(name = "message")
+    private String message;
     // TODO: 14.02.2017 Заменить File на String, так как File не имеет public конструктора по умолчанию
     @XmlElement(name = "outputFile")
     private String outputFile; // File или String лучше?
@@ -23,10 +24,16 @@ public class Response {
     @XmlElement(name = "logMessages") // в клиенте создается метод getLogMessage, проверить почему
     private List<LogMessage> logMessages = null;
 
-    @XmlElement(name = "message")
-    private String message;
 
     public Response() {}
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     public String getOutputFile() {
         return outputFile;
@@ -44,11 +51,4 @@ public class Response {
         this.logMessages = logMessages;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }
