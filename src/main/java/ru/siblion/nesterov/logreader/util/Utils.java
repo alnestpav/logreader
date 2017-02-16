@@ -17,7 +17,7 @@ public class Utils {
 
     private static final Logger logger = AppLogger.getLogger();
 
-    /* Метод раньше был в классе FileSearcher, но перенес в класс Utils, так как он также используется еще и в классе Request */
+    /* Метод раньше был в классе FileFinder, но перенес в класс Utils, так как он также используется еще и в классе Request */
     public static List<String> getFilesMatching(File root, String regExp) {
         try {
             if (!root.isDirectory()) {

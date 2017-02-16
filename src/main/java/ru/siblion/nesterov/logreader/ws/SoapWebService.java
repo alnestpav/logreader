@@ -29,7 +29,7 @@ public class SoapWebService {
             RequestController requestController = new RequestController(request);
             return requestController.getResponse();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Get response error: ", e);
+            logger.log(Level.SEVERE, "Response error: ", e);
         }
         return null;
     }

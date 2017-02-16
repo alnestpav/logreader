@@ -23,14 +23,14 @@ import java.util.regex.Pattern;
  */
 
 /* Класс для поиска лог-файлов WebLogic */
-public class FileSearcher {
+public class FileFinder {
 
     private String domainDirectory;
     private String domainName;
 
     private static final Logger logger = AppLogger.getLogger();
 
-    public FileSearcher() {
+    public FileFinder() {
         domainDirectory = AppConfig.DOMAIN_DIRECTORY;
         Pattern domainPattern = Pattern.compile("\\w+$");
         Matcher domainMatcher = domainPattern.matcher(domainDirectory);

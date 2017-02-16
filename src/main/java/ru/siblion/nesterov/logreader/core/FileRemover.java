@@ -5,7 +5,9 @@ package ru.siblion.nesterov.logreader.core;
  */
 import ru.siblion.nesterov.logreader.util.AppLogger;
 import ru.siblion.nesterov.logreader.util.AppConfig;
+import ru.siblion.nesterov.logreader.util.ResourceExporter;
 
+import javax.ejb.DependsOn;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -22,6 +24,7 @@ import java.util.regex.Pattern;
 /* Класс для удаления пользовательских лог-файлов */
 @Startup
 @Singleton
+@DependsOn("ResourceExporter")
 public class FileRemover {
     private final static Properties APP_CONFIG_PROPERTIES = AppConfig.getProperties();
 

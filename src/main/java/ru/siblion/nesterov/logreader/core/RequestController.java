@@ -1,6 +1,5 @@
 package ru.siblion.nesterov.logreader.core;
 
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import ru.siblion.nesterov.logreader.type.*;
 import ru.siblion.nesterov.logreader.util.AppConfig;
 import ru.siblion.nesterov.logreader.util.AppLogger;
@@ -14,20 +13,21 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Created by alexander on 13.02.2017.
  */
 
-/* Класс, созданный для того, чтобы вынести из класса Request всю бизнес-логику */
+/* Класс принимает запрос пользователя и создает ответ */
 public class RequestController {
     private Request request;
-    private Response response = new Response();
+    private Response response = new Response(); // создаем ответ на запрос
 
     private final static Properties APP_CONFIG_PROPERTIES = AppConfig.getProperties();
-    private final String DIRECTORY = APP_CONFIG_PROPERTIES.getProperty("directory");
+
+    /* Директория на сервере, в которую будут сохраняться найденные логи */
+    private final String FOUND_LOGS_DIRECTORY = APP_CONFIG_PROPERTIES.getProperty("directory");
 
     private static final int NUMBER_OF_THREADS = 10;
     private static ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
@@ -37,6 +37,8 @@ public class RequestController {
     public RequestController(Request request) {
         this.request = request;
 
+        /* Если интервалы дат не заданы, то в запросе задается интервал (null, null) ,
+           так как метод getLogMessagesForLogFile в классе LogReader работает хотя бы с одним интервалом */
         if (request.getDateIntervals() == null) {
             List<DateInterval> emptyDateIntervals = new ArrayList<>();
             emptyDateIntervals.add(new DateInterval(null, null));
@@ -45,7 +47,7 @@ public class RequestController {
     }
 
 
-    private List<LogMessage> getListOfLogMessages() {
+    private List<LogMessage> findLogMessages() {
         LogReader logReader = new LogReader(request.getString(), request.getDateIntervals(), request.getLocationType(), request.getLocation());
         List<LogMessage>  logMessageList = null;
         try {
@@ -57,39 +59,36 @@ public class RequestController {
         return logMessageList;
     }
 
-    private void saveResultToFile() {
-        List<LogMessage> logMessageList = getListOfLogMessages();
-        LogMessages logMessages = new LogMessages(request, logMessageList);
-        ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter();
-        objectToFileWriter.write(logMessages, request.getFileFormat(), response.getOutputFile());
-    }
+    /* Метод проверяет может ли для данного запроса уже существовать кэшированный файл с найденными логами */
+    private boolean canRequestHaveCashedFile() {
+        try {
+            DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
 
-    private boolean checkCacheFile() {
-        for (DateInterval dateInterval: request.getDateIntervals()) {
-            Date currentDate = new Date();
-            XMLGregorianCalendar xmlGregorianDate = new XMLGregorianCalendarImpl();
-            GregorianCalendar gregorianCalendar = new GregorianCalendar();
-            gregorianCalendar.setTime(currentDate);
-            XMLGregorianCalendar dateTo = dateInterval.getDateTo();
-            try {
-                xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
-            } catch (DatatypeConfigurationException e) {
-                logger.log(Level.SEVERE, "Ошибка при получения экземпляра XMLGregorianCalendar", e) ;
+            for (DateInterval dateInterval: request.getDateIntervals()) {
+                Date currentDate = new Date();
+                XMLGregorianCalendar xmlGregorianDate;
+                GregorianCalendar gregorianCalendar = new GregorianCalendar();
+                gregorianCalendar.setTime(currentDate);
+                XMLGregorianCalendar dateTo = dateInterval.getDateTo();
+                xmlGregorianDate = datatypeFactory.newXMLGregorianCalendar(gregorianCalendar);
+                if (dateTo != null && dateTo.compare(xmlGregorianDate) > 0) {
+                    return false;
+                }
             }
-            if (dateTo != null && dateTo.compare(xmlGregorianDate) > 0) {
-                return false;
-            }
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
         }
-        return true; // возможно стоит поменять тип возвращаемого значения
+        return true;
     }
 
-    private String searchCacheFile() {
-        List<String> files = Utils.getFilesMatching(
-                new File(APP_CONFIG_PROPERTIES.getProperty("directory")), ".+" + hashCode() + "\\." + request.getFileFormat());
-        if (files.isEmpty()) {
+    /* Метод ищет в папке с найденными ранее логами файл, который соотвествует
+       текущему запросу пользователя и при успешном поиске возвращает его */
+    private String returnCachedFileForRequestIfExists() {
+        List<String> cachedFiles = Utils.getFilesMatching(new File(FOUND_LOGS_DIRECTORY), ".+" + hashCode() + "\\." + request.getFileFormat());
+        if (cachedFiles.isEmpty()) {
             return null;
         } else {
-            return files.get(0);
+            return cachedFiles.get(0);
         }
     }
 
@@ -106,23 +105,33 @@ public class RequestController {
             response.setMessage("Отсутствует параметр location");
             return response;
         }
+
+        /* Если формат файла не задан, то ответ возвращает список найденных логов,
+        *  иначе происходит сохранения найденных логов в файл */
         if (request.getFileFormat() == null) {
-            response.setLogMessages(getListOfLogMessages());
+            response.setLogMessages(findLogMessages());
         } else {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
             Date requestDate = new Date(); // дата, время получения запроса
             String formattedDate = simpleDateFormat.format(requestDate);
-            response.setOutputFile(DIRECTORY + "\\log-d" + formattedDate + "h" + request.hashCode() + "." + request.getFileFormat());
+
+            /* Ответ немедленно возвращает путь к файлу с найденными логамии,
+               который в асинхронном режиме генерируется в отдельном потоке */
+            response.setOutputFile(FOUND_LOGS_DIRECTORY + "\\log-d" + formattedDate + "h" + request.hashCode() + "." + request.getFileFormat());
+
             executorService.submit(() -> {
-                if (checkCacheFile() && searchCacheFile() != null) {
-                    response.setOutputFile(searchCacheFile());
+                String cachedFileForRequest = canRequestHaveCashedFile() ? returnCachedFileForRequestIfExists() : null;
+                if (cachedFileForRequest != null) {
+                    /* Если кэшированный файл существует, то возвращаем его в ответе */
+                    response.setOutputFile(returnCachedFileForRequestIfExists());
                 } else {
-                    saveResultToFile();
+                    /* Иначе получает список логов и сохраняем его в файл */
+                    List<LogMessage> logMessageList = findLogMessages();
+                    ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter();
+                    objectToFileWriter.write(new LogMessages(request, logMessageList), request.getFileFormat(), response.getOutputFile());
                 }
             });
-            /* Если не закомментировать следующую строку,
-               то нельзя более одного запроса отправить на поиск логов со скачиванием файла */
-            // executorService.shutdown(); // TODO: 09.02.2017 Почитать про ExecutorService
+
         }
         return response;
     }

@@ -33,8 +33,8 @@ public class LogReader {
     private static final Logger logger = AppLogger.getLogger();
 
     public LogReader(String string, List<DateInterval> dateIntervals, LocationType locationType, String location) {
-        FileSearcher fileSearcher = new FileSearcher();
-        logFiles = fileSearcher.getLogFiles(locationType, location);
+        FileFinder fileFinder = new FileFinder();
+        logFiles = fileFinder.getLogFiles(locationType, location);
         if (logFiles.size() > 0) {
             this.dateIntervals = dateIntervals;
             this.string = string;

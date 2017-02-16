@@ -15,11 +15,12 @@ import java.util.List;
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Response {
+    /* При возникновении нештатной ситуации во время обработки запроса в сообщение записывается информация об ошибке */
     @XmlElement(name = "message")
     private String message;
-    // TODO: 14.02.2017 Заменить File на String, так как File не имеет public конструктора по умолчанию
+
     @XmlElement(name = "outputFile")
-    private String outputFile; // File или String лучше?
+    private String outputFile;
 
     @XmlElement(name = "logMessages") // в клиенте создается метод getLogMessage, проверить почему
     private List<LogMessage> logMessages = null;
