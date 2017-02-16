@@ -5,7 +5,6 @@ package ru.siblion.nesterov.logreader.core;
  */
 import ru.siblion.nesterov.logreader.util.AppLogger;
 import ru.siblion.nesterov.logreader.util.AppConfig;
-import ru.siblion.nesterov.logreader.util.ResourceExporter;
 
 import javax.ejb.DependsOn;
 import javax.ejb.Schedule;
@@ -53,7 +52,7 @@ public class FileRemover {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                long lifeTime = (currentDate.getTime() - fileDate.getTime())/1000; // в секундах
+                long lifeTime = (currentDate.getTime() - fileDate.getTime())/1000; // времия в секундах
                 if (!file.isDirectory() &&  lifeTime > configLifeTime)
                     file.delete();
             }

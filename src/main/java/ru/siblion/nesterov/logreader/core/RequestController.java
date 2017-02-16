@@ -2,7 +2,6 @@ package ru.siblion.nesterov.logreader.core;
 
 import ru.siblion.nesterov.logreader.type.*;
 import ru.siblion.nesterov.logreader.util.AppConfig;
-import ru.siblion.nesterov.logreader.util.AppLogger;
 import ru.siblion.nesterov.logreader.util.Utils;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -13,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 
 /**
  * Created by alexander on 13.02.2017.
@@ -32,8 +30,6 @@ public class RequestController {
     private static final int NUMBER_OF_THREADS = 10;
     private static ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    private static final Logger logger = AppLogger.getLogger();
-
     public RequestController(Request request) {
         this.request = request;
 
@@ -44,19 +40,6 @@ public class RequestController {
             emptyDateIntervals.add(new DateInterval(null, null));
             request.setDateIntervals(emptyDateIntervals);
         }
-    }
-
-
-    private List<LogMessage> findLogMessages() {
-        LogReader logReader = new LogReader(request.getString(), request.getDateIntervals(), request.getLocationType(), request.getLocation());
-        List<LogMessage>  logMessageList = null;
-        try {
-            logMessageList = logReader.getLogMessages();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        response.setMessage(logReader.getMessage());
-        return logMessageList;
     }
 
     /* Метод проверяет может ли для данного запроса уже существовать кэшированный файл с найденными логами */
@@ -84,12 +67,24 @@ public class RequestController {
     /* Метод ищет в папке с найденными ранее логами файл, который соотвествует
        текущему запросу пользователя и при успешном поиске возвращает его */
     private String returnCachedFileForRequestIfExists() {
-        List<String> cachedFiles = Utils.getFilesMatching(new File(FOUND_LOGS_DIRECTORY), ".+" + hashCode() + "\\." + request.getFileFormat());
+        List<String> cachedFiles = Utils.getFilesMatching(new File(FOUND_LOGS_DIRECTORY), ".+" + hashCode() +"\\." + request.getFileFormat());
         if (cachedFiles.isEmpty()) {
             return null;
         } else {
             return cachedFiles.get(0);
         }
+    }
+
+    private List<LogMessage> findLogMessages() {
+        LogReader logReader = new LogReader(request.getString(), request.getDateIntervals(), request.getLocationType(), request.getLocation());
+        List<LogMessage>  logMessageList = null;
+        try {
+            logMessageList = logReader.getLogMessages();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        response.setMessage(logReader.getMessage());
+        return logMessageList;
     }
 
     public Response getResponse() {
@@ -110,29 +105,29 @@ public class RequestController {
         *  иначе происходит сохранения найденных логов в файл */
         if (request.getFileFormat() == null) {
             response.setLogMessages(findLogMessages());
-        } else {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
-            Date requestDate = new Date(); // дата, время получения запроса
-            String formattedDate = simpleDateFormat.format(requestDate);
-
-            /* Ответ немедленно возвращает путь к файлу с найденными логамии,
-               который в асинхронном режиме генерируется в отдельном потоке */
-            response.setOutputFile(FOUND_LOGS_DIRECTORY + "\\log-d" + formattedDate + "h" + request.hashCode() + "." + request.getFileFormat());
-
-            executorService.submit(() -> {
-                String cachedFileForRequest = canRequestHaveCashedFile() ? returnCachedFileForRequestIfExists() : null;
-                if (cachedFileForRequest != null) {
-                    /* Если кэшированный файл существует, то возвращаем его в ответе */
-                    response.setOutputFile(returnCachedFileForRequestIfExists());
-                } else {
-                    /* Иначе получает список логов и сохраняем его в файл */
-                    List<LogMessage> logMessageList = findLogMessages();
-                    ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter();
-                    objectToFileWriter.write(new LogMessages(request, logMessageList), request.getFileFormat(), response.getOutputFile());
-                }
-            });
-
+            return response;
         }
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSZ");
+        Date requestDate = new Date(); // дата, время получения запроса
+        String formattedDate = simpleDateFormat.format(requestDate);
+
+        /* Ответ немедленно возвращает путь к файлу с найденными логамии,
+              который в асинхронном режиме генерируется в отдельном потоке */
+        response.setOutputFile(FOUND_LOGS_DIRECTORY + "\\log-d" + formattedDate + "h" + request.hashCode() + "." + request.getFileFormat());
+
+        executorService.submit(() -> {
+            String cachedFileForRequest = canRequestHaveCashedFile() ? returnCachedFileForRequestIfExists() : null;
+            if (cachedFileForRequest != null) {
+                /* Если кэшированный файл существует, то возвращаем его в ответе */
+                response.setOutputFile(returnCachedFileForRequestIfExists());
+            } else {
+                /* Иначе получает список логов и сохраняем его в файл */
+                List<LogMessage> logMessageList = findLogMessages();
+                ObjectToFileWriter objectToFileWriter = new ObjectToFileWriter();
+                objectToFileWriter.write(new LogMessages(request, logMessageList), request.getFileFormat(), response.getOutputFile());
+            }
+        });
         return response;
     }
 

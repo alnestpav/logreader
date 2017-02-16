@@ -80,7 +80,7 @@ public class LogReader {
             String line = reader.readLine();
 
             /* Строка представляет собой - файл:номер - если несколько файлов */
-            Pattern lineNumberPattern = Pattern.compile("^.*?:(?<lineNumber>[0-9]+?):"); // TODO: 31.01.2017 Почитать про регулярные выражения
+            Pattern lineNumberPattern = Pattern.compile("^.*?:(?<lineNumber>[0-9]+?):");
             Matcher lineNumberMatcher;
 
             Pattern filePattern = Pattern.compile("[^.]+\\.log\\d*"); // вернуть ^ в начало выражения
@@ -119,13 +119,11 @@ public class LogReader {
                                                     List<Integer> prefixPositions) {
 
         int numberOfLinesInFile = 0;
-        try(FileReader fileReader = new FileReader(file); // FileReader или FileInputStream стоит использовать?
+        try(FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             while (bufferedReader.readLine() != null) {
                 numberOfLinesInFile++;
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -145,7 +143,6 @@ public class LogReader {
 
         /* Находим блоки, которые содержат искомую строку */
         List<Pair<Integer, Integer>> blockPositions = new ArrayList<>();
-        // TODO: 02.02.2017 Переписать, чтобы не надо было каждый раз проходить все строки
         int i = 0;
         for (Pair<Integer, Integer> blockPosition : allBlockPositions) {
             while (i < stringPositions.size()) {
@@ -225,7 +222,8 @@ public class LogReader {
 
         List<LogMessage> logMessageList = new ArrayList<>();
         for (String logFile : logFiles) {
-            Future<List<LogMessage>> logMessageListFromFile = executorService.submit(new LogCallable(logFile, prefixPositions, stringPositions));
+            Future<List<LogMessage>> logMessageListFromFile =
+                    executorService.submit(new LogCallable(logFile, prefixPositions, stringPositions));
             logMessageList.addAll(logMessageListFromFile.get());
         }
         executorService.shutdown();
@@ -241,7 +239,8 @@ public class LogReader {
         Map<String, List<Integer>> prefixPositions;
         Map<String, List<Integer>> stringPositions;
 
-        private LogCallable(String logFile, Map<String, List<Integer>> prefixPositions, Map<String, List<Integer>> stringPositions) {
+        private LogCallable(String logFile, Map<String, List<Integer>> prefixPositions,
+                                            Map<String, List<Integer>> stringPositions) {
             this.logFile = logFile;
             this.prefixPositions = prefixPositions;
             this.stringPositions = stringPositions;
